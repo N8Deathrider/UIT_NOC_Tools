@@ -1,30 +1,102 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+This script retrieves the uptime of a switch or switches and displays the information.
+
+The script uses command line arguments to specify the switch address(es) and an optional debug flag.
+It imports the Switch class from the SwitchInfo module to interact with the switches.
+The uptime information is retrieved from the switch and displayed using the rich library for formatting.
+
+Usage:
+    python uit_uptime.py [-d] switch [switch ...]
+
+Arguments:
+    -d, --debug: Enable debug mode for additional logging.
+    switch: The switch address(es) to retrieve uptime information for.
+
+Exit Codes:
+    0: No errors.
+    1: General error.
+    120: Invalid argument to exit.
+    130: Keyboard interrupt (Ctrl+C).
+"""
+
+# Standard libraries
+import logging
+from sys import exit
+import argparse
+
+# Third-party libraries
+from rich.logging import RichHandler
+from rich import print as rprint
+
+# Local libraries
 from SwitchInfo import Switch
-from nrc import argumentToVariable
 
-reset = '\033[0m'
-purple = '\033[35m'
-light_blue = '\033[36m'
-green = '\033[1;32m'
+# Standard exit codes
+EXIT_SUCCESS = 0  # No errors
+EXIT_GENERAL_ERROR = 1  # General error
+EXIT_INVALID_ARGUMENT = 120  # Invalid argument to exit
+EXIT_KEYBOARD_INTERRUPT = 130  # Keyboard interrupt (Ctrl+C)
 
 
-def clear_two_lines_up():
+# Logging setup
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler()]
+)
+log: logging.Logger = logging.getLogger("rich")
+logging.getLogger("paramiko").setLevel(logging.WARNING)
+
+
+def get_args() -> argparse.Namespace:
     """
-    Clears two lines above the current cursor position in the terminal.
+    Get command line arguments for getting the uptime of a switch or switches.
+
+    Returns:
+        argparse.Namespace: The parsed command line arguments.
     """
-    print('\033[1A\033[2K\033[1A\033[2K', end='', flush=True)
+    parser = argparse.ArgumentParser(description="Get the uptime of a switch or switches.")
+
+    parser.add_argument("-d", "--debug", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("switch", type=str, help="The switch address.", nargs="+")
+
+    log.debug(f"Arguments: {parser.parse_args()}")
+    return parser.parse_args()
 
 
-def clear_one_line_up():
+def main() -> None:
     """
-    Clears one line above the current cursor position in the terminal.
+    This is the main function that performs the main logic of the program.
+
+    It retrieves command line arguments, sets up the message template, and iterates over the specified switches to calculate and display their uptime.
+
+    Args:
+        None
+
+    Returns:
+        None
     """
-    print('\033[1A\033[2K', end='', flush=True)
+    ARGS = get_args()
+    MESSAGE = "[cyan]The switch [purple]\[[/purple][green]{switch}[/green][purple]][/purple] has been up for [purple]\[[/purple][green]{standard_date}[/green][purple]][/purple] days which means the date it was restarted was [purple]\[[green]{nice_date}[/green][purple]][/purple]"
+
+    if ARGS.debug:
+        log.setLevel(logging.DEBUG)
+
+    for current_switch in ARGS.switch:
+        switch: Switch = Switch(current_switch)
+        uptime = switch.uptime
+        rprint(MESSAGE.format(switch=current_switch, standard_date=uptime[0], nice_date=uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A")))
 
 
-switch = Switch(argumentToVariable(1, prompt_text='Switch Address: '))
-uptime = switch.uptime
-print(f'{light_blue}The switch {purple}[{reset}{green}{switch.ip}{reset}{purple}]{reset} {light_blue}has '
-    f'been up for{reset} {purple}[{reset}{green}{uptime[0]}{reset}{purple}]{reset} '
-    f'{light_blue}days which means the date it was '
-    f'restarted was{reset} {purple}[{reset}{green}{uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A")}{reset}{purple}]{reset} ')
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        log.info("\nCtrl + c pressed. Exiting script...")
+        exit(EXIT_KEYBOARD_INTERRUPT)
+    except Exception as e:
+        log.exception(f"An unhandled error occurred: {e}")
+        exit(EXIT_GENERAL_ERROR)
