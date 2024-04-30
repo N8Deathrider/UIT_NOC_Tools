@@ -85,6 +85,8 @@ def main() -> None:
     if ARGS.debug:
         log.setLevel(logging.DEBUG)
 
+    log.debug(f"Switches: {ARGS.switch}")
+
     for current_switch in ARGS.switch:
         switch: Switch = Switch(current_switch)
         uptime = switch.uptime
