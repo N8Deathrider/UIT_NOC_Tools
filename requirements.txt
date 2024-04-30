@@ -1,0 +1,9 @@
+arrow=>1.2.2
+beautifulsoup4=>4.11.1
+fuzzyset=>0.1.2
+netaddr=>0.8.0
+netmiko=>4.1.1
+pyperclip=>1.8.2
+requests=>2.31.0
+requests-file=>1.5.1
+rich=>13.5.2
