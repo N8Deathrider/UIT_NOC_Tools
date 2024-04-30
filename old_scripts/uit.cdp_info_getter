@@ -1,0 +1,61 @@
+#!/bin/bash
+file='./cdp_info_getter.tmp'
+b='\x1b[34m'
+y='\x1b[33m'
+g='\x1b[1;32m'
+r='\x1b[0m'
+column_5='\x1b[5G'
+column_6='\x1b[6G'
+column_7='\x1b[7G'
+column_8='\x1b[8G'
+column_9='\x1b[9G'
+column_10='\x1b[10G'
+column_11='\x1b[11G'
+column_12='\x1b[12G'
+column_13='\x1b[13G'
+column_14='\x1b[14G'
+column_15='\x1b[15G'
+column_16='\x1b[16G'
+column_17='\x1b[17G'
+column_18='\x1b[18G'
+column_19='\x1b[19G'
+column_20='\x1b[20G'
+column_21='\x1b[21G'
+column_22='\x1b[22G'
+column_23='\x1b[23G'
+column_24='\x1b[24G'
+column_25='\x1b[25G'
+column_26='\x1b[26G'
+column_27='\x1b[27G'
+column_28='\x1b[28G'
+column_29='\x1b[29G'
+column_30='\x1b[30G'
+
+distance=${column_27}
+
+function clean_up() {
+    rm $file
+    echo -e "\nStopped uit.cdp_info_getter"
+    exit
+}
+
+trap clean_up INT
+
+tshark -i '\Device\NPF_{D710CCFF-8F17-43A6-8347-28E82E2EC283}' -Vf "ether host 01:00:0c:cc:cc:cc" -c 1 -a duration:120 > $file
+
+dev_id=$(grep -m 1 -oE '(Device ID: .*)' $file | sed 's/Device ID: //')
+ip=$(grep -m 1 -oE '(IP Address: ([0-9]{,3}\.){3,}[0-9]{,3})' $file| sed 's/IP Address: //')
+port=$(grep -m 1 -oE '(Port ID: .*)' $file | sed 's/Port ID: //')
+vlan=$(grep -m 1 -oE '(Native VLAN: .*)' $file | sed 's/Native VLAN: //')
+vtp=$(grep -m 1 -oE '(VTP Management Domain: .*)' $file | sed 's/VTP Management Domain: //')
+
+# echo -e "\n${column_13}${b}Device ID${y}:${r}${column_24}${g}${dev_id}${r}\n${column_12}${b}IP Address${y}:${r}${column_24}${g}${ip}${r}\n${column_15}${b}Port ID${y}:${r}${column_24}${g}${port}${r}\n${column_11}${b}Native VLAN${y}:${r}${column_24}${g}${vlan}${r}\n${b}VTP Management Domain${y}:${r}${column_24}${g}${vtp}${r}\n"
+echo -e "\033[1A\033[2K\033[1A\033[2K
+${column_13}\033[35m[\033[36mDevice ID\033[35m]\033[36m»${r}${distance}${g}${dev_id}${r}
+${column_12}${b}\033[35m[\033[36mIP Address\033[35m]\033[36m»${r}${distance}${g}${ip}${r}
+${column_15}\033[35m[\033[36mPort ID\033[35m]\033[36m»${r}${distance}${g}${port}${r}
+${column_11}\033[35m[\033[36mNative VLAN\033[35m]\033[36m»${r}${distance}${g}${vlan}${r}
+\033[35m[\033[36mVTP Management Domain\033[35m]\033[36m»${r}${distance}${g}${vtp}${r}
+"
+
+rm $file

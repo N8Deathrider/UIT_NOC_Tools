@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+from rule_creator import helper
+
+try:
+    helper()
+except KeyboardInterrupt:
+    print("Ctrl-c detected, stopping script...")
+else:
+    print("Rule Created")

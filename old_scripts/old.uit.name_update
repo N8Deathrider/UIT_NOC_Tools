@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+import sys
+
+switch_type = ''
+switch_name = ''
+building_number = ''
+building_name = ''
+room_number = ''
+distribution_node = ''
+config_text = ''
+ip = ''
+separator='++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+
+def clear_screen():
+    print('\033[2J\033[H', end='')
+
+def terminal_to_script_variable_set(number, question):
+    """
+    Checks for # of argument passed to the script
+    Inputs:
+        num: the number of argument you want to search for
+        question(str): what the prompt should be asked if the argument is not provided
+    """
+    num = int(number)
+    arg_num = int(num + 1)
+    if len(sys.argv) < arg_num: # Argument number +1
+        arg = input(f'{question}> ')
+    else:
+        arg = sys.argv[num]
+    return arg
+
+
+switch_type = terminal_to_script_variable_set(1,"Switch type").lower()
+building_number = terminal_to_script_variable_set(2,"Building number")
+if len(building_number) < 4:
+    building_number = input('Please enter the building number as a 4 digit number> ')
+building_name = terminal_to_script_variable_set(3,"Building name").lower()
+room_number = terminal_to_script_variable_set(4,"Room number")
+if len(room_number) < 3:
+    room_number = input('Please enter the building number as at least a 3 digit number> ')
+distribution_node = terminal_to_script_variable_set(5,"Distribution node").lower()
+ip = terminal_to_script_variable_set(6,"ip")
+
+switch_name = f'{switch_type}-{building_number}{building_name}-{room_number}-{distribution_node}'
+
+
+config_text = (
+    'conf t\n'
+    f'hostname {switch_name}\n'
+    f'snmp-server location Bldg. {building_number} Room {room_number}\n'
+    'banner login ^\n'
+    '\n'
+    f'{switch_name}.net.utah.edu\n'
+    '\n'
+    'University of Utah Network:  All use of this device must comply\n'
+    'with the University of Utah policies and procedures.  Any use of\n'
+    'this device, whether deliberate or not will be held legally\n'
+    'responsible.  See University of Utah Information Security\n'
+    'Policy (4-004) for details.\n'
+    '\n'
+    'Problems within the University of Utah\'s network should be reported\n'
+    'by calling the Campus Helpdesk at 581-4000, or via e-mail at\n'
+    'helpdesk@utah.edu\n'
+    '\n'
+    'DO NOT LOGIN\n'
+    'if you are not authorized by NetCom at the University of Utah.\n'
+    '\n'
+    '\n'
+    '^\n'
+    'end\n'
+    'wr\n'
+    '\n'
+    'exit\n'
+               )
+
+clear_screen()
+print(ip)
+print(separator)
+print(f'{switch_type}-{building_number}')
+print(separator)
+print(f'{switch_name}')
+print(separator)
+print(config_text)
+print(separator)

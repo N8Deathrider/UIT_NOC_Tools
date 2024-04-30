@@ -1,0 +1,34 @@
+#!/bin/bash
+file='/tmp/cdp_info_getter.tmp'
+dev_id="\e[31mError\e[0m: Value is not set"
+ip="\e[31mError\e[0m: Value is not set"
+port="\e[31mError\e[0m: Value is not set"
+vlan="\e[31mError\e[0m: Value is not set"
+
+function clean_up() {
+    rm $file
+    echo -e "\nStopped uit.connect_to_connected_switch"
+    exit
+}
+
+trap clean_up INT
+
+tshark -i '\Device\NPF_{D710CCFF-8F17-43A6-8347-28E82E2EC283}' -Vf "ether host 01:00:0c:cc:cc:cc" -c 1 -a duration:120 > $file
+
+dev_id="\e[35m[\e[36mName\e[35m]\e[36m» \e[32m$(grep -m 1 -oE '(Device ID: .*)' $file | sed 's/Device ID: //' | sed 's/\r//g')\e[0m"
+ip_display="\e[35m[\e[36mIP\e[35m]\e[36m» \e[32m$(grep -m 1 -oE '(IP Address: ([0-9]{,3}\.){3,}[0-9]{,3})' $file| sed 's/IP Address: //' | sed 's/\r//g')\e[0m"
+ip="$(grep -m 1 -oE '(IP Address: ([0-9]{,3}\.){3,}[0-9]{,3})' $file| sed 's/IP Address: //' | sed 's/\r//g')"
+port="\e[35m[\e[36mPort\e[35m]\e[36m» \e[32m$(grep -m 1 -oE '(Port ID: .*)' $file | sed 's/Port ID: //' | sed 's/\r//g')\e[0m"
+vlan="\e[35m[\e[36mVLAN\e[35m]\e[36m» \e[32m$(grep -m 1 -oE '(Native VLAN: .*)' $file | sed 's/Native VLAN: //' | sed 's/\r//g')\e[0m"
+
+rm $file
+
+# dev_id="sx1-482-102tower-5w-4401-102tower.net.ut"   #DEBUG
+# ip="127.0.0.1"  #DEBUG
+# port="GigabitEthernet1/0/1"   #DEBUG
+# vlan="1"        #DEBUG
+
+
+clear
+echo -e "Connecting to:\n$dev_id\n${ip_display}\n\nEthernet connection:\n${port}\n${vlan}\n\n"
+script -a $HOME/ssh_logs/${ip}_sshlog -c "sshpass -p 8caMmGFLJhw ssh -B wifi0 u1377551@${ip}"

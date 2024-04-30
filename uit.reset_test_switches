@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+This script is used to reset test switches by removing added VLANs and resetting interfaces.
+
+The script performs the following steps:
+1. Imports necessary modules and classes.
+2. Prompts the user for the username and password or imports them from the auth.py file.
+3. Defines a function to get the list of added VLANs on a switch.
+4. Defines a function to get the list of interfaces to reset on a switch.
+5. Defines the main function that iterates through a list of switches, retrieves the added VLANs and interfaces to reset, and sends the configuration commands to the switches.
+6. Executes the main function if the script is run directly.
+"""
+
+from netmiko import ConnectHandler
+from netmiko.base_connection import BaseConnection
+from getpass import getpass
+from sys import exit
+from rich import print as rprint
+
+from auth import SSH
+from SwitchInfo import Switch
+
+try:  # Try to import the username and password from the auth.py file
+    from auth import SSH  # Import the SSH class from the auth.py file
+    USERNAME = SSH.username  # Get the username from the SSH class
+    PASSWORD = SSH.password  # Get the password from the SSH class
+except ImportError:  # If the auth.py file does not exist
+    USERNAME = input("Enter the username: ")  # Prompt the user for the username
+    PASSWORD = getpass("Enter the password: ")  # Prompt the user for the password securely (the password will not be shown exactly like in the terminal normally)
+
+
+def added_vlans(switch: Switch) -> list[dict]:
+    """
+    Get the list of added VLANs on a switch.
+
+    Args:
+        switch (Switch): The switch object.
+
+    Returns:
+        list[dict]: The list of added VLANs, where each VLAN is represented as a dictionary.
+    """
+    default_vlans = [1, 800, 986, 1002, 1003, 1004, 1005]
+    return [vlan for vlan in switch.vlans if int(vlan["vlan_id"]) not in default_vlans]
+
+
+def interfaces_to_reset(switch: BaseConnection) -> list[str]:
+    """
+    Get the list of interfaces to reset on a switch.
+
+    Args:
+        switch (BaseConnection): The switch connection object.
+
+    Returns:
+        list[str]: The list of interfaces to reset.
+    """
+    interfaces = switch.send_command("show interface status", use_textfsm=True)
+    return [interface["port"] for interface in interfaces if interface["status"] == "notconnect" and interface["status"] != "trunk"]
+
+
+def main():
+    """
+    The main function that resets the test switches.
+
+    This function iterates through a list of switches, retrieves the added VLANs and interfaces to reset,
+    and sends the configuration commands to the switches.
+    """
+    switches = ["172.31.16.52", "172.31.16.21"]
+
+    for switch in switches:
+        s: Switch = Switch(switch)
+        vlans = added_vlans(s)
+        config_text = []
+        for vlan in vlans:
+            config_text.append(f"no vlan {vlan['vlan_id']}")
+        with ConnectHandler(**s.connection_dictionary(username=USERNAME, password=PASSWORD, device_type="cisco_ios")) as net_connect:
+            interfaces = interfaces_to_reset(net_connect)
+            for interface in interfaces:
+                config_text.append(f"default interface {interface}")
+            output = net_connect.send_config_set(
+                config_text,
+                cmd_verify=True,
+                strip_prompt=False,
+                strip_command=False
+            )
+            output += net_connect.send_command("write memory", strip_prompt=False, strip_command=False)
+
+
+if __name__ == "__main__":  # If the script is being run directly
+    try:  # Try to run the script
+        main()  # Run the script
+        exit(0)  # Exit with status code 0 (no errors)
+    except KeyboardInterrupt:  # If the user pressed Ctrl+C
+        print("\nExiting... User pressed Ctrl+C.")
+        exit(130)  # Exit with status code 130 (Ctrl+C)
+    except Exception as e:  # If an unknown error occurred
+        print(f"An unexpected error occurred: {e}")
+        exit(1)  # Exit with status code 1 (general error)

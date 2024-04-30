@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import requests
+import json
+from time import sleep
+from nrc import ansi
+
+test_data = [
+    '{"finItemCount":"2","totalItemCount":"5","id":2,"payload":{"Ver":"1.0","Name":"JF Report","Dev":{"sn":"012345678","mac":"00c017b60012","mode":"JF200","swVer":"0.9","build":"0420","ipaddr":"129.196.211.102"},"Res":{"PoE":{"res":"ok","status":"green","voltage":"55V"},"Link":{"res":"ok","status":"green","rxPair":"1,2","advSpeed":"10/100","advDuplex":"HDx/FDx","actSpeed":"100","actDuplex":"FDx","polarity":"Normal"},"Switch":{"res":"ok","status":"gray","type":"LLDP","name":"sx1-0482-102tower-5th-test.net.utah.edu ","port":"Gi0/3,GigabitEthernet0/3","vlan":"151 ","vvlan":"","model":"Cisco IOS Software, C3560CX Sof","addr":"172.031.016.052"},"IpConfig":{"res":"ok","status":"pending","type":"STATIC","addr":"","server":"","sub":"","dns":["",""]},"Router":{"res":"ok","status":"pending","addr":"","connect":["--","--","--"]},"WWW":{"res":"ok","status":"pending","url":"","addr":"","port":"80","type":"tcp","connect":["--","--","--"]}}}}',
+    '{"finItemCount":"3","totalItemCount":"5","id":2,"payload":{"Ver":"1.0","Name":"JF Report","Dev":{"sn":"012345678","mac":"00c017b60012","mode":"JF200","swVer":"0.9","build":"0420","ipaddr":"129.196.211.102"},"Res":{"PoE":{"res":"ok","status":"green","voltage":"55V"},"Link":{"res":"ok","status":"green","rxPair":"1,2","advSpeed":"10/100","advDuplex":"HDx/FDx","actSpeed":"100","actDuplex":"FDx","polarity":"Normal"},"Switch":{"res":"ok","status":"gray","type":"LLDP","name":"sx1-0482-102tower-5th-test.net.utah.edu ","port":"Gi0/3,GigabitEthernet0/3","vlan":"151 ","vvlan":"","model":"Cisco IOS Software, C3560CX Sof","addr":"172.031.016.052"},"IpConfig":{"res":"ok","status":"green","type":"STATIC","addr":"155.101.251.227","server":"155.101.246.200","sub":"255.255.255.0","dns":["172.20.120.20",""]},"Router":{"res":"ok","status":"pending","addr":"","connect":["--","--","--"]},"WWW":{"res":"ok","status":"pending","url":"","addr":"","port":"80","type":"tcp","connect":["--","--","--"]}}}}',
+    '{"finItemCount":"4","totalItemCount":"5","id":2,"payload":{"Ver":"1.0","Name":"JF Report","Dev":{"sn":"012345678","mac":"00c017b60012","mode":"JF200","swVer":"0.9","build":"0420","ipaddr":"129.196.211.102"},"Res":{"PoE":{"res":"ok","status":"green","voltage":"55V"},"Link":{"res":"ok","status":"green","rxPair":"1,2","advSpeed":"10/100","advDuplex":"HDx/FDx","actSpeed":"100","actDuplex":"FDx","polarity":"Normal"},"Switch":{"res":"ok","status":"gray","type":"LLDP","name":"sx1-0482-102tower-5th-test.net.utah.edu ","port":"Gi0/3,GigabitEthernet0/3","vlan":"151 ","vvlan":"","model":"Cisco IOS Software, C3560CX Sof","addr":"172.031.016.052"},"IpConfig":{"res":"ok","status":"green","type":"STATIC","addr":"155.101.251.227","server":"155.101.246.200","sub":"255.255.255.0","dns":["172.20.120.20",""]},"Router":{"res":"ok","status":"green","addr":"155.101.251.1","connect":["1ms","3ms","2ms"]},"WWW":{"res":"ok","status":"pending","url":"","addr":"","port":"80","type":"tcp","connect":["--","--","--"]}}}}',
+    '{"finItemCount":"5","totalItemCount":"5","id":2,"payload":{"Ver":"1.0","Name":"JF Report","Dev":{"sn":"012345678","mac":"00c017b60012","mode":"JF200","swVer":"0.9","build":"0420","ipaddr":"129.196.211.102"},"Res":{"PoE":{"res":"ok","status":"green","voltage":"55V"},"Link":{"res":"ok","status":"green","rxPair":"1,2","advSpeed":"10/100","advDuplex":"HDx/FDx","actSpeed":"100","actDuplex":"FDx","polarity":"Normal"},"Switch":{"res":"ok","status":"gray","type":"LLDP","name":"sx1-0482-102tower-5th-test.net.utah.edu ","port":"Gi0/3,GigabitEthernet0/3","vlan":"151 ","vvlan":"","model":"Cisco IOS Software, C3560CX Sof","addr":"172.031.016.052"},"IpConfig":{"res":"ok","status":"green","type":"STATIC","addr":"155.101.251.227","server":"155.101.246.200","sub":"255.255.255.0","dns":["172.20.120.20",""]},"Router":{"res":"ok","status":"green","addr":"155.101.251.1","connect":["1ms","3ms","2ms"]},"WWW":{"res":"ok","status":"green","url":"www.google.com","addr":"172.217.0.68","port":"80","type":"tcp","connect":["14ms","14ms","15ms"]}}}}'
+]
+
+dev = False
+
+def parse_response(data: dict):
+    """
+    Parses the response data and checks if all information has been collected.
+
+    Args:
+        data (dict): The response data to be parsed.
+
+    Returns:
+        dict or None: If all information has been collected, returns the parsed data.
+                      Otherwise, returns None.
+    """
+    if data["finItemCount"] == data["totalItemCount"]:
+        if dev:
+            print("all info collected")
+        return data
+    else:
+        return None
+
+
+def get_test_data():
+    """
+    Retrieves test data for the UIT application.
+
+    Returns:
+        Response: An object representing the response containing the test data.
+    """
+    import random
+    class Response:
+        def __init__(self) -> None:
+            self.ok = True
+        def json(self) -> dict:
+            return json.loads(random.choice(test_data))
+    return Response()
+
+
+def color_it(result_item: dict, section_name: str) -> str:
+    colors = {"green": ansi.green_fg, "yellow": ansi.red_fg, "red": ansi.red_fg}
+    return f'{colors[result_item["status"]]}{section_name}{ansi.default_fg}'
+
+
+def fetch_data():
+    linksprinter_url = "http://ui.linksprinter.com/getResult.js?cmd=refresh"
+    linksprinter_url = "http://172.16.9.9/getResult.js?cmd=refresh"
+    # linksprinter_url = "http://155.99.254.246/getResult.txt"
+    for _ in range(30):
+        if dev:
+            r = get_test_data()
+        else:
+            try:
+                r: requests.models.Response = requests.get(url=linksprinter_url)
+            except ConnectionRefusedError:
+                print("Connection refused")
+        if r.ok:
+            try:
+                data = parse_response(r.json())
+            except requests.exceptions.JSONDecodeError:
+                print("Error no json found")
+                break
+            if data:
+                return data["payload"]
+        if dev:
+            print("Tried one time and data wasn't ready yet")
+        sleep(1)
+    print("Tried 30 times and failed 30 times")
+# TODO: maybe use argparse to test for -v to show more info like the dev info
+
+
+def status_printer(fluke_data: dict, section: str) -> str:
+    colors = {"green": ansi.green_fg, "yellow": ansi.red_fg, "red": ansi.red_fg, "gray": ""}
+    section_data = fluke_data[section]
+    return f"{colors[section_data['status']]}{section}: {section_data['res'].upper()}{ansi.default_fg}"
+
+
+def fix_ip_address(address: str) -> str:
+    return ".".join(map(lambda x: x.lstrip("0"), address.split(".")))
+
+
+def data_displayer(fluke_data: dict):
+    if dev:
+        from nrc import expand_json
+        print(expand_json(fluke_data))
+    dev_data = fluke_data["Dev"]
+    fluke_data = fluke_data["Res"]
+    PoE = fluke_data["PoE"]
+    Link = fluke_data["Link"]
+    Switch = fluke_data["Switch"]
+
+    text = (
+        f"‣{status_printer(fluke_data, 'PoE')}\n"
+        f"\t∙Voltage: {PoE['voltage']}\n"
+        f"‣{status_printer(fluke_data, 'Link')}\n"
+        f"‣{status_printer(fluke_data, 'Switch')}\n"
+        f"\t∙Type: {Switch['type']}\n"
+        f"\t∙Name: {Switch['name']}\n"
+        f"\t∙Port: {Switch['port'].split(',')[-1]}\n"
+        f"\t∙Access VLAN: {Switch['vlan'].strip()}\n"
+        f"\t∙Voice VLAN: {Switch['vvlan']}\n"
+        f"\t∙Model: {Switch['model']}\n"
+        f"\t∙Address: {fix_ip_address(Switch['addr'])}\n"
+        f"{status_printer(fluke_data, 'IpConfig')}\n"
+    )
+    print(text.replace("\t", " " * 4))
+    
+
+
+if __name__ == "__main__":
+    data_displayer(fetch_data())

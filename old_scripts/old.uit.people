@@ -1,0 +1,34 @@
+#!/usr/bin/python3
+
+import requests
+import pprint
+import urllib3
+import webbrowser
+import sys
+
+#urllib3.disable_warnings()
+
+search_url = 'https://people.utah.edu/uWho/basic.hml'
+#search_url = 'http://httpbin.org/post'
+if len(sys.argv) < 2:
+	search_item = input("Who are you looking for?\n")
+else:
+	search_item = sys.argv[1]
+search_arguments = {'searchTerm': search_item}
+#search_arguments = {'searchTerm': 'u1377551'}
+#f = open('/mnt/c/Users/u1377551/Desktop/people.html', 'w')
+chrome_path = '/mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe %s --incognito'
+
+r = requests.post(search_url, data=search_arguments)
+
+if r.ok == True:
+#    pprint.pprint(r.json())
+#    print(r.text)
+    print(r.url)
+#    f.write(r.text)
+#    f.close()
+    webbrowser.get(chrome_path).open_new(r.url)
+else:
+    print('Error: ', r.text)
+    quit()
+quit()

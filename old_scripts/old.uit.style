@@ -1,0 +1,313 @@
+#!/usr/bin/env python3
+"""
+Written by Nathan Cable - u1377551 - 08/10/2022
+"""
+import pyperclip as pc
+from sys import exit
+from nrc import ansi, clear, vlan_info, SwitchInfo
+import argparse
+
+#############
+# VARIABLES #
+#############
+O = ansi.forgroundRGB(209,154,102)
+B = ansi.forground256(33)
+R = ansi.default_fg
+BOLD_ON = ansi.bold_on
+BOLD_OFF = ansi.bold_off
+log_message = "The log is below."
+info_tag = f"{B}[i]{R}"
+stop_listening_instructions = f"{info_tag} When done, press {BOLD_ON}Enter{BOLD_OFF} and then press {BOLD_ON}Ctrl{BOLD_OFF} + {BOLD_ON}d{BOLD_OFF}"
+copied_anouncement = f'{ansi.yellow_fg}This has been automatically copied to the clipbord!{ansi.default_fg}'
+opening_code_tag = '<code style="background-color: #dddbdb;">'
+
+#######################
+# SETTING UP ARGPARSE #
+#######################
+p = argparse.ArgumentParser(description="The point of this script is to make it slightly more convenient to add style to work notes.")
+g = p.add_mutually_exclusive_group(required=True)
+
+########################
+# ADDING THE ARGUMENTS #
+########################
+p.add_argument(  # DEBUG
+    "-d",
+    "--debug",
+    action="store_true"
+    # TODO: This should be either deleted or commented out at release
+)
+
+g.add_argument(  # Italic
+    "-i",
+    nargs="+",
+    metavar=f"{O}text{R}",
+    help="italic: italicizes the text"
+)
+
+g.add_argument(  # Underline
+    "-u",
+    nargs="+",
+    metavar=f"{O}text{R}",
+    help="underline: underlines the text"
+)
+
+g.add_argument(  # Bold
+    "-b",
+    nargs="+",
+    metavar=f"{O}text{R}",
+    help="bold: bolds the text"
+)
+
+g.add_argument(  # Mark
+    "-m",
+    nargs="+",
+    metavar=f"{O}text{R}",
+    help="mark: marks/highlights the text"
+)
+
+g.add_argument(  # Code
+    "-c",
+    nargs="+",
+    metavar=f"{O}text{R}",
+    help="code: styles the text as code but what that looks like depends on the css where this text is placed"
+)
+
+g.add_argument(  # Vlan Info
+    "-vi",
+    nargs=2,
+    metavar=(f"{O}vlan_number{R}", f"{O}switch_ip{R}|{O}switch_name{R}"),
+    help=f"vlan information: styles the string as '{O}{{vlan_number}}{R} - {O}{{vlan_description}}{R}' with both the vlan number and name wrapped with code tags"
+)
+
+g.add_argument(  # Switch Info
+    "-si",
+    nargs=1,
+    metavar=f"{O}switch_ip{R}|{O}switch_name{R}",
+    help="switch information: takes either the hostname or ip address and returns '{O}{{hostname}}{R} (IP: {O}{{switch_ip}}{R})' with both the hostname and ip address wrapped with the code tags"
+)
+
+g.add_argument(  # Switch-port
+    "-sp",
+    nargs=2,
+    metavar=(f"{O}switch_port{R}", f"{O}switch_ip{R}|{O}switch_name{R}"),
+    help=f"switch port: styles the string as 'switch-port {O}{{switch_port}}{R} of {O}{{switch_name}}{R} (IP: {O}{{switch_ip}}{R})' with the information (highlighted with orange) being wrapped in code tags"
+)
+
+g.add_argument(  # Switch-port Config
+    "-spc",
+    nargs=3,
+    metavar=(f"{O}switch_port{R}", f"{O}switch_ip{R}|{O}switch_name{R}", f"{O}vlan_number{R}"),
+    help=f"switch-port config: styles the string to match 'I configured switch-port {O}{{switch_port}}{R} of switch {O}{{switch_name}}{R} (IP: {O}{{switch_ip}}{R}) to be on VLAN {O}{{vlan_number}}{R} - {O}{{vlan_description}}{R}. The log is below.' with the information (highlighted with orange) being wrapped with code tags"
+)
+
+g.add_argument(  # Patched Port To
+    "-ppt",
+    nargs=3,
+    metavar=(f"{O}patch_panel_port_number{R}", f"{O}switch_port{R}", f"{O}switch_ip{R}|{O}switch_name{R}"),
+    help=f"patched port to: styles the string as 'I patched the patch-panel port {O}{{patch_panel_port_number}}{R} to switch-port {O}{{switch_port}}{R} of switch {O}{{switch_name}}{R} (IP: {O}{{switch_ip}}{R})' with all of the information (highlighted with orange) being wrapped in code tags"
+)
+
+g.add_argument(  # Patch-panel Port Config
+    "-ppc",
+    nargs=4,
+    metavar=(f"{O}patch_panel_port_number{R}", f"{O}switch_port{R}", f"{O}switch_ip{R}|{O}switch_name{R}", f"{O}vlan_number{R}"),
+    help=f"patch-panel-port patch and config: styles the string as 'I patched the patch-panel port {O}{{patch_panel_port_number}}{R} to switch-port {O}{{switch_port}}{R} of switch {O}{{switch_name}}{R} (IP: {O}{{switch_ip}}{R}) and configured the switch-port to be on VLAN {O}{{vlan_number}}{R} - {O}{{vlan_description}}{R}. The log is below.' with all of the information (highlighted with orange) being wrapped in code tags"
+)
+
+g.add_argument(  # Switch Output
+    "-so",
+    action="store_true",
+    help="switch output: wraps the switch output in a pre tag and converts newlines into <br>"
+)
+
+g.add_argument(  # Email
+    "-em",
+    action="store_true",
+    help="email: works just like -so but will bold 'From:', 'Date:', 'To:', and 'Subject:' (the easiest way to get all of that is to click 'Reply' on the email and then copy the information from the 'previous conversation' area)"
+)
+
+g.add_argument(  # ServiceNow Link
+    "-l",
+    "--link",
+    nargs=2,
+    metavar=(f"{O}text{R}", f"{O}URL{R}"),
+    help=f"servicenow link: creates a hyperlink compatable with servicenow"
+)
+
+g.add_argument(  # Version
+    "-v",
+    "--version",
+    action="version",
+    version="%(prog)s 2.0"
+)
+
+
+#########################
+# THE STYLING FUNCTIONS #
+#########################
+def style_italic(text):
+    return f"<em>{text}</em>"
+
+
+def style_underline(text):
+    return f"<u>{text}</u>"
+
+
+def style_bold(text):
+    return f"<strong>{text}</strong>"
+
+
+def style_mark(text):
+    return f"<mark>{text}</mark>"
+
+
+def style_code(text):
+    return f"{opening_code_tag}{text}</code>"
+
+
+def style_vlan_information(vlan_number, switch):
+    vlan_data = vlan_info(SwitchInfo(switch), vlan_number)
+    return f"{opening_code_tag}{vlan_data['vlan_id']}</code> - {opening_code_tag}{vlan_data['name']}</code>"
+
+
+def style_switch_information(switch_address):
+    switch = SwitchInfo(switch_address)
+    return f"{opening_code_tag}{switch.fqdn}</code> (IP: {opening_code_tag}{switch.ip}</code>)"
+
+
+def style_switch_port(sp, switch):
+    """
+    sp stands for switch-port
+    switch stands for either the switch hostname or switch ip
+    """
+    return f"switch-port {opening_code_tag}{sp}</code> of the switch {style_switch_information(switch)}"
+
+
+def style_switch_port_config(sp, switch, vnum):
+    """
+    sp stands for switch-port
+    switch stands for either the switch hostname or switch ip
+    """
+    return f'I configured {style_switch_port(sp, switch)} to be on VLAN {style_vlan_information(vnum, switch)}. {log_message}\n\n\n{style_switch_output()}'
+
+
+def style_patched_port_to(pp_port_number, sp, switch):
+    return f"I patched the patch-panel port {opening_code_tag}{pp_port_number}</code> to {style_switch_port(sp, switch)}"
+
+
+def style_patch_panel_port_congifg(pp_port_number, sp, switch, vnum):
+    return f"I patched the patch-panel port {opening_code_tag}{pp_port_number}</code> to {style_switch_port(sp, switch)} and configured that switch-port to be on VLAN {style_vlan_information(vnum, switch)}. {log_message}\n\n\n{style_switch_output()}"
+
+
+def style_switch_output():
+    """
+    o is short for output
+    """
+    o = []
+    print(f"Please paste the copy of the switch output here.\n{stop_listening_instructions}")
+    while True:
+        try:
+            o.append(input())
+        except EOFError:
+            break
+    clear()
+    # return f"<pre style=\"background-color: #dddbdb;\">{'<br>'.join(o)}</pre>"
+    return f"<pre>{'<br>'.join(o)}</pre>"
+
+
+def style_email():
+    """
+    em is short for email
+    """
+    em = []
+    print(f"Please paste the copy of the email here.\n{stop_listening_instructions}")
+    while True:
+        try:
+            em.append(input())
+        except EOFError:
+            break
+    clear()
+    styled_email = "<br>".join(em)
+    styled_email = styled_email.replace("From:", "<strong>From:</strong>")
+    styled_email = styled_email.replace("Date:", "<strong>Date:</strong>")
+    styled_email = styled_email.replace("Sent:", "<strong>Sent:</strong>")
+    styled_email = styled_email.replace("To:", "<strong>To:</strong>")
+    styled_email = styled_email.replace("Cc:", "<strong>Cc:</strong>")
+    styled_email = styled_email.replace("Subject:", "<strong>Subject:</strong>")
+    return f"<pre>{styled_email}</pre>"
+
+
+def style_link(t, u):
+    """
+    t is short for text
+    u is short for url
+    """
+    return f'<a href="{u}" target="_blank" rel="noopener noreferrer">{t}</a>'
+
+
+###################
+# OTHER FUNCTIONS #
+###################
+# def switch_address(switch_addr):
+#     """
+#     Returns the switch_name and switch_ip and is best used like this
+#     switch_name, switch_ip = switch_address
+#     """
+#     addr = gethostbyaddr(switch_addr)
+#     name = addr[0]
+#     ip = addr[2][0]
+#     return name, ip
+
+
+def sn_code_tag_wrapper(text):
+    return f"[code]{text}[/code]"
+
+
+#########################
+# PARSING THE ARGUMENTS #
+#########################
+try:
+    args = p.parse_args()
+
+    if args.debug:  # DEBUG
+        print(args)
+
+    if args.i:  # Italic
+        styled_text = style_italic(" ".join(args.i))
+    elif args.u:  # Underline
+        styled_text = style_underline(" ".join(args.u))
+    elif args.b:  # Bold
+        styled_text = style_bold(" ".join(args.b))
+    elif args.m:  # Mark
+        styled_text = style_mark(" ".join(args.m))
+    elif args.c:  # Code
+        styled_text = style_code(" ".join(args.c))
+    elif args.vi:  # Vlan Info
+        styled_text = style_vlan_information(args.vi[0], args.vi[1])
+    elif args.si:  # Switch Info
+        styled_text = style_switch_information(args.si[0])
+    elif args.sp:  # Switch-port
+        styled_text = style_switch_port(args.sp[0],args.sp[1])
+    elif args.spc:  # Switch-port Config
+        styled_text = style_switch_port_config(args.spc[0], args.spc[1], args.spc[2])
+    elif args.ppt:  # Patched Port To
+        styled_text = style_patched_port_to(args.ppt[0], args.ppt[1], args.ppt[2])
+    elif args.ppc:  # Patch-panel Port Config
+        styled_text = style_patch_panel_port_congifg(args.ppc[0], args.ppc[1], args.ppc[2], args.ppc[3])
+    elif args.so:  # Switch Output
+        styled_text = style_switch_output()
+    elif args.em:  # Email
+        styled_text = style_email()
+    elif args.link:  # ServiceNow Link
+        styled_text = style_link(args.link[0], args.link[1])
+
+    wrapped_styled_text = sn_code_tag_wrapper(styled_text)
+except KeyboardInterrupt:
+    print(f"\n{BOLD_ON}Ctrl{BOLD_OFF} + {BOLD_ON}c{BOLD_OFF} detected... Exiting script")
+    exit(130)
+
+##################################
+# PRINTING AND COPY TO CLIPBOARD #
+##################################
+pc.copy(wrapped_styled_text)
+print(f"{wrapped_styled_text}\n\n{copied_anouncement}")

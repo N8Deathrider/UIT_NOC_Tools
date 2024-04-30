@@ -1,0 +1,10 @@
+#!/usr/bin/python3
+
+"""
+Here's a handy link for when I get to making this.
+https://map.utah.edu/?bsbuhospitalshuttle=on&visitorparking=on&facultystaffparking=on&utabusstop=on&construction=on
+
+And also here is the link to the API information that I used to make the above link
+https://map.utah.edu/app/resources/apidoc/index.html
+"""
+

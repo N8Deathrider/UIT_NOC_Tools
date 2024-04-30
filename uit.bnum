@@ -1,0 +1,2 @@
+#!/bin/bash
+open -u "https://orion.sys.utah.edu/ui/manage/nodes?buildingNumber=$1"

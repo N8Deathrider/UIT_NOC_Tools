@@ -1,0 +1,11 @@
+- [ ] Finish writing the README.md
+- [ ] Cleanup the head of [uit_switch_configure](uit_switch_configure.py)
+- [ ] Cleanup the tail of [uit_switch_configure](uit_switch_configure.py)
+- [ ] Cleanup the use of ansi in [uit_style](uit_style.py)
+- [ ] Redo the help for each argument in [uit_style](uit_style.py) using copilot
+- [ ] Refactor [uit_key_interfaces](uit_key_interfaces.py) to use rich and logging
+- [ ] Add missing exit codes to [uit_key_interfaces](uit_key_interfaces.py)
+- [ ] Completely refactor [uit_bsb](uit_bsb.py)
+- [ ] Refactor [uit_people](uit_people)
+- [ ] Refactor [uit_statusio](uit_statusio)
+- [ ] Refactor [uit_uptime](uit_uptime)
