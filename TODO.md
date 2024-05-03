@@ -9,3 +9,4 @@
 - [ ] Refactor and fix [uit_people](uit_people)
 - [X] Refactor [uit_statusio](uit_statusio)
 - [X] Refactor [uit_uptime](uit_uptime)
+- [ ] Add some validation for things like interfaces and vlans in [uit_switch_configure](uit_switch_configure.py)
