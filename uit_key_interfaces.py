@@ -54,6 +54,7 @@ except ImportError:  # If the auth.py file does not exist
 # Standard exit codes
 EXIT_SUCCESS = 0  # No errors
 EXIT_GENERAL_ERROR = 1  # General error
+EXIT_INVALID_ARGUMENT = 120  # Invalid argument to exit
 EXIT_KEYBOARD_INTERRUPT = 130  # Keyboard interrupt (Ctrl+C)
 
 
