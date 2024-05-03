@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+A script to get interface info for each interface up to the router.
+"""
 
 # Standard library imports
 import argparse
