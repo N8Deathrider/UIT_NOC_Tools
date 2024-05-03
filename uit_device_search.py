@@ -29,7 +29,6 @@ from rich import print as rprint
 from rich.console import Console
 from rich.console import Group
 from rich.logging import RichHandler
-from rich.live import Live
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
