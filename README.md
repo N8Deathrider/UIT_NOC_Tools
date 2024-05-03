@@ -9,8 +9,15 @@ UIT Tools is designed to assist in managing tickets and preforming other tasks f
 ## Features
 
 - **uit_bsb**: A simple tracker to tell me the eta for the UofU BSB bus
-- **uit_device_search**: Description of tool 2.
-- **Tool 3**: Description of tool 3.
+- **uit_device_search**: This script performs a search for a specified item using an API and retrieves the results.
+- **uit_key_interfaces**: This script checks the trunk interfaces of switches to ensure that their descriptions follow a specific standard.
+- **uit_people**: This script allows users to search for and retrieve information about people from the University of Utah's online directory.
+- **uit_route**: This script provides functions for routing requests to the appropriate queue and generating a formatted message with routing information and a Teams link.
+- **uit_statusio**: This script retrieves status information from the status.io API and displays it in the terminal using the Rich library for enhanced formatting.
+- **uit_style**: #TODO
+- **uit_switch_configure**: This script allows users to configure network switch interfaces by running automated commands based off user input.
+- **uit_uplink_check**: This script retrieves interface information for each interface up to the router.
+- **uit_uptime**:This script retrieves the uptime of a switch or switches and displays the information.
 
 ## Installation
 
@@ -27,7 +34,7 @@ To use UIT Tools, follow these steps:
 
 > [!NOTE]
 > I usually will symlink each of these file to a different dir that's added to $PATH with a nicer looking name just for looks.
-> For example: `uit.bsb -> /Users/me/Repos/UIT_Tools/uit_bsb.py`
+> For example: `ln -s ./uit_bsb.py ~/.local/bin/uit.bsb`
 
 ## Usage
 
