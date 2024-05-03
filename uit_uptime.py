@@ -11,7 +11,6 @@ Usage:
     python uit_uptime.py [-d] switch [switch ...]
 
 Arguments:
-    -d, --debug: Enable debug mode for additional logging.
     switch: The switch address(es) to retrieve uptime information for.
 
 Exit Codes:
