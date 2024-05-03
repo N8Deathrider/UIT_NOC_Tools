@@ -17,7 +17,7 @@ UIT NOC Tools is designed to assist in managing tickets and preforming other tas
 - **uit_style**: #TODO
 - **uit_switch_configure**: This script allows users to configure network switch interfaces by running automated commands based off user input.
 - **uit_uplink_check**: This script retrieves interface information for each interface up to the router.
-- **uit_uptime**:This script retrieves the uptime of a switch or switches and displays the information.
+- **uit_uptime**: This script retrieves the uptime of a switch or switches and displays the information.
 
 ## Installation
 
