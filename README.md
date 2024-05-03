@@ -1,10 +1,10 @@
-# UIT Tools
+# UIT NOC Tools
 
-Welcome to UIT Tools, a collection of utilities and resources for me while I'm working at the University Information Technology NOC desk.
+Welcome to UIT NOC Tools, a collection of utilities and resources for me while I'm working at the University Information Technology NOC desk.
 
 ## Overview
 
-UIT Tools is designed to assist in managing tickets and preforming other tasks for my job. It provides a set of tools and resources that can be used to streamline processes and improve overall efficiency.
+UIT NOC Tools is designed to assist in managing tickets and preforming other tasks for my job. It provides a set of tools and resources that can be used to streamline processes and improve overall efficiency.
 
 ## Features
 
@@ -21,7 +21,7 @@ UIT Tools is designed to assist in managing tickets and preforming other tasks f
 
 ## Installation
 
-To use UIT Tools, follow these steps:
+To use UIT NOC Tools, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/N8Deathrider/UIT_NOC_Tools.git`
 2. Navigate to the cloned repository: `cd uit-tools`
