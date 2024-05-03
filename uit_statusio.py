@@ -1,13 +1,39 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+A simple script to retrieve the status information from the status.io API and display it in the terminal.
+"""
 
-import requests
-
+# Standard libraries
+import logging
 from sys import exit
 
+# Third-party libraries
+import requests
+from rich.logging import RichHandler
 from rich import print as rprint
 from rich.table import Table
 from rich.panel import Panel
 from rich.columns import Columns
+
+# Local libraries
+
+
+# Standard exit codes
+EXIT_SUCCESS = 0  # No errors
+EXIT_GENERAL_ERROR = 1  # General error
+EXIT_INVALID_ARGUMENT = 120  # Invalid argument to exit
+EXIT_KEYBOARD_INTERRUPT = 130  # Keyboard interrupt (Ctrl+C)
+
+
+# Logging setup
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler()]
+)
+log: logging.Logger = logging.getLogger("rich")
 
 
 class TermColors:
@@ -26,6 +52,9 @@ class TermColors:
 
 
 def main1():
+    """
+    #TODO: Add docstring
+    """
     url = 'https://api.status.io/1.0/status/561446c409989c1d2d000e99'
     final_text = []
     status_colors = {
@@ -91,6 +120,9 @@ def get_status_color(status: dict[str, str]) -> str:
 
 
 def main2():
+    """
+    #TODO: Add docstring
+    """
     status_info = get_status()
 
     overall_status = status_info["status_overall"]
@@ -111,6 +143,9 @@ def main2():
 
 
 def main3():
+    """
+    #TODO: Add docstring
+    """
     status_info = get_status()
 
     overall_status = status_info["status_overall"]
@@ -127,7 +162,14 @@ def main3():
 
 
 
-if __name__ == '__main__':
-    # main1()
-    main2()
-    # main3()
+if __name__ == "__main__":
+    try:
+        # main1()
+        main2()
+        # main3()
+    except KeyboardInterrupt:
+        log.info("\nCtrl + c pressed. Exiting script...")
+        exit(EXIT_KEYBOARD_INTERRUPT)
+    except Exception as e:
+        log.exception(f"An unhandled error occurred: {e}")
+        exit(EXIT_GENERAL_ERROR)

@@ -7,5 +7,5 @@
 - [ ] Add missing exit codes to [uit_key_interfaces](uit_key_interfaces.py)
 - [ ] Completely refactor [uit_bsb](uit_bsb.py)
 - [ ] Refactor [uit_people](uit_people)
-- [ ] Refactor [uit_statusio](uit_statusio)
+- [X] Refactor [uit_statusio](uit_statusio)
 - [X] Refactor [uit_uptime](uit_uptime)
