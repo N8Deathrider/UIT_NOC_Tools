@@ -24,7 +24,7 @@ UIT NOC Tools is designed to assist in managing tickets and preforming other tas
 To use UIT NOC Tools, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/N8Deathrider/UIT_NOC_Tools.git`
-2. Navigate to the cloned repository: `cd uit-tools`
+2. Navigate to the cloned repository: `cd UIT_NOC_Tools`
 <!-- 3. It's recommended to create a virtual environment to isolate your project: `python3 -m venv env`
 4. Activate the virtual environment: 
    - On Mac/Linux: `source env/bin/activate`
