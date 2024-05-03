@@ -8,4 +8,4 @@
 - [ ] Completely refactor [uit_bsb](uit_bsb.py)
 - [ ] Refactor [uit_people](uit_people)
 - [ ] Refactor [uit_statusio](uit_statusio)
-- [ ] Refactor [uit_uptime](uit_uptime)
+- [X] Refactor [uit_uptime](uit_uptime)
