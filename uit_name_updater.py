@@ -94,6 +94,18 @@ def get_args() -> argparse.Namespace:
 
 
 def validate_ip_address(ip: str) -> str:
+    """
+    Validates the given IP address.
+
+    Args:
+        ip (str): The IP address to validate.
+
+    Returns:
+        str: The validated IP address.
+
+    Raises:
+        argparse.ArgumentTypeError: If the IP address is invalid.
+    """
     try:
         ipaddress.ip_address(ip)
         return ip
