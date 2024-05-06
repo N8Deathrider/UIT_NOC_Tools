@@ -35,6 +35,22 @@ logging.getLogger("paramiko").setLevel(logging.WARNING)  # Suppress Paramiko inf
 
 
 def get_args() -> argparse.Namespace:
+    """
+    Parse command line arguments and return the parsed arguments as a Namespace object.
+
+    This function uses the argparse module to define and parse command line arguments.
+    It expects the following arguments:
+    - function_descriptor: The descriptor for the switch type. 'dx' for distribution switches and 'sx' for access switches.
+    - count: The count of the type of device in the same room.
+    - building_number: The building number where the switch is located. (Will be padded with 0's to 4 digits)
+    - building_short_name: The short name of the building where the switch is located.
+    - room_number: The room number where the switch is located. (Will be padded with 0's to 4 digits)
+    - distribution_node: The distribution node where the switch is connected.
+    - switch_ip: The IP address of the switch.
+
+    Returns:
+        argparse.Namespace: The parsed command line arguments.
+    """
     parser = argparse.ArgumentParser(
         description="This script figures out the proper name for a switch based on the "
         "current standards and updates it in the needed places."
@@ -85,7 +101,7 @@ def get_args() -> argparse.Namespace:
 
     parser.add_argument(
         "switch_ip",
-        type=validate_ip_address,
+        type=validate_ip_address,  # Validate the IP address
         help="The IP address of the switch.",
         metavar="SWITCH_IP"
     )
