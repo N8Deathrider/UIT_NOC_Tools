@@ -165,7 +165,11 @@ def name_generator(
     if building_short_name[0].isnumeric():  # If the building short name starts with a number
         building_short_name = f"-{building_short_name}"  # Add a hyphen to the beginning of the building short name
 
-    return f"{function_descriptor}{count}-{building_number.zfill(4)}{building_short_name}-{room_number.zfill(4)}-{distribution_node}".lower()
+    switch_name = f"{function_descriptor}{count}-{building_number.zfill(4)}{building_short_name}-{room_number.zfill(4)}-{distribution_node}".lower()
+
+    log.debug(f"Generated Switch Name: {switch_name}")
+
+    return switch_name
 
 
 def location_generator(building_number: str, room_number: str) -> str:
@@ -238,11 +242,13 @@ def orion_search(ip: str = None, dns: str = None, proptag: str = None, barcode: 
     if ip:
         r = session.get("https://toast.utah.edu/orion/switch", params={"ip": ip})
         r.raise_for_status()
+        log.debug(f"Orion Search Response: {r.json()}")
         return r.json()
 
     if dns:
         r = session.get("https://toast.utah.edu/orion/switch", params={"dns": dns})
         r.raise_for_status()
+        log.debug(f"Orion Search Response: {r.json()}")
         return r.json()
 
     if proptag:
@@ -250,6 +256,7 @@ def orion_search(ip: str = None, dns: str = None, proptag: str = None, barcode: 
             "https://toast.utah.edu/orion/switch", params={"proptag": proptag}
         )
         r.raise_for_status()
+        log.debug(f"Orion Search Response: {r.json()}")
         return r.json()
 
     if barcode:
@@ -257,6 +264,7 @@ def orion_search(ip: str = None, dns: str = None, proptag: str = None, barcode: 
             "https://toast.utah.edu/orion/switch", params={"barcode": barcode}
         )
         r.raise_for_status()
+        log.debug(f"Orion Search Response: {r.json()}")
         return r.json()
 
     raise (ValueError("You must provide an ip, dns, proptag, or barcode"))
@@ -277,6 +285,7 @@ def ddi_search(ip: str) -> dict:
     """
     r = session.get("https://toast.utah.edu/infoblox/host", params={"ip": ip})
     r.raise_for_status()
+    log.debug(f"DDI Search Response: {r.json()}")
     return r.json()
 
 
