@@ -242,6 +242,24 @@ def orion_search(ip: str = None, dns: str = None, proptag: str = None, barcode: 
     raise (ValueError("You must provide an ip, dns, proptag, or barcode"))
 
 
+def search_ip(ip: str) -> dict:
+    """
+    Search for information about a host using its IP address.
+
+    Args:
+        ip (str): The IP address of the host to search for.
+
+    Returns:
+        dict: A dictionary containing information about the host.
+
+    Raises:
+        requests.HTTPError: If the HTTP request to the API fails.
+    """
+    r = session.get("https://toast.utah.edu/infoblox/host", params={"ip": ip})
+    r.raise_for_status()
+    return r.json()
+
+
 def main() -> None:
     """
     #TODO: Add description
