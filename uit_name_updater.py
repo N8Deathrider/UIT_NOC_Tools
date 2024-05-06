@@ -165,7 +165,7 @@ def name_generator(
     if building_short_name[0].isnumeric():  # If the building short name starts with a number
         building_short_name = f"-{building_short_name}"  # Add a hyphen to the beginning of the building short name
 
-    return f"{function_descriptor}{count}-{building_number.zfill(4)}{building_short_name}-{room_number.zfill(4)}-{distribution_node}.net.utah.edu".lower()
+    return f"{function_descriptor}{count}-{building_number.zfill(4)}{building_short_name}-{room_number.zfill(4)}-{distribution_node}".lower()
 
 
 def location_generator(building_number: str, room_number: str) -> str:
@@ -182,20 +182,40 @@ def location_generator(building_number: str, room_number: str) -> str:
     return f"Bldg. {building_number.zfill(4)} Room {room_number.zfill(4)}"
 
 
-def banner_generator(switch_name: str) -> str:
+def switch_commands_generator(switch_name: str, building_number: str, room_number: str) -> list:
     """
-    Generates a banner string for a network device based on the given switch name.
+    Generates a list of switch commands based on the provided switch name and location string.
 
     Args:
-        switch_name (str): The name of the network device.
+        switch_name (str): The name of the switch.
+        location_string (str): The location string for the switch.
 
     Returns:
-        str: The generated banner string for the network device.
+        list: A list of switch commands.
+
     """
-    ...
-    #TODO: Figure out if this can be a string that gets split into a list of lines
-    # for the configuration commands or if it needs to be a list of lines set during
-    # the configuration commands like in the old script.
+    return [
+        f"hostname {switch_name}",
+        f"snmp-server location {location_generator(building_number, room_number)}",
+        "banner login ^",
+        "\n",
+        f"{switch_name}.net.utah.edu",
+        "\n",
+        "University of Utah Network:  All use of this device must comply",
+        "with the University of Utah policies and procedures.  Any use of",
+        "this device, whether deliberate or not will be held legally",
+        "responsible.  See University of Utah Information Security",
+        "Policy (4-004) for details.",
+        "\n",
+        "Problems within the University of Utah's network should be reported",
+        "by calling the Campus Helpdesk at 581-4000, or via e-mail at",
+        "helpdesk@utah.edu",
+        "\n",
+        "DO NOT LOGIN",
+        "if you are not authorized by NetCom at the University of Utah.",
+        "\n\n",
+        "^"
+    ]
 
 
 def orion_search(ip: str = None, dns: str = None, proptag: str = None, barcode: str = None) -> dict:
