@@ -136,8 +136,6 @@ def validate_ip_address(ip: str) -> str:
         raise argparse.ArgumentTypeError("Invalid IP address")
 
 
-
-
 def main() -> None:
     """
     #TODO: Add description
