@@ -242,7 +242,7 @@ def orion_search(ip: str = None, dns: str = None, proptag: str = None, barcode: 
     raise (ValueError("You must provide an ip, dns, proptag, or barcode"))
 
 
-def search_ip(ip: str) -> dict:
+def ddi_search(ip: str) -> dict:
     """
     Search for information about a host using its IP address.
 
