@@ -198,7 +198,23 @@ def banner_generator(switch_name: str) -> str:
     # the configuration commands like in the old script.
 
 
-def orion_search(ip: str = None, dns: str = None, proptag: str = None, barcode: str = None):
+def orion_search(ip: str = None, dns: str = None, proptag: str = None, barcode: str = None) -> dict:
+    """
+    Performs a search in the Orion system based on the provided parameters.
+
+    Args:
+        ip (str, optional): The IP address to search for.
+        dns (str, optional): The DNS name to search for.
+        proptag (str, optional): The property tag to search for.
+        barcode (str, optional): The barcode to search for.
+
+    Returns:
+        dict: The JSON response containing the search results.
+
+    Raises:
+        ValueError: If none of the search parameters (ip, dns, proptag, barcode) are provided.
+    """
+    
     if ip:
         r = session.get("https://toast.utah.edu/orion/switch", params={"ip": ip})
         r.raise_for_status()
