@@ -152,9 +152,9 @@ def name_generator(
     Args:
         function_descriptor (str): The function descriptor for the device.
         count (str): The count of the device.
-        building_number (str): The building number of the device.
+        building_number (str): The building number of the device.  (Padded with 0's to 4 digits)
         building_short_name (str): The short name of the building.
-        room_number (str): The room number of the device.
+        room_number (str): The room number of the device. (Padded with 0's to 4 digits)
         distribution_node (str): The distribution node of the device.
 
     Returns:
@@ -173,8 +173,8 @@ def location_generator(building_number: str, room_number: str) -> str:
     Generates a location string for a network device based on the given building and room numbers.
 
     Args:
-        building_number (str): The building number of the device.
-        room_number (str): The room number of the device.
+        building_number (str): The building number of the device. (Padded with 0's to 4 digits)
+        room_number (str): The room number of the device. (Padded with 0's to 4 digits)
 
     Returns:
         str: The generated location string for the network device.
