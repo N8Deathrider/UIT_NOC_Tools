@@ -136,6 +136,36 @@ def validate_ip_address(ip: str) -> str:
         raise argparse.ArgumentTypeError("Invalid IP address")
 
 
+def name_generator(
+        function_descriptor: str,
+        count: str|int,
+        building_number: str|int,
+        building_short_name: str,
+        room_number: str|int,
+        distribution_node: str
+    ) -> str:
+    """
+    Generates a name for a network device based on the given parameters.
+
+    Args:
+        function_descriptor (str): The function descriptor for the device.
+        count (str|int): The count of the device.
+        building_number (str|int): The building number of the device.
+        building_short_name (str): The short name of the building.
+        room_number (str|int): The room number of the device.
+        distribution_node (str): The distribution node of the device.
+
+    Returns:
+        str: The generated name for the network device.
+    """
+    building_short_name = building_short_name.replace(" ", "")  # Remove spaces from the building short name
+
+    if building_short_name[0].isnumeric():  # If the building short name starts with a number
+        building_short_name = f"-{building_short_name}"  # Add a hyphen to the beginning of the building short name
+
+    return f"{function_descriptor}{count}-{building_number.zfill(4)}{building_short_name}-{room_number.zfill(4)}-{distribution_node}.net.utah.edu".lower()
+
+
 def main() -> None:
     """
     #TODO: Add description
@@ -147,6 +177,7 @@ def main() -> None:
         log.setLevel(logging.DEBUG)
 
     log.debug(f"Arguments: {ARGS}")
+
 
 if __name__ == "__main__":
     try:
