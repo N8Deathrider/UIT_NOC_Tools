@@ -12,6 +12,7 @@ from sys import exit
 
 # Third-party libraries
 from rich.logging import RichHandler
+from u1377551 import login_duo
 
 # Local libraries
 
@@ -33,6 +34,7 @@ logging.basicConfig(
 log: logging.Logger = logging.getLogger("rich")
 logging.getLogger("paramiko").setLevel(logging.WARNING)  # Suppress Paramiko info logs
 
+session = login_duo()
 
 def get_args() -> argparse.Namespace:
     """
@@ -194,6 +196,34 @@ def banner_generator(switch_name: str) -> str:
     #TODO: Figure out if this can be a string that gets split into a list of lines
     # for the configuration commands or if it needs to be a list of lines set during
     # the configuration commands like in the old script.
+
+
+def orion_search(ip: str = None, dns: str = None, proptag: str = None, barcode: str = None):
+    if ip:
+        r = session.get("https://toast.utah.edu/orion/switch", params={"ip": ip})
+        r.raise_for_status()
+        return r.json()
+
+    if dns:
+        r = session.get("https://toast.utah.edu/orion/switch", params={"dns": dns})
+        r.raise_for_status()
+        return r.json()
+
+    if proptag:
+        r = session.get(
+            "https://toast.utah.edu/orion/switch", params={"proptag": proptag}
+        )
+        r.raise_for_status()
+        return r.json()
+
+    if barcode:
+        r = session.get(
+            "https://toast.utah.edu/orion/switch", params={"barcode": barcode}
+        )
+        r.raise_for_status()
+        return r.json()
+
+    raise (ValueError("You must provide an ip, dns, proptag, or barcode"))
 
 
 def main() -> None:
