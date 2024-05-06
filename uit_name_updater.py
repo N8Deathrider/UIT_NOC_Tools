@@ -180,6 +180,22 @@ def location_generator(building_number: str, room_number: str) -> str:
     return f"Bldg. {building_number.zfill(4)} Room {room_number.zfill(4)}"
 
 
+def banner_generator(switch_name: str) -> str:
+    """
+    Generates a banner string for a network device based on the given switch name.
+
+    Args:
+        switch_name (str): The name of the network device.
+
+    Returns:
+        str: The generated banner string for the network device.
+    """
+    ...
+    #TODO: Figure out if this can be a string that gets split into a list of lines
+    # for the configuration commands or if it needs to be a list of lines set during
+    # the configuration commands like in the old script.
+
+
 def main() -> None:
     """
     #TODO: Add description
