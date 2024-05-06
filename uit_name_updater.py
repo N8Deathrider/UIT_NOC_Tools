@@ -13,6 +13,7 @@ from sys import exit
 # Third-party libraries
 from rich.logging import RichHandler
 from u1377551 import login_duo
+from netmiko import ConnectHandler, SSHDetect
 
 # Local libraries
 
