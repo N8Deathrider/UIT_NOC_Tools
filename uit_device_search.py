@@ -17,10 +17,7 @@ the required search arguments when calling the 'start_search' function.
 # Standard libraries
 import json
 import logging
-import pickle
-import urllib3
 from sys import exit
-from pathlib import Path
 from time import sleep
 
 # Third-party libraries
@@ -34,7 +31,7 @@ from rich.prompt import Prompt
 from rich.table import Table
 
 # Local libraries
-from u1377551 import duo_push
+from u1377551 import login_duo as login
 from u1377551 import rich_get_next_arg
 
 # Standard exit codes
@@ -62,51 +59,6 @@ logging.basicConfig(
     handlers=[RichHandler(rich_tracebacks=True)]
 )
 log: logging.Logger = logging.getLogger("rich")
-
-
-def login() -> requests.Session:
-    """
-    Logs in and returns a session object.
-
-    This function performs the following steps:
-    1. Loads cookies from a file.
-    2. Creates a session object.
-    3. Disables HTTPS verification and warnings.  (This is only here because I was getting an error about https verification)
-    4. Updates the session with the loaded cookies.
-    5. Checks if the session is authenticated by sending a request to the finished API endpoint.
-    6. If not authenticated, calls the duo_push function to authenticate the session.
-
-    Returns:
-        requests.Session: The authenticated session object.
-    """
-    cookie_jar_path = Path.home().joinpath(".toastCookieJar")
-    # The path to the file that will store the cookies
-
-    s = requests.Session()
-    # Creating the session
-
-    s.verify = False
-    if s.verify is False:
-        urllib3.disable_warnings()
-    # This is only here because I for some reason was getting an error about https verification
-    # so to bypass that and because I trust the toast url but by disabling https verification you
-    # still get an annoying warning that https verification is disabled every time a request is made
-    # and this disables/hides that warning
-
-    with cookie_jar_path.open("rb") as f:  # Loading the cookies from the file
-        s.cookies.update(pickle.load(f))  # Updating the session with the cookies
-
-    while s.get("https://toast.utah.edu/api/finished").status_code == 401:
-        # Checking if the session is authenticated by sending a request to the finished api endpoint
-        s = duo_push()  # If not calling the duo_push function to authenticate the session
-        s.verify = False
-        urllib3.disable_warnings()
-        s.get("https://toast.utah.edu/login_helper")  # Sending a request to the login_helper api endpoint to authenticate the session
-
-    with cookie_jar_path.open("wb") as f:  # Saving the cookies to the file
-        pickle.dump(s.cookies, f)  # Dumping the cookies to the file
-
-    return s  # Returning the session
 
 
 def result_formatter(result_data: dict, search_item: str) -> None:
