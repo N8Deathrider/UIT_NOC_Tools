@@ -166,6 +166,20 @@ def name_generator(
     return f"{function_descriptor}{count}-{building_number.zfill(4)}{building_short_name}-{room_number.zfill(4)}-{distribution_node}.net.utah.edu".lower()
 
 
+def location_generator(building_number: str, room_number: str) -> str:
+    """
+    Generates a location string for a network device based on the given building and room numbers.
+
+    Args:
+        building_number (str): The building number of the device.
+        room_number (str): The room number of the device.
+
+    Returns:
+        str: The generated location string for the network device.
+    """
+    return f"Bldg. {building_number.zfill(4)} Room {room_number.zfill(4)}"
+
+
 def main() -> None:
     """
     #TODO: Add description
