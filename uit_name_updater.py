@@ -106,6 +106,13 @@ def get_args() -> argparse.Namespace:
         metavar="SWITCH_IP"
     )
 
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        help=argparse.SUPPRESS  # Hide the debug option from the help message
+    )
+
     return parser.parse_args()
 
 
@@ -135,8 +142,13 @@ def main() -> None:
     """
     #TODO: Add description
     """
-    ...
 
+    ARGS = get_args()
+
+    if ARGS.debug:
+        log.setLevel(logging.DEBUG)
+
+    log.debug(f"Arguments: {ARGS}")
 
 if __name__ == "__main__":
     try:
