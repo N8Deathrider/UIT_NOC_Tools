@@ -138,10 +138,10 @@ def validate_ip_address(ip: str) -> str:
 
 def name_generator(
         function_descriptor: str,
-        count: str|int,
-        building_number: str|int,
+        count: str,
+        building_number: str,
         building_short_name: str,
-        room_number: str|int,
+        room_number: str,
         distribution_node: str
     ) -> str:
     """
@@ -149,10 +149,10 @@ def name_generator(
 
     Args:
         function_descriptor (str): The function descriptor for the device.
-        count (str|int): The count of the device.
-        building_number (str|int): The building number of the device.
+        count (str): The count of the device.
+        building_number (str): The building number of the device.
         building_short_name (str): The short name of the building.
-        room_number (str|int): The room number of the device.
+        room_number (str): The room number of the device.
         distribution_node (str): The distribution node of the device.
 
     Returns:
