@@ -123,6 +123,18 @@ def main2() -> None:
 
 
 def main3() -> None:
+    """
+    This is the main function that performs the main logic of the program.
+
+    It retrieves command line arguments, sets up the message template, and iterates over the specified switches to calculate and display their uptime.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     ARGS = get_args()
 
     if ARGS.debug:
