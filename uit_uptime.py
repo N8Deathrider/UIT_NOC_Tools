@@ -28,6 +28,7 @@ import argparse
 # Third-party libraries
 from rich.logging import RichHandler
 from rich import print as rprint
+from rich.table import Table
 
 # Local libraries
 from SwitchInfo import Switch
@@ -63,6 +64,35 @@ def get_args() -> argparse.Namespace:
     parser.add_argument("switch", type=str, help="The switch address.", nargs="+")
 
     return parser.parse_args()
+
+
+def table_gen(switches: list) -> Table:
+    """
+    Generate a table with the uptime information for the specified switches.
+
+    Args:
+        switches (list): The list of switches to get uptime information for.
+
+    Returns:
+        Table: The table with the uptime information.
+    """
+    table = Table(title="Switch Uptime Information")
+    table.add_column("Switch", style="cyan", no_wrap=True)
+    table.add_column("Uptime", style="magenta", no_wrap=True)
+    table.add_column("Days up", style="yellow", no_wrap=True)
+    table.add_column("Restart timestamp", style="green", no_wrap=True)
+    table.add_column("Reason", style="bright_blue", no_wrap=True)
+
+    for switch in switches:
+        switch_obj = Switch(switch)
+        uptime = switch_obj.uptime[3]
+        restart_timestamp = switch_obj.uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A")
+        days_up = str(switch_obj.uptime[0])
+        log.debug(f"Uptime: {uptime}")
+        log.debug(f"Restart timestamp: {restart_timestamp}")
+        table.add_row(switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason"))
+
+    return table
 
 
 def main2() -> None:
