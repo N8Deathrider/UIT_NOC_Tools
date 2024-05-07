@@ -140,14 +140,8 @@ def validate_ip_address(ip: str) -> str:
         raise argparse.ArgumentTypeError("Invalid IP address")
 
 
-def name_generator(
-        function_descriptor: str,
-        count: str,
-        building_number: str,
-        building_short_name: str,
-        room_number: str,
-        distribution_node: str
-    ) -> str:
+def name_generator(function_descriptor: str, count: str, building_number: str,
+                   building_short_name: str, room_number: str, distribution_node: str) -> str:
     """
     Generates a name for a network device based on the given parameters.
 
