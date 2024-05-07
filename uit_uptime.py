@@ -78,7 +78,7 @@ def table_gen(switches: list) -> Table:
         Table: The table with the uptime information.
     """
     table = Table(title="Switch Uptime Information")
-    table.add_column("Switch", style="cyan", no_wrap=True)
+    table.add_column("Switch", style="cyan", no_wrap=False)
     table.add_column("Uptime", style="magenta", no_wrap=True)
     table.add_column("Days up", style="yellow", no_wrap=True)
     table.add_column("Restart timestamp", style="green", no_wrap=True)
