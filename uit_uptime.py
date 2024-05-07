@@ -122,9 +122,20 @@ def main2() -> None:
         rprint(MESSAGE.format(switch=current_switch, standard_date=uptime[0], nice_date=uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A"), reason=uptime[2]))
 
 
+def main3() -> None:
+    ARGS = get_args()
+
+    if ARGS.debug:
+        log.setLevel(logging.DEBUG)
+
+    log.debug(f"Arguments: {ARGS}")
+
+    table = table_gen(ARGS.switch)
+    rprint(table)
+
 if __name__ == "__main__":
     try:
-        main2()
+        main3()
         exit(EXIT_SUCCESS)
     except KeyboardInterrupt:
         log.info("\nCtrl + c pressed. Exiting script...")
