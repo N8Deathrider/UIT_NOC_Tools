@@ -29,6 +29,7 @@ import argparse
 from rich.logging import RichHandler
 from rich import print as rprint
 from rich.table import Table
+from rich.console import Console
 
 # Local libraries
 from SwitchInfo import Switch
@@ -134,6 +135,8 @@ def main3() -> None:
     Returns:
         None
     """
+    console = Console()
+    
     ARGS = get_args()
 
     if ARGS.debug:
@@ -141,7 +144,8 @@ def main3() -> None:
 
     log.debug(f"Arguments: {ARGS}")
 
-    table = table_gen(ARGS.switch)
+    with console.status("Retrieving uptime information...") as status:
+        table = table_gen(ARGS.switch)
     rprint(table)
 
 if __name__ == "__main__":
