@@ -120,10 +120,12 @@ def get_uptime_info(switch: str|Switch) -> tuple:
     uptime = switch_obj.uptime[3]
     restart_timestamp = switch_obj.uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A")
     days_up = str(switch_obj.uptime[0])
-    log.debug(f"Uptime: {uptime}")
-    log.debug(f"Restart timestamp: {restart_timestamp}")
+    
+    row = (switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason"))
 
-    return switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason")
+    log.debug(f"Row: {row}")
+
+    return row
 
 
 def main2() -> None:
