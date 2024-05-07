@@ -95,6 +95,37 @@ def table_gen(switches: list) -> Table:
     return table
 
 
+def get_uptime_info(switch: str|Switch) -> tuple:
+    """
+    Retrieves the uptime information for a given switch.
+
+    Args:
+        switch (str or Switch): The switch to retrieve the uptime information for. 
+            It can be either a string representing the switch name or a Switch object.
+
+    Returns:
+        tuple: A tuple containing the following information:
+            - switch: The switch name or Switch object.
+            - uptime: The uptime value of the switch.
+            - days_up: The number of days the switch has been up.
+            - restart_timestamp: The timestamp of the last restart.
+            - reload_reason: The reason for the last reload.
+
+    """
+    if isinstance(switch, str):  # If the switch is a string, create a Switch object
+        switch_obj = Switch(switch)
+    elif isinstance(switch, Switch):  # If the switch is a Switch object, use it
+        switch_obj = switch
+
+    uptime = switch_obj.uptime[3]
+    restart_timestamp = switch_obj.uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A")
+    days_up = str(switch_obj.uptime[0])
+    log.debug(f"Uptime: {uptime}")
+    log.debug(f"Restart timestamp: {restart_timestamp}")
+
+    return switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason")
+
+
 def main2() -> None:
     """
     This is the main function that performs the main logic of the program.
