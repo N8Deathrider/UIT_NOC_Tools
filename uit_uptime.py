@@ -65,7 +65,7 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main() -> None:
+def main2() -> None:
     """
     This is the main function that performs the main logic of the program.
 
