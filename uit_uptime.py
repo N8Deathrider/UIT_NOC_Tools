@@ -62,7 +62,6 @@ def get_args() -> argparse.Namespace:
     parser.add_argument("-d", "--debug", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("switch", type=str, help="The switch address.", nargs="+")
 
-    log.debug(f"Arguments: {parser.parse_args()}")
     return parser.parse_args()
 
 
@@ -79,17 +78,18 @@ def main() -> None:
         None
     """
     ARGS = get_args()
-    MESSAGE = "[cyan]The switch [purple]\[[/purple][green]{switch}[/green][purple]][/purple] has been up for [purple]\[[/purple][green]{standard_date}[/green][purple]][/purple] days which means the date it was restarted was [purple]\[[green]{nice_date}[/green][purple]][/purple]"
+    MESSAGE = "[cyan]The switch [purple]\[[green]{switch}[purple]][cyan] has been up for [purple]\[[green]{standard_date}[purple]][cyan] days; it was restarted was [purple]\[[green]{nice_date}[purple]][cyan] reason is [purple]\[[green]{reason}[purple]][cyan]"
 
     if ARGS.debug:
         log.setLevel(logging.DEBUG)
 
-    log.debug(f"Switches: {ARGS.switch}")
+    log.debug(f"Arguments: {ARGS}")
 
     for current_switch in ARGS.switch:
         switch: Switch = Switch(current_switch)
         uptime = switch.uptime
-        rprint(MESSAGE.format(switch=current_switch, standard_date=uptime[0], nice_date=uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A")))
+        log.debug(f"Uptime: {uptime}")
+        rprint(MESSAGE.format(switch=current_switch, standard_date=uptime[0], nice_date=uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A"), reason=uptime[2]))
 
 
 if __name__ == "__main__":
