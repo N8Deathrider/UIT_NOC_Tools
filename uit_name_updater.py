@@ -9,6 +9,7 @@ import argparse
 import ipaddress
 import logging
 from sys import exit
+import webbrowser
 
 # Third-party libraries
 from rich.logging import RichHandler
@@ -288,6 +289,23 @@ def ddi_search(ip: str) -> dict:
     r.raise_for_status()
     log.debug(f"DDI Search Response: {r.json()}")
     return r.json()
+
+
+def view_orion_node_page(node_id: int):
+    """
+    Opens the Orion Node Page for the given node ID.
+
+    Parameters:
+    - node_id (int): The ID of the node to view.
+
+    Returns:
+    None
+    """
+    node_url =  f"https://orion.sys.utah.edu/Orion/NetPerfMon/NodeDetails.aspx?NetObject=N:{node_id}"
+
+    log.debug(f"Opening Orion Node Page: {node_url}")
+
+    webbrowser.open(node_url)
 
 
 def main() -> None:
