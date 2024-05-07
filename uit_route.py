@@ -145,7 +145,7 @@ def queue_search(query: str) -> str:
     if match in alt_queue_names:  # If the match is an alternate queue name, return the full queue name
         return alt_queue_names[match]
     
-    if match == "other":  # If the match is "other", ask the user for the queue name
+    if match == "Other":  # If the match is "other", ask the user for the queue name
         return Prompt.ask("What's the queue name?")
 
     return match  # Otherwise, return the full queue name
