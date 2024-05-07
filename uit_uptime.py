@@ -94,7 +94,7 @@ def main2() -> None:
 
 if __name__ == "__main__":
     try:
-        main()
+        main2()
         exit(EXIT_SUCCESS)
     except KeyboardInterrupt:
         log.info("\nCtrl + c pressed. Exiting script...")
