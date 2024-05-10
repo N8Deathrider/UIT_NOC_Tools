@@ -207,6 +207,7 @@ def main_v5():
     access_vlan_number = IntPrompt.ask('Access VLAN Number')  # Get the access vlan number
     interface_ids = Prompt.ask('Port(s)').split(",")  # Get the interface id
 
+    # TODO: add description to the top of the commands listing all ports to be configured and to what vlan(s)
     pre_config_commands = ["show clock", "show users", f"show vlan brief | include ({access_vlan_number}|{desired_voice_vlan_number})_"] if voice_vlan else ["show clock", "show users", f"show vlan brief | include {access_vlan_number}"]
 
     print("Now attempting to configure the requested interface(s)")
