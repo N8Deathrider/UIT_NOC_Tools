@@ -404,6 +404,7 @@ def main() -> None:
         log.debug(f"Current Hostname: {hostname}")
         if hostname != correct_name:
             if Confirm.ask(f"Switch name is currently '{hostname}' on the switch, would you like to change it to '{correct_name}'?"):
+                # TODO: Find better way to ask for confirmation that's not so long
                 commands = switch_commands_generator(correct_name, ARGS.building_number, ARGS.room_number)
                 switch_output += net_connect.send_config_set(commands)
                 net_connect.set_base_prompt()
@@ -420,6 +421,7 @@ def main() -> None:
 
     if node_name != correct_name + domain_name:
         if Confirm.ask(f"Switch name is currently '{node_name}' in Orion, would you like to change it to '{correct_name + domain_name}'?"):
+            # TODO: Find better way to ask for confirmation that's not so long
             orion.change_orion_node_name(uri, correct_name)
 
     log.debug("Exiting Orion Section")
