@@ -358,6 +358,7 @@ def main() -> None:
     log.debug(f"Arguments: {ARGS}")
 
     correct_name = name_generator(ARGS.function_descriptor, ARGS.count, ARGS.building_number, ARGS.building_short_name, ARGS.room_number, ARGS.distribution_node)
+    domain_name = ".net.utah.edu"
 
 # -- Orion section ------------------------------
     orion_data = orion.get_switch(ARGS.switch_ip).get("results")[0]
