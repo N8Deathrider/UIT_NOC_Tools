@@ -328,6 +328,24 @@ def view_orion_node_page(node_id: int):
     webbrowser.open(node_url)
 
 
+def change_orion_node_name(uri: str, new_name: str):
+    """
+    Changes the name of an Orion node.
+
+    Parameters:
+    - uri (str): The URI of the node to change.
+    - new_name (str): The new name of the node.
+
+    Returns:
+    None
+    """
+    if not new_name.endswith(".net.utah.edu"):
+        new_name = new_name + ".net.utah.edu"
+    log.debug(f"Changing Orion Node Name: {new_name}")
+
+    orion.swis.update(uri, NodeName=new_name)
+
+
 def main() -> None:
     """
     #TODO: Add description
