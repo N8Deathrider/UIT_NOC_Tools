@@ -261,15 +261,12 @@ def location_generator(building_number: str, room_number: str) -> str:
 
 def switch_commands_generator(switch_name: str, building_number: str, room_number: str) -> list:
     """
-    Generates a list of switch commands based on the provided switch name and location string.
+    Generate a list of commands for configuring a switch.
 
-    Args:
-        switch_name (str): The name of the switch.
-        location_string (str): The location string for the switch.
-
-    Returns:
-        list: A list of switch commands.
-
+    :param switch_name: The name of the switch.
+    :param building_number: The number of the building where the switch is located.
+    :param room_number: The number of the room where the switch is located.
+    :return: A list of commands for configuring the switch.
     """
     return [
         f"hostname {switch_name}",
