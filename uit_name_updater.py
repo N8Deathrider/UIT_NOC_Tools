@@ -361,6 +361,7 @@ def main() -> None:
     domain_name = ".net.utah.edu"
 
 # -- Orion section ------------------------------
+    log.debug("Entering Orion Section")
     orion_data = orion.get_switch(ARGS.switch_ip).get("results")[0]
     log.debug(f"Orion Data: {orion_data}")
 
@@ -370,6 +371,8 @@ def main() -> None:
     if node_name != correct_name + domain_name:
         if Confirm.ask(f"Switch name is currently '{node_name}', would you like to change it to '{correct_name}'?"):
             orion.change_orion_node_name(uri, correct_name)
+
+    log.debug("Exiting Orion Section")
 
 
 if __name__ == "__main__":
