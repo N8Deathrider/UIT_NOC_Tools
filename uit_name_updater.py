@@ -14,6 +14,7 @@ from getpass import getpass
 
 # Third-party libraries
 from rich.logging import RichHandler
+from rich.prompt import Prompt, Confirm
 from u1377551 import login_duo
 from netmiko import ConnectHandler, SSHDetect
 import orionsdk
@@ -354,6 +355,19 @@ def main() -> None:
         log.setLevel(logging.DEBUG)
 
     log.debug(f"Arguments: {ARGS}")
+
+    correct_name = name_generator(ARGS.function_descriptor, ARGS.count, ARGS.building_number, ARGS.building_short_name, ARGS.room_number, ARGS.distribution_node)
+
+# -- Orion section ------------------------------
+    orion_data = orion.get_switch(ARGS.switch_ip).get("results")[0]
+    log.debug(f"Orion Data: {orion_data}")
+
+    uri = orion_data["URI"]
+    node_name = orion_data["NodeName"].replace(".net.utah.edu", "")  # Remove the .net.utah.edu from the node name
+
+    if node_name != correct_name:
+        if Confirm.ask(f"Switch name is currently '{node_name}', would you like to change it to '{correct_name}'?"):
+            orion.change_orion_node_name(uri, correct_name)
 
 
 if __name__ == "__main__":
