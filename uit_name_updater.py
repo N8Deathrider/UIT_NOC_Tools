@@ -374,6 +374,15 @@ def main() -> None:
 
     log.debug("Exiting Orion Section")
 
+# -- InfoBlox section ------------------------------
+    log.debug("Entering InfoBlox Section")
+    ddi_data = ddi_search(ARGS.switch_ip).get("result")
+    ddi_names = ddi_data.get("names", "").split(", ")
+    for name in ddi_names:
+        if name != correct_name + domain_name:
+            print("There is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
+            break
+
 
 if __name__ == "__main__":
     try:
