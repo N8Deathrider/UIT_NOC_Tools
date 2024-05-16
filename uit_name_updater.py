@@ -61,6 +61,7 @@ except ImportError:
 
 class Orion:
     def __init__(self, server, username: str, password: str):
+        orionsdk.swisclient.requests.packages.urllib3.disable_warnings()
         self.swis = orionsdk.SwisClient(server, username, password, port=17778)
 
     def get_dev_info(self):
