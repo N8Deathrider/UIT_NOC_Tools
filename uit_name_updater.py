@@ -345,7 +345,29 @@ def view_orion_node_page(node_id: int):
 
 def main() -> None:
     """
-    #TODO: Add description
+    Main function for updating switch names in Orion and InfoBlox.
+
+    This function performs the following steps:
+    1. Connects to the Orion server.
+    2. Retrieves command line arguments.
+    3. Sets the log level based on the debug flag.
+    4. Generates the correct switch name based on the provided arguments.
+    5. Sets the domain name.
+    6. Enters the switch section and detects the device type.
+    7. Connects to the switch using SSH.
+    8. Retrieves the current hostname of the switch.
+    9. Checks if the current hostname matches the correct name.
+    10. Asks for confirmation to change the switch name if necessary.
+    11. Generates the switch commands to change the name.
+    12. Sends the switch commands and saves the configuration.
+    13. Enters the Orion section and retrieves the switch data from Orion.
+    14. Checks if the current node name in Orion matches the correct name.
+    15. Asks for confirmation to change the node name in Orion if necessary.
+    16. Changes the node name in Orion.
+    17. Exits the Orion section.
+    18. Enters the InfoBlox section and retrieves the InfoBlox data for the switch.
+    19. Checks if there is a mismatch between the switch name and the InfoBlox name.
+    20. Prints a message if there is a mismatch.
     """
 
     orion = Orion("smg-hamp-p01.ad.utah.edu", ORION_USERNAME, ORION_PASSWORD)
