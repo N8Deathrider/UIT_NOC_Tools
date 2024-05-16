@@ -466,20 +466,20 @@ def get_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def teams_message_parser(text):
+def teams_message_parser(text: str) -> list[dict]:
     """
     Parses text containing messages with timestamps and reactions into a list of dictionaries.
 
     Args:
-        text: The text containing messages.
+        text (str): The text containing messages.
 
     Returns:
-        A list of dictionaries, where each dictionary contains keys:
-            'timestamp': The timestamp of the message.
-            'sender': The sender of the message.
-            'message': The content of the message.
-            'reactions' (optional): A list of dictionaries containing reaction info,
-                with keys 'type' (e.g., "like", "heart") and 'count' (number of reactions).
+        list[dict]: A list of dictionaries, where each dictionary contains keys:
+            - 'timestamp' (str): The timestamp of the message.
+            - 'sender' (str): The sender of the message.
+            - 'message' (str): The content of the message.
+            - 'reactions' (optional) (list[dict]): A list of dictionaries containing reaction info,
+                with keys 'type' (str) (e.g., "like", "heart") and 'count' (int) (number of reactions).
     """
     pattern = r"\[(.+?)\]\s*(.*?)(?=\n\[|\Z)"
     matches = re.findall(pattern, text, re.DOTALL)
@@ -493,14 +493,18 @@ def teams_message_parser(text):
             parsed_reactions = []
             for reaction_line in reactions:
                 if reaction_line.startswith(" "):  # Check for leading whitespace
-                    reaction_type, count_str = reaction_line.strip().split()[
-                        :2
-                    ]  # Remove leading/trailing whitespace
-                    try:
-                        count = int(count_str)
-                    except ValueError:
-                        count = 0
-                    parsed_reactions.append({"type": reaction_type, "count": count})
+                    # Split on whitespace (separates multiple reaction types)
+                    reaction_types_and_counts = reaction_line.strip().split()
+                    for i in range(0, len(reaction_types_and_counts), 2):
+                        try:
+                            reaction_type, count_str = reaction_types_and_counts[
+                                i : i + 2
+                            ]
+                            count = int(count_str)
+                        except ValueError:
+                            # Handle cases where count_str is not a number
+                            count = 0
+                        parsed_reactions.append({"type": reaction_type, "count": count})
             reactions = (
                 parsed_reactions if parsed_reactions else []
             )  # Set empty list if no valid reactions found
