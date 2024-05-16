@@ -93,7 +93,7 @@ class Orion:
             ValueError: Caused when no information is given.
         """
         result = ""
-        query = "SELECT (NodeID, IP, DNS, NodeName, Location) FROM Orion.Nodes "
+        query = "SELECT (URI, NodeID, IP, DNS, NodeName, Location) FROM Orion.Nodes "
         if ip:
             ip = ip.split("/")[0]  # get rid of CIDR just in case
             result = self.swis.query(query + f"WHERE IP='{ip}'")
