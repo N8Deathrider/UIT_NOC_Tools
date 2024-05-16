@@ -466,22 +466,56 @@ def get_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def teams_messages_to_dict(text: str) -> list[dict[str, str]]:
-    # regex_pattern = r'(\[((?:\d{1,2}\/\d{1,2}\/\d{2} )?\d{1,2}:\d{2} (?:AM|PM))\] (\w+\s*\w+(?:\s*\w+))$)'  #FIXME
-    regex_pattern = r'(\[((?:\d{1,2}\/\d{1,2}\/\d{2} )?\d{1,2}:\d{2} (?:AM|PM))\] (\w+\s*\w+(?:\s*\w+))$)'  #FIXME
-    # messages = re.split(regex_pattern, text)[1:]
-    messages = re.split(regex_pattern, text, flags=re.MULTILINE)[1:]
-    messages_list:list[dict[str,str]] = []
-    for i in range(0, len(messages), 4):
-        messages_list.append(
+def teams_message_parser(text):
+    """
+    Parses text containing messages with timestamps and reactions into a list of dictionaries.
+
+    Args:
+        text: The text containing messages.
+
+    Returns:
+        A list of dictionaries, where each dictionary contains keys:
+            'timestamp': The timestamp of the message.
+            'sender': The sender of the message.
+            'message': The content of the message.
+            'reactions' (optional): A list of dictionaries containing reaction info,
+                with keys 'type' (e.g., "like", "heart") and 'count' (number of reactions).
+    """
+    pattern = r"\[(.+?)\]\s*(.*?)(?=\n\[|\Z)"
+    matches = re.findall(pattern, text, re.DOTALL)
+    messages = []
+    for timestamp, sender_message in matches:
+        sender, potential_message_reactions = sender_message.split("\n", 1)
+        message, *reactions = potential_message_reactions.splitlines()
+
+        # Check if reactions exist (based on starting with whitespace)
+        if reactions:
+            parsed_reactions = []
+            for reaction_line in reactions:
+                if reaction_line.startswith(" "):  # Check for leading whitespace
+                    reaction_type, count_str = reaction_line.strip().split()[
+                        :2
+                    ]  # Remove leading/trailing whitespace
+                    try:
+                        count = int(count_str)
+                    except ValueError:
+                        count = 0
+                    parsed_reactions.append({"type": reaction_type, "count": count})
+            reactions = (
+                parsed_reactions if parsed_reactions else []
+            )  # Set empty list if no valid reactions found
+        else:
+            reactions = None
+
+        messages.append(
             {
-                "full_header": messages[i],
-                "timestamp": messages[i + 1],
-                "name": messages[i + 2],
-                "content": messages[i + 3].strip()
+                "timestamp": timestamp.strip(),
+                "sender": sender.strip(),
+                "message": message.strip(),
+                "reactions": reactions,
             }
         )
-    return messages_list
+    return messages
 
 
 def teams_message_text_gen(message_text: str) -> str:
@@ -523,9 +557,9 @@ def teams_html_gen(messages_text: str) -> str:
 .u1377551-message.me .u1377551-message-body div {background-color: #E8EBFA;}
         """
     messages = []
-    message_dicts = teams_messages_to_dict(messages_text)
+    message_dicts = teams_message_parser(messages_text)
     for message_dict in message_dicts:
-        messages.append(teams_message_gen(message_dict["timestamp"], message_dict["name"], message_dict["content"]))
+        messages.append(teams_message_gen(message_dict["timestamp"], message_dict["sender"], message_dict["message"]))
     messages = "\n".join(messages)
     return """<div style="background-color: #F5F5F5">
     <style>
