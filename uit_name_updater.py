@@ -14,7 +14,7 @@ from getpass import getpass
 
 # Third-party libraries
 from rich.logging import RichHandler
-from rich.prompt import Prompt, Confirm
+from rich.prompt import Confirm
 from u1377551 import login_duo
 from netmiko import ConnectHandler, SSHDetect
 import orionsdk
