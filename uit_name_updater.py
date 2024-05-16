@@ -365,9 +365,9 @@ def main() -> None:
     log.debug(f"Orion Data: {orion_data}")
 
     uri = orion_data["URI"]
-    node_name = orion_data["NodeName"].replace(".net.utah.edu", "")  # Remove the .net.utah.edu from the node name
+    node_name = orion_data["NodeName"]
 
-    if node_name != correct_name:
+    if node_name != correct_name + domain_name:
         if Confirm.ask(f"Switch name is currently '{node_name}', would you like to change it to '{correct_name}'?"):
             orion.change_orion_node_name(uri, correct_name)
 
