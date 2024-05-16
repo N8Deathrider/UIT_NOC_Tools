@@ -276,7 +276,7 @@ def switch_commands_generator(switch_name: str, building_number: str, room_numbe
         f"snmp-server location {location_generator(building_number, room_number)}",
         "banner login ^",
         "\n",
-        f"{switch_name}.net.utah.edu",
+        switch_name,
         "\n",
         "University of Utah Network:  All use of this device must comply",
         "with the University of Utah policies and procedures.  Any use of",
