@@ -10,11 +10,13 @@ import ipaddress
 import logging
 from sys import exit
 import webbrowser
+from getpass import getpass
 
 # Third-party libraries
 from rich.logging import RichHandler
 from u1377551 import login_duo
 from netmiko import ConnectHandler, SSHDetect
+import orionsdk
 
 # Local libraries
 
@@ -36,7 +38,82 @@ logging.basicConfig(
 log: logging.Logger = logging.getLogger("rich")
 logging.getLogger("paramiko").setLevel(logging.WARNING)  # Suppress Paramiko info logs
 
+ORION_SERVER = "smg-hamp-p01.ad.utah.edu"
 session = login_duo()
+
+try:
+    from auth import UofU, SSH
+
+    ORION_USERNAME, ORION_PASSWORD = f"ad\{UofU.unid}", UofU.cisPassword
+except ImportError:
+    print("No auth.py file found.")
+    uNID = input("Enter your uNID: ")
+    ORION_PASSWORD = getpass("Enter your CIS password: ")
+    WIAN_PASSWORD = getpass("Enter your WIAN password: ")
+    ORION_USERNAME = f"ad\{uNID}"
+    class SSH:
+        username = uNID
+        password = WIAN_PASSWORD
+        full = {
+            "username": username,
+            "password": password
+        }
+
+
+class Orion:
+    def __init__(self, server, username: str, password: str):
+        self.swis = orionsdk.SwisClient(server, username, password, port=17778)
+
+    def get_dev_info(self):
+        """
+        Fetches development status.
+
+        Returns:
+            str: Returns "Production" if url is sys.utah.edu, returns
+            "Development" otherwise.
+        """
+        return "Production" if "sys.utah.edu" in self.swis.url else "Development"
+
+    def get_switch(self, ip=None, proptag=None, barcode=None, dns_name=None) -> dict:
+        """
+        Get switch information by either IP, property tag, or barcode. This will
+        return switch information. Note that all arguments are optional;
+        however, at least one must be used to filter results.
+
+        Args:
+            ip (str): Optional - IP address of the switch.
+            proptag (str): Optional - Property tag of the switch.
+            barcode (str): Optional - Barcode of the switch.
+            dns_name (str): Optional - DNS/hostname.
+
+        Returns:
+            Orion.SwitchData: An object with the most relevant switch returned.
+
+        Raises:
+            ValueError: Caused when no information is given.
+        """
+        result = ""
+        query = "SELECT (NodeID, IP, DNS, NodeName, Location) FROM Orion.Nodes "
+        if ip:
+            ip = ip.split("/")[0]  # get rid of CIDR just in case
+            result = self.swis.query(query + f"WHERE IP='{ip}'")
+        elif proptag or barcode:
+            result = self.swis.query(
+                query
+                + "WHERE Location LIKE '%"
+                + str(proptag if proptag else barcode)
+                + "%'"
+            )
+        elif dns_name:
+            result = self.swis.query(query + "WHERE DNS LIKE '%" + dns_name + "%'")
+        else:
+            raise ValueError("no information given")
+
+        return result
+
+
+orion = Orion(ORION_SERVER, ORION_USERNAME, ORION_PASSWORD)
+
 
 def get_args() -> argparse.Namespace:
     """
@@ -216,54 +293,6 @@ def switch_commands_generator(switch_name: str, building_number: str, room_numbe
         "\n\n",
         "^"
     ]
-
-
-def orion_search(ip: str = None, dns: str = None, proptag: str = None, barcode: str = None) -> dict:
-    """
-    Performs a search in the Orion system based on the provided parameters.
-
-    Args:
-        ip (str, optional): The IP address to search for.
-        dns (str, optional): The DNS name to search for.
-        proptag (str, optional): The property tag to search for.
-        barcode (str, optional): The barcode to search for.
-
-    Returns:
-        dict: The JSON response containing the search results.
-
-    Raises:
-        ValueError: If none of the search parameters (ip, dns, proptag, barcode) are provided.
-    """
-    
-    if ip:
-        r = session.get("https://toast.utah.edu/orion/switch", params={"ip": ip})
-        r.raise_for_status()
-        log.debug(f"Orion Search Response: {r.json()}")
-        return r.json()
-
-    if dns:
-        r = session.get("https://toast.utah.edu/orion/switch", params={"dns": dns})
-        r.raise_for_status()
-        log.debug(f"Orion Search Response: {r.json()}")
-        return r.json()
-
-    if proptag:
-        r = session.get(
-            "https://toast.utah.edu/orion/switch", params={"proptag": proptag}
-        )
-        r.raise_for_status()
-        log.debug(f"Orion Search Response: {r.json()}")
-        return r.json()
-
-    if barcode:
-        r = session.get(
-            "https://toast.utah.edu/orion/switch", params={"barcode": barcode}
-        )
-        r.raise_for_status()
-        log.debug(f"Orion Search Response: {r.json()}")
-        return r.json()
-
-    raise (ValueError("You must provide an ip, dns, proptag, or barcode"))
 
 
 def ddi_search(ip: str) -> dict:
