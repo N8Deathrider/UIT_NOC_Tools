@@ -394,7 +394,7 @@ def main() -> None:
     guesser = SSHDetect(**device_dict)
     best_match = guesser.autodetect()
     device_dict["device_type"] = best_match
-    # log.debug(f"Device Dict: {device_dict}")  # Disabled for now because it shows the password #TODO: neex to fix this
+    # log.debug(f"Device Dict: {device_dict}")  # Disabled for now because it shows the password #TODO: need to fix this
 
     with ConnectHandler(**device_dict) as net_connect:
         hostname = net_connect.send_command("show version", use_genie=True).get("version", {}).get("hostname")
