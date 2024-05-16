@@ -351,6 +351,8 @@ def main() -> None:
     #TODO: Add description
     """
 
+    orion = Orion(ORION_SERVER, ORION_USERNAME, ORION_PASSWORD)
+
     ARGS = get_args()
 
     if ARGS.debug:
