@@ -38,8 +38,6 @@ logging.basicConfig(
 log: logging.Logger = logging.getLogger("rich")
 logging.getLogger("paramiko").setLevel(logging.WARNING)  # Suppress Paramiko info logs
 
-ORION_SERVER = "smg-hamp-p01.ad.utah.edu"
-session = login_duo()
 
 try:
     from auth import UofU, SSH
@@ -319,6 +317,7 @@ def ddi_search(ip: str) -> dict:
     Raises:
         requests.HTTPError: If the HTTP request to the API fails.
     """
+    session = login_duo()  #TODO: find a better place for this
     r = session.get("https://toast.utah.edu/infoblox/host", params={"ip": ip})
     r.raise_for_status()
     log.debug(f"DDI Search Response: {r.json()}")
@@ -347,7 +346,7 @@ def main() -> None:
     #TODO: Add description
     """
 
-    orion = Orion(ORION_SERVER, ORION_USERNAME, ORION_PASSWORD)
+    orion = Orion("smg-hamp-p01.ad.utah.edu", ORION_USERNAME, ORION_PASSWORD)
 
     ARGS = get_args()
 
