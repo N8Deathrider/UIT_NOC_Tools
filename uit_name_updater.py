@@ -110,9 +110,23 @@ class Orion:
             raise ValueError("no information given")
 
         return result
+    
+    def change_orion_node_name(self, uri: str, new_name: str):
+        """
+        Changes the name of an Orion node.
 
+        Parameters:
+        - uri (str): The URI of the node to change.
+        - new_name (str): The new name of the node.
 
-orion = Orion(ORION_SERVER, ORION_USERNAME, ORION_PASSWORD)
+        Returns:
+        None
+        """
+        if not new_name.endswith(".net.utah.edu"):
+            new_name = new_name + ".net.utah.edu"
+        log.debug(f"Changing Orion Node Name: {new_name}")
+
+        self.swis.update(uri, NodeName=new_name)
 
 
 def get_args() -> argparse.Namespace:
@@ -326,24 +340,6 @@ def view_orion_node_page(node_id: int):
     log.debug(f"Opening Orion Node Page: {node_url}")
 
     webbrowser.open(node_url)
-
-
-def change_orion_node_name(uri: str, new_name: str):
-    """
-    Changes the name of an Orion node.
-
-    Parameters:
-    - uri (str): The URI of the node to change.
-    - new_name (str): The new name of the node.
-
-    Returns:
-    None
-    """
-    if not new_name.endswith(".net.utah.edu"):
-        new_name = new_name + ".net.utah.edu"
-    log.debug(f"Changing Orion Node Name: {new_name}")
-
-    orion.swis.update(uri, NodeName=new_name)
 
 
 def main() -> None:
