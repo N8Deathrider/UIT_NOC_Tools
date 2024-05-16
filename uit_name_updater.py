@@ -360,7 +360,35 @@ def main() -> None:
     correct_name = name_generator(ARGS.function_descriptor, ARGS.count, ARGS.building_number, ARGS.building_short_name, ARGS.room_number, ARGS.distribution_node)
     domain_name = ".net.utah.edu"
 
-# -- Orion section ------------------------------
+    # -- Switch section ------------------------------
+    log.debug("Entering Switch Section")
+    switch_output = ""
+    device_dict = {
+        "device_type": "autodetect",
+        "host": ARGS.switch_ip,
+        "username": SSH.username,
+        "password": SSH.password
+    }
+    guesser = SSHDetect(**device_dict)
+    best_match = guesser.autodetect()
+    device_dict["device_type"] = best_match
+    # log.debug(f"Device Dict: {device_dict}")  # Disabled for now because it shows the password #TODO: neex to fix this
+
+    with ConnectHandler(**device_dict) as net_connect:
+        hostname = net_connect.send_command("show version", use_genie=True).get("version", {}).get("hostname")
+        if not hostname:
+            log.error("Unable to retrieve the hostname of the switch.")
+            exit(EXIT_GENERAL_ERROR)
+        log.debug(f"Current Hostname: {hostname}")
+        if hostname != correct_name:
+            if Confirm.ask(f"Switch name is currently '{hostname}' on the switch, would you like to change it to '{correct_name}'?"):
+                commands = switch_commands_generator(correct_name, ARGS.building_number, ARGS.room_number)
+                switch_output += net_connect.send_config_set(commands)
+                net_connect.set_base_prompt()
+                switch_output += net_connect.save_config()
+                log.debug(f"Output: {switch_output}")
+
+    # -- Orion section ------------------------------
     log.debug("Entering Orion Section")
     orion_data = orion.get_switch(ARGS.switch_ip).get("results")[0]
     log.debug(f"Orion Data: {orion_data}")
@@ -369,12 +397,12 @@ def main() -> None:
     node_name = orion_data["NodeName"]
 
     if node_name != correct_name + domain_name:
-        if Confirm.ask(f"Switch name is currently '{node_name}', would you like to change it to '{correct_name}'?"):
+        if Confirm.ask(f"Switch name is currently '{node_name}' in Orion, would you like to change it to '{correct_name + domain_name}'?"):
             orion.change_orion_node_name(uri, correct_name)
 
     log.debug("Exiting Orion Section")
 
-# -- InfoBlox section ------------------------------
+    # -- InfoBlox section ------------------------------
     log.debug("Entering InfoBlox Section")
     ddi_data = ddi_search(ARGS.switch_ip).get("result")
     ddi_names = ddi_data.get("names", "").split(", ")
