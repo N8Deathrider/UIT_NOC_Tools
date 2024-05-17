@@ -381,6 +381,7 @@ def main() -> None:
 
     correct_name = name_generator(ARGS.function_descriptor, ARGS.count, ARGS.building_number, ARGS.building_short_name, ARGS.room_number, ARGS.distribution_node)
     domain_name = ".net.utah.edu"
+    full_name = correct_name + domain_name
 
     # -- Switch section ------------------------------
     log.debug("Entering Switch Section")
@@ -419,8 +420,8 @@ def main() -> None:
     uri = orion_data["URI"]
     node_name = orion_data["NodeName"]
 
-    if node_name != correct_name + domain_name:
-        if Confirm.ask(f"Switch name is currently '{node_name}' in Orion, would you like to change it to '{correct_name + domain_name}'?"):
+    if node_name != full_name:
+        if Confirm.ask(f"Switch name is currently '{node_name}' in Orion, would you like to change it to '{full_name}'?"):
             # TODO: Find better way to ask for confirmation that's not so long
             orion.change_orion_node_name(uri, correct_name)
 
@@ -431,7 +432,7 @@ def main() -> None:
     ddi_data = ddi_search(ARGS.switch_ip).get("result")
     ddi_names = ddi_data.get("names", "").split(", ")
     for name in ddi_names:
-        if name != correct_name + domain_name:
+        if name != full_name:
             print("There is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
             break
 
