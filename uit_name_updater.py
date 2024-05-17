@@ -15,6 +15,7 @@ from getpass import getpass
 # Third-party libraries
 from rich.logging import RichHandler
 from rich.prompt import Confirm
+from rich import print as rprint
 from u1377551 import login_duo
 from netmiko import ConnectHandler, SSHDetect
 import orionsdk
@@ -434,6 +435,7 @@ def main() -> None:
     for name in ddi_names:
         if name != full_name:
             print("There is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
+            rprint(f"\nThe proper switch name should be: '[green]{correct_name}[/green]' with the domain '[green]{domain_name}[/green]'")
             break
 
 
