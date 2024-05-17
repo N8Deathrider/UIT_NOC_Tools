@@ -161,8 +161,11 @@ def get_next_hop(connection: netmiko.BaseConnection, interface: str) -> dict:
     )
     log.debug(f"Neighbors: {neighbors = }")
 
-    neighbor_name = neighbors[0].get("neighbor")
-    log.debug(f"Neighbor name: {neighbor_name = }")
+    try:
+        neighbor_name = neighbors[0].get("neighbor")
+        log.debug(f"Neighbor name: {neighbor_name = }")
+    except AttributeError:
+        raise Exception("Next hop not found")
 
     neighbors = connection.send_command(
         f"show cdp neighbors detail",
@@ -247,8 +250,12 @@ def main():
 
                 target["upstream_interface_info"] = get_interface_info(connection, target["upstream_interface"])
 
-                next_target = get_next_hop(connection, target["upstream_interface"])
-                log.debug(f"{next_target = }")
+                try:
+                    next_target = get_next_hop(connection, target["upstream_interface"])
+                    log.debug(f"{next_target = }")
+                except Exception:
+                    log.debug("Next hop not found. Breaking for loop.")
+                    break
 
                 targets.append(next_target)
                 # log.debug(f"{targets = }")
