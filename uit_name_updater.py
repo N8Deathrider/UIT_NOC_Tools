@@ -458,7 +458,7 @@ def main() -> None:
     for name in ddi_names:
         if name != full_name:
             print("\nThere is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
-            rprint(f"The proper switch name should be: '[green]{correct_name}[/green]' with the domain '[green]{domain_name}[/green]'")
+            rprint(f"The proper switch name for '[green]{ARGS.switch_ip}[/green]' should be: '[green]{correct_name}[/green]' with the domain '[green]{domain_name}[/green]'")
             break
 
 
