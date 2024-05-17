@@ -155,10 +155,13 @@ def get_next_hop(connection: netmiko.BaseConnection, interface: str) -> dict:
     Raises:
         Exception: If the next hop is not found.
     """
-    neighbor_name = connection.send_command(
+    neighbors = connection.send_command(
         f"show cdp neighbors {interface}",
         use_textfsm=True
-    )[0].get("neighbor")
+    )
+    log.debug(f"Neighbors: {neighbors = }")
+
+    neighbor_name = neighbors[0].get("neighbor")
     log.debug(f"Neighbor name: {neighbor_name = }")
 
     neighbors = connection.send_command(
