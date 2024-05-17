@@ -426,8 +426,9 @@ def main() -> None:
             exit(EXIT_GENERAL_ERROR)
         log.debug(f"Current Hostname: {hostname}")
         if hostname != correct_name:
-            if Confirm.ask(f"Switch name is currently '{hostname}' on the switch, would you like to change it to '{correct_name}'?"):
-                # TODO: Find better way to ask for confirmation that's not so long
+            log.debug("Mismatch between switch name and correct name.")
+            rprint(change_display_table("Switch Name Mismatch", hostname, correct_name))
+            if Confirm.ask(f"Would you like to change the switch name to '{correct_name}'?"):
                 commands = switch_commands_generator(correct_name, ARGS.building_number, ARGS.room_number)
                 switch_output += net_connect.send_config_set(commands)
                 net_connect.set_base_prompt()
@@ -443,8 +444,9 @@ def main() -> None:
     node_name = orion_data["NodeName"]
 
     if node_name != full_name:
-        if Confirm.ask(f"Switch name is currently '{node_name}' in Orion, would you like to change it to '{full_name}'?"):
-            # TODO: Find better way to ask for confirmation that's not so long
+        log.debug("Mismatch between switch name and Orion name.")
+        rprint(change_display_table("Orion Name Mismatch", node_name, full_name))
+        if Confirm.ask(f"Would you like to change the Orion node name to '{correct_name}'?"):
             orion.change_orion_node_name(uri, correct_name)
 
     log.debug("Exiting Orion Section")
@@ -455,8 +457,8 @@ def main() -> None:
     ddi_names = ddi_data.get("names", "").split(", ")
     for name in ddi_names:
         if name != full_name:
-            print("There is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
-            rprint(f"\nThe proper switch name should be: '[green]{correct_name}[/green]' with the domain '[green]{domain_name}[/green]'")
+            print("\nThere is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
+            rprint(f"The proper switch name should be: '[green]{correct_name}[/green]' with the domain '[green]{domain_name}[/green]'")
             break
 
 
