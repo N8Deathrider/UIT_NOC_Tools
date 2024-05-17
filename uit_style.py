@@ -175,7 +175,9 @@ def style_switch_output(switch_output: str = pc.paste()) -> str:
     #         break
     # clear()
     # output = f"<pre>{'<br>'.join(pc.paste().splitlines())}</pre>"
-    switch_output = syntax_highlighting(f"<pre>{'<br>'.join(switch_output.splitlines())}</pre>")
+    switch_output = syntax_highlighting(
+        f"<pre style=\"background-color: #1e2021;color: #b9b3aa;\">{'<br>'.join(switch_output.splitlines())}</pre>"
+    )
     return switch_output
 
 
@@ -253,7 +255,7 @@ def style_csv() -> str:
 
 
 def style_toast_output() -> str:
-    output = f"<pre>{'<br>'.join(pc.paste().splitlines())}</pre>"
+    output = f"<pre style=\"background-color: #1e2021;color: #b9b3aa;\">{'<br>'.join(pc.paste().splitlines())}</pre>"
     return output
 
 
