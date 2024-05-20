@@ -11,6 +11,8 @@ import logging
 from sys import exit
 import webbrowser
 from getpass import getpass
+from socket import gethostbyname
+from socket import gaierror
 
 # Third-party libraries
 from rich.logging import RichHandler
@@ -466,6 +468,26 @@ def main() -> None:
             print("\nThere is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
             rprint(f"The proper switch name for '[green]{ARGS.switch_ip}[/green]' should be: '[green]{correct_name}[/green]' with the domain '[green]{domain_name}[/green]'")
             break
+
+    log.debug("Exiting InfoBlox Section")
+
+    # -- demark section ------------------------------
+    log.debug("Entering Demark Section")
+
+    if ARGS.function_descriptor == "dx":
+        alias_numbers = padder(ARGS.building_number)
+        for alias_number in alias_numbers:
+            demark_alias = f"dx{ARGS.count}-{alias_number}{domain_name}"
+            try:
+                demark_ip = gethostbyname(demark_alias)
+                log.debug(f"Resolved {demark_alias} to {demark_ip}")
+                if demark_ip != ARGS.switch_ip:
+                    rprint(
+                        f"[green]'{demark_alias}'[/green] resolves to [red]'{demark_ip}'[/red] but should resolve to [green]'{ARGS.switch_ip}'[/green]."
+                    )
+            except gaierror:
+                log.debug(f"Unable to resolve {demark_alias}")
+                rprint(f"[green]'{demark_alias}'[/green] also needs to be added.")
 
 
 if __name__ == "__main__":
