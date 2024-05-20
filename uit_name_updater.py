@@ -365,6 +365,12 @@ def change_display_table(table_title: str, current_name: str, potential_name: st
     return table
 
 
+def padder(number):
+    number_str = str(number)
+    max_len = 4
+    return [number_str.zfill(i) for i in range(len(number_str), max_len + 1)]
+
+
 def main() -> None:
     """
     Main function for updating switch names in Orion and InfoBlox.
