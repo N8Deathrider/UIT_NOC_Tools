@@ -475,8 +475,7 @@ def main() -> None:
     log.debug("Entering Demark Section")
 
     if ARGS.function_descriptor == "dx":
-        alias_numbers = padder(ARGS.building_number)
-        for alias_number in alias_numbers:
+        for alias_number in padder(ARGS.building_number):
             demark_alias = f"dx{ARGS.count}-{alias_number}{domain_name}"
             try:
                 demark_ip = gethostbyname(demark_alias)
