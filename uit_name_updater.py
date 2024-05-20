@@ -403,7 +403,7 @@ def main() -> None:
 
     correct_name = name_generator(ARGS.function_descriptor, ARGS.count, ARGS.building_number, ARGS.building_short_name, ARGS.room_number, ARGS.distribution_node)
     domain_name = ".net.utah.edu"
-    full_name = correct_name + domain_name
+    full_name = correct_name + domain_name  # Correct name with domain
 
     # -- Switch section ------------------------------
     log.debug("Entering Switch Section")
