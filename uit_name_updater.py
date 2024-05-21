@@ -257,6 +257,12 @@ def name_generator(function_descriptor: str, count: str, building_number: str,
     if building_short_name[0].isnumeric():  # If the building short name starts with a number
         building_short_name = f"-{building_short_name}"  # Add a hyphen to the beginning of the building short name
 
+    # This is a temp fix for when current room numbers are listed as 'mdf' rather than a proper number.
+    # This will be removed once all room numbers are properly listed.
+    # If proper room number is known, it should be used instead of 'mdf'.
+    if room_number != "mdf":  # If the room number is not 'mdf' (main distribution frame)
+        room_number = room_number.zfill(4) # Pad the room number with 0's to 4 digits
+
     switch_name = f"{function_descriptor}{count}-{building_number.zfill(4)}{building_short_name}-{room_number.zfill(4)}-{distribution_node}".lower()
 
     log.debug(f"Generated Switch Name: {switch_name}")
