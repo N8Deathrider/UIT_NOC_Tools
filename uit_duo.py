@@ -117,6 +117,28 @@ class Duo:
         return self.session
 
 
+def get_form_args(html_doc: str, name) -> str:
+    """
+    Retrieves the value of an HTML attribute with the specified name from the given HTML document.
+
+    Args:
+        html_doc (str): The HTML document as a string.
+        name: The name of the attribute to retrieve.
+
+    Returns:
+        str: The value of the attribute.
+
+    Raises:
+        KeyError: If the attribute with the specified name is not found.
+    """
+    try:
+        return BeautifulSoup(html_doc, "html.parser").find(attrs={"name": name})[
+            "value"
+        ]
+    except (TypeError, KeyError):
+        raise KeyError(f"{name} not found")
+
+
 def main() -> None:
     """
     #TODO: Add description
