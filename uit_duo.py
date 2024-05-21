@@ -7,9 +7,16 @@
 # Standard libraries
 import logging
 from sys import exit
+import urllib.parse
+from getpass import getpass
+from pathlib import Path
+import pickle
+import urllib3
 
 # Third-party libraries
 from rich.logging import RichHandler
+from bs4 import BeautifulSoup
+import requests
 
 # Local libraries
 
@@ -29,6 +36,25 @@ logging.basicConfig(
     handlers=[RichHandler()]
 )
 log: logging.Logger = logging.getLogger("rich")
+
+
+class Duo:
+    """
+    #TODO: Add description
+    """
+
+    def __init__(self, uNID: str, password: str) -> None:
+        """
+        #TODO: Add description
+        """
+        self.session = requests.Session()
+        self.login_url = "https://go.utah.edu/cas/login"
+        self.api_url = "https://api-aba4bf07.duosecurity.com/frame/v4"
+
+        self.session.headers.update({
+            "User-Agent": f"{uNID}-python-requests",
+            "UNID": uNID
+        })
 
 
 def main() -> None:
