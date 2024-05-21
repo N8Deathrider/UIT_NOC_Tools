@@ -58,6 +58,17 @@ class Duo:
         })
 
 
+    def store_cookies(self) -> None:
+            """
+            Stores the session cookies in a file.
+            
+            This method serializes the session cookies and saves them to a file using pickle.
+            The file path is specified by the `cookie_jar` attribute of the class.
+            """
+            with open(self.cookie_jar, "wb") as file:
+                pickle.dump(self.session.cookies, file)
+
+
 def main() -> None:
     """
     #TODO: Add description
