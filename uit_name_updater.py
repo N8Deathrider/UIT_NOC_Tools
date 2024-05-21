@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-#TODO: Add description
+This script is used to update the name of a network device in the UIT NOC Tools system.
+It generates a new name for the device based on the given parameters and updates the name in the necessary places.
 """
 
 # Standard libraries
