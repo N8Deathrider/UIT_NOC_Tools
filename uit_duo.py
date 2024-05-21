@@ -50,6 +50,7 @@ class Duo:
         self.session = requests.Session()
         self._login_url = "https://go.utah.edu/cas/login"
         self._api_url = "https://api-aba4bf07.duosecurity.com/frame/v4"
+        self.cookie_jar = Path.home().joinpath(".uit_duo_cookies")
 
         self.session.headers.update({
             "User-Agent": f"{uNID}-python-requests",
