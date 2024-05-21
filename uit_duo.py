@@ -52,21 +52,29 @@ class Duo:
         self._api_url = "https://api-aba4bf07.duosecurity.com/frame/v4"
         self.cookie_jar = Path.home().joinpath(".uit_duo_cookies")
 
-        self.session.headers.update({
-            "User-Agent": f"{uNID}-python-requests",
-            "UNID": uNID
-        })
-
+        self.session.headers.update(
+            {"User-Agent": f"{uNID}-python-requests", "UNID": uNID}
+        )
 
     def store_cookies(self) -> None:
-            """
-            Stores the session cookies in a file.
-            
-            This method serializes the session cookies and saves them to a file using pickle.
-            The file path is specified by the `cookie_jar` attribute of the class.
-            """
-            with open(self.cookie_jar, "wb") as file:
-                pickle.dump(self.session.cookies, file)
+        """
+        Stores the session cookies in a file.
+
+        This method serializes the session cookies and saves them to a file using pickle.
+        The file path is specified by the `cookie_jar` attribute of the class.
+        """
+        with open(self.cookie_jar, "wb") as file:
+            pickle.dump(self.session.cookies, file)
+
+    def load_cookies(self) -> None:
+        """
+        Loads the session cookies from a file.
+
+        This method loads the session cookies from a file using pickle.
+        The file path is specified by the `cookie_jar` attribute of the class.
+        """
+        with open(self.cookie_jar, "rb") as file:
+            self.session.cookies.update(pickle.load(file))
 
 
 def main() -> None:
