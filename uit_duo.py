@@ -94,6 +94,29 @@ class Duo:
         response.raise_for_status()  # Raise an exception if the response is not 200
         return get_form_args(response.text, "execution")
 
+    def get_xsrf(self, execution: str) -> tuple[str, str]:
+        """
+        Get the XSRF token and the response URL after logging in.
+
+        Args:
+            execution (str): The execution value for authentication.
+
+        Returns:
+            tuple[str, str]: A tuple containing the XSRF token and the response URL.
+        """
+        response: requests.Response = self.session.post(
+            url=self._login_url,
+            data={
+                "username": self._username,
+                "password": self._password,
+                "_eventId": "submit",
+                "execution": execution,
+            }
+        )
+        response.raise_for_status()  # Raise an exception if the response is not 200
+
+        return get_form_args(response.text, "_xsrf"), response.url
+
     def auth_test(self) -> bool:
         """
         Performs an authentication test by sending a GET request to the test URL.
