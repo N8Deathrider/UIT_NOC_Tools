@@ -38,6 +38,10 @@ logging.basicConfig(
 log: logging.Logger = logging.getLogger("rich")
 
 
+class LoginError(Exception):
+    pass
+
+
 class Duo:
     """
     #TODO: Add description
@@ -102,7 +106,12 @@ class Duo:
         self.load_cookies()
         if not self.auth_test():
             self.login()
+            if not self.auth_test():
+                log.error("Authentication failed. Please check your credentials and try again.")
+                raise LoginError("Authentication failed. Please check your credentials and try again.")
+
             self.store_cookies()
+
         return self.session
 
 
