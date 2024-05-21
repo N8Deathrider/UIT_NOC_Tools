@@ -48,7 +48,7 @@ logging.getLogger("paramiko").setLevel(logging.WARNING)  # Suppress Paramiko inf
 try:
     from auth import UofU, SSH
 
-    ORION_USERNAME, ORION_PASSWORD = f"ad\{UofU.unid}", UofU.cisPassword
+    ORION_USERNAME, ORION_PASSWORD = f"ad\\{UofU.unid}", UofU.cisPassword
 except ImportError:
     print("No auth.py file found.")
     uNID = input("Enter your uNID: ")
