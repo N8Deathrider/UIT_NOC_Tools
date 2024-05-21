@@ -63,7 +63,7 @@ class Duo:
             {"User-Agent": f"{uNID}-python-requests", "UNID": uNID}
         )
 
-    def store_cookies(self) -> None:
+    def _store_cookies(self) -> None:
         """
         Stores the session cookies in a file.
 
@@ -73,7 +73,7 @@ class Duo:
         with open(self.cookie_jar, "wb") as file:
             pickle.dump(self.session.cookies, file)
 
-    def load_cookies(self) -> None:
+    def _load_cookies(self) -> None:
         """
         Loads the session cookies from a file.
 
@@ -94,7 +94,7 @@ class Duo:
         response.raise_for_status()  # Raise an exception if the response is not 200
         return get_form_args(response.text, "execution")
 
-    def get_xsrf(self, execution: str) -> tuple[str, str]:
+    def _get_xsrf(self, execution: str) -> tuple[str, str]:
         """
         Get the XSRF token and the response URL after logging in.
 
@@ -141,14 +141,14 @@ class Duo:
         Raises:
             LoginError: If the authentication fails.
         """
-        self.load_cookies()
+        self._load_cookies()
         if not self.auth_test():
             self.login()
             if not self.auth_test():
                 log.error("Authentication failed. Please check your credentials and try again.")
                 raise LoginError("Authentication failed. Please check your credentials and try again.")
 
-            self.store_cookies()
+            self._store_cookies()
 
         return self.session
 
