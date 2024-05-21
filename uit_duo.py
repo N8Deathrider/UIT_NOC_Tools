@@ -81,6 +81,17 @@ class Duo:
         with open(self.cookie_jar, "rb") as file:
             self.session.cookies.update(pickle.load(file))
 
+    def _get_execution_value(self) -> str:
+        """
+        Retrieves the execution value from the login page.
+
+        Returns:
+            str: The execution value.
+        """
+        response: requests.Response = self.session.get(url=self._login_url)
+        response.raise_for_status()  # Raise an exception if the response is not 200
+        return get_form_args(response.text, "execution")
+
     def auth_test(self) -> bool:
         """
         Performs an authentication test by sending a GET request to the test URL.
