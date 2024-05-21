@@ -77,6 +77,16 @@ class Duo:
         with open(self.cookie_jar, "rb") as file:
             self.session.cookies.update(pickle.load(file))
 
+    def auth_test(self) -> bool:
+            """
+            Performs an authentication test by sending a GET request to the test URL.
+
+            Returns:
+                bool: True if the response is successful (status code 200), False otherwise.
+            """
+            response: requests.Response = self.session.get(self._test_url)
+            return response.ok
+
 
 def main() -> None:
     """
