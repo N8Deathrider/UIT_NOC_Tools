@@ -48,8 +48,8 @@ class Duo:
         #TODO: Add description
         """
         self.session = requests.Session()
-        self.login_url = "https://go.utah.edu/cas/login"
-        self.api_url = "https://api-aba4bf07.duosecurity.com/frame/v4"
+        self._login_url = "https://go.utah.edu/cas/login"
+        self._api_url = "https://api-aba4bf07.duosecurity.com/frame/v4"
 
         self.session.headers.update({
             "User-Agent": f"{uNID}-python-requests",
