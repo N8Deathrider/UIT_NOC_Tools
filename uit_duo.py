@@ -87,6 +87,24 @@ class Duo:
             response: requests.Response = self.session.get(self._test_url)
             return response.ok
 
+    def authenticate(self) -> requests.Session:
+            """
+            Authenticates the user and returns a requests.Session object.
+
+            This method first tries to load the stored cookies. If the cookies are not found or expired,
+            it checks if the authentication is successful by calling the `auth_test` method. If the authentication
+            fails, it prompts the user to login and stores the cookies for future use.
+
+            Returns:
+                A requests.Session object that can be used for making authenticated requests.
+
+            """
+            self.load_cookies()
+            if not self.auth_test():
+                self.login()
+                self.store_cookies()
+            return self.session
+
 
 def main() -> None:
     """
