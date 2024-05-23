@@ -127,6 +127,32 @@ class Duo:
         response: requests.Response = self.session.get(self._test_url)
         return response.ok
 
+    def _get_final_cookies(self, sid: str, txid: str, device_key: str, xsrf: str) -> requests.Session:
+        """
+        Sends a POST request to the DUO_URL to exit the Duo authentication process and retrieve the final cookies.
+
+        Args:
+            sid (str): The session ID.
+            txid (str): The transaction ID.
+            device_key (str): The device key.
+            xsrf (str): The XSRF token.
+
+        Raises:
+            requests.HTTPError: If the POST request fails.
+        """
+        response: requests.Response = self.session.post(
+            url=f"{self._api_url}/oidc/exit",
+            data={
+                "sid": sid,
+                "txid": txid,
+                # "factor": "Duo Push",  # This is not needed for the API to authenticate
+                "device_key": device_key,
+                "_xsrf": xsrf,
+                "dampen_choice": "true",
+            }
+        )
+        response.raise_for_status()
+
     def authenticate(self) -> requests.Session:
         """
         Authenticates the user and returns a session object.
