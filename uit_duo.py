@@ -226,6 +226,7 @@ class Duo:
             bool: True if the response is successful (status code 200), False otherwise.
         """
         response: requests.Response = self.session.get(self._test_url)
+        log.debug(f"Authentication test status code: {response.status_code}")
         return response.ok
 
     def login(self) -> None:
