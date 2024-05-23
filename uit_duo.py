@@ -167,6 +167,23 @@ class Duo:
         except FileNotFoundError:
             pass
 
+    def _get_devices(self, sid: str) -> list[Device]:
+        """
+        Retrieves a list of devices associated with the given session ID.
+
+        Args:
+            sid (str): The session ID.
+
+        Returns:
+            list[Device]: A list of Device objects representing the devices associated with the session ID.
+        """
+        response: requests.Response = self.session.get(
+            url=f"{self._api_url}/auth/prompt/data",
+            params={"post_auth_action": "OIDC_EXIT", "sid": sid}
+        )
+        response.raise_for_status()
+        return [Device(phone, self.session, self._api_url) for phone in response.json()["response"]["phones"]]
+
     def _get_execution_value(self) -> str:
         """
         Retrieves the execution value from the login page.
