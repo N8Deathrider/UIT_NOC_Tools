@@ -221,7 +221,7 @@ class Duo:
         third_response: requests.Response = self.session.post(url=auth_url, data={"_xsrf": xsrf})
         third_response.raise_for_status()
 
-        sid = self._get_sid(auth_url)  # Get the sid from the auth_url
+        sid = extract_sid(auth_url)  # Get the sid from the auth_url
         devices = self._get_devices(sid)  # Get the devices that can receive a push
         device: Device = devices[0]  # Use the first device
 
@@ -281,6 +281,27 @@ class Duo:
             self._store_cookies()
 
         return self.session
+
+
+def extract_sid(auth_url: str) -> str:
+    """
+    Retrieves the sid from the given authentication URL.
+
+    Args:
+        auth_url (str): The authentication URL.
+
+    Returns:
+        str: The sid extracted from the URL.
+
+    Raises:
+        ValueError: If sid is not found in the URL.
+    """
+    sid = urllib.parse.parse_qs(urllib.parse.urlparse(auth_url).query).get(
+        "sid", [None]
+    )[0]
+    if sid is None:
+        raise ValueError("sid not found")
+    return sid
 
 
 def get_form_args(html_doc: str, name) -> str:
