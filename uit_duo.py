@@ -161,8 +161,11 @@ class Duo:
         This method loads the session cookies from a file using pickle.
         The file path is specified by the `cookie_jar` attribute of the class.
         """
-        with open(self.cookie_jar, "rb") as file:
-            self.session.cookies.update(pickle.load(file))
+        try:
+            with open(self.cookie_jar, "rb") as file:
+                self.session.cookies.update(pickle.load(file))
+        except FileNotFoundError:
+            pass
 
     def _get_execution_value(self) -> str:
         """
