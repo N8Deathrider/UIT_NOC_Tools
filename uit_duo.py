@@ -65,7 +65,9 @@ class Device:
 
     """
 
-    def __init__(self, phone: dict):
+    def __init__(self, phone: dict, session: requests.Session, api_url: str) -> None:
+        self._session = session
+        self._api_url = api_url
         self.key: str | None = phone.get("key")
         self.name: str | None = phone.get("name")
         self.sms_batch_size: int | None = phone.get("sms_batch_size")
@@ -92,8 +94,8 @@ class Device:
 
         """
         self.sid = sid
-        response: requests.Response = s.post(
-            url=f"{DUO_URL}/prompt",
+        response: requests.Response = self._session.post(
+            url=f"{self._api_url}/prompt",
             data={"device": self.index, "factor": "Duo Push", "sid": self.sid},
         )
         response.raise_for_status()
@@ -114,8 +116,8 @@ class Device:
             str: The status code of the authentication request.
 
         """
-        response: requests.Response = s.post(
-            f"{DUO_URL}/status", data={"txid": txid, "sid": self.sid}
+        response: requests.Response = self._session.post(
+            f"{self._api_url}/status", data={"txid": txid, "sid": self.sid}
         )
         response.raise_for_status()
         return response.json()["response"]["status_code"]
