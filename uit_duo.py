@@ -363,7 +363,12 @@ def check_status(device: Device, txid: str, times: int = 3):
         status = device.get_status(txid)  # Get the status of the push
         if status == "allow":
             # User accepted the push
+            log.debug("Authentication Push accepted.")
             break
+        elif status == "pushed":
+            # Push was sent
+            log.debug("Push was sent.")
+            pass
         elif status == "deny":
             # User denied the push
             log.error("Authentication Push denied.")
