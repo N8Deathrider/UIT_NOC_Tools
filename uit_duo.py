@@ -127,6 +127,26 @@ class Duo:
         response: requests.Response = self.session.get(self._test_url)
         return response.ok
 
+    def login(self) -> None:
+        """
+        #TODO: Add description
+        """
+        xsrf, auth_url = self._get_xsrf(self._get_execution_value())
+
+        # TODO: What is this for?
+        third_response: requests.Response = self.session.post(url=auth_url, data={"_xsrf": xsrf})
+        third_response.raise_for_status()
+
+        sid = self._get_sid(auth_url)  # Get the sid from the auth_url
+        devices = self._get_devices(sid)  # Get the devices that can receive a push
+        device: Device = devices[0]  # Use the first device
+
+        txid = device.push(sid)  # Send a push to the device
+
+        check_status(device, txid, 3)  # Check the status of the push
+
+        self._get_final_cookies(sid, txid, device.key, xsrf)
+
     def _get_final_cookies(self, sid: str, txid: str, device_key: str, xsrf: str) -> requests.Session:
         """
         Sends a POST request to the DUO_URL to exit the Duo authentication process and retrieve the final cookies.
