@@ -165,6 +165,10 @@ class Duo:
             with open(self.cookie_jar, "rb") as file:
                 self.session.cookies.update(pickle.load(file))
         except FileNotFoundError:
+            # If the file is not found, do nothing
+            pass
+        except EOFError:
+            # If the file is empty, do nothing
             pass
 
     def _get_devices(self, sid: str) -> list[Device]:
