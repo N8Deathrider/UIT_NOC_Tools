@@ -306,9 +306,28 @@ def get_form_args(html_doc: str, name) -> str:
 
 def main() -> None:
     """
-    #TODO: Add description
+    Main function for the UIT Duo authentication tool.
+    
+    This function handles the authentication process using the Duo authentication system.
+    It prompts the user for their uNID and password, and then creates a Duo object to perform the authentication.
+    If the `auth` module is available, it uses the pre-configured uNID and password from the `UofU` class.
+    Otherwise, it prompts the user to enter their uNID and password manually.
     """
-    ...
+
+    # Get username and password
+    try:
+        from auth import UofU
+        uNID = UofU.unid
+        password = UofU.cisPassword
+    except ImportError:
+        uNID = input("Enter your uNID: ")
+        password = getpass("Enter your: cis password: ")
+
+    # Create Duo object and login
+    duo = Duo(uNID, password)
+    duo.login()
+    print("Login successful! And cookies should be updated in the file.")
+
 
 
 if __name__ == "__main__":
