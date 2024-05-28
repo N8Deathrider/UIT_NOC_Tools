@@ -340,9 +340,7 @@ def get_form_args(html_doc: str, name) -> str:
         KeyError: If the attribute with the specified name is not found.
     """
     try:
-        return BeautifulSoup(html_doc, "html.parser").find(attrs={"name": name})[
-            "value"
-        ]
+        return BeautifulSoup(html_doc, "html.parser").find(attrs={"name": name})["value"]
     except (TypeError, KeyError):
         raise KeyError(f"{name} not found")
 
