@@ -173,8 +173,8 @@ class Duo:
         authentication based on the user's chosen method (push notification, etc.).
 
         Args:
-            xsrf: The xsrf value extracted from the login response.
-            auth_url: The URL obtained after initial login processing.
+            xsrf (str): The xsrf value extracted from the login response.
+            auth_url (str): The URL obtained after initial login processing.
 
         Raises:
             requests.exceptions.RequestException: If any network request fails.
