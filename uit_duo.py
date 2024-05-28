@@ -43,12 +43,44 @@ class LoginError(Exception):
 
 class Duo:
     """
-    #TODO: Add description
-    """
+    Represents a Duo authentication handler for the University of Utah platform.
 
+    This class provides methods to perform login with Duo authentication,
+    handle Duo two-factor authentication, and store/load session cookies.
+
+    Attributes:
+        session (requests.Session): The session object used for making HTTP requests.
+        _username (str): The uNID of the user.
+        _password (str): The password of the user.
+        _prompt_check_times (int): The number of times to check Duo authentication status.
+        _login_url (str): The URL for the login page.
+        _duo_api_url (str): The URL for the Duo API.
+        _test_url (str): The URL for testing authentication.
+        cookie_jar (Path): The file path for storing session cookies.
+
+    Methods:
+        __init__(self, uNID: str, password: str) -> None:
+            Initializes a new instance of the `Duo` class.
+        _store_cookies(self) -> None:
+            Stores the session cookies in a file.
+        _load_cookies(self) -> None:
+            Loads the session cookies from a file.
+        login(self) -> requests.Session:
+            Performs login to the University of Utah platform with Duo authentication.
+        handle_duo_auth(self, xsrf: str, auth_url: str) -> None:
+            Completes Duo two-factor authentication with user interaction.
+    """
+    
     def __init__(self, uNID: str, password: str) -> None:
         """
-        #TODO: Add description
+        Initializes a new instance of the `Duo` class.
+
+        Args:
+            uNID (str): The uNID of the user.
+            password (str): The password of the user.
+
+        Returns:
+            None
         """
         self.session = requests.Session()
         self._username = uNID
@@ -233,7 +265,7 @@ class Duo:
                 # User denied the push
                 log.error("Authentication Push denied.")
                 raise LoginError("Authentication Push denied.")
-            
+
             if status == "timeout":
                 # Push timed out
                 log.error("Authentication Push timed out.")
@@ -241,7 +273,9 @@ class Duo:
 
             log.debug(f"Push status: {status}")
         else:  # If the loop completes without breaking
-            raise LoginError(f"Duo authentication failed, checked status {self._prompt_check_times} time(s).")
+            raise LoginError(
+                f"Duo authentication failed, checked status {self._prompt_check_times} time(s)."
+            )
 
         # Step 10: Finalize Duo authentication with selected device
         log.debug("Finalizing Duo authentication...")
