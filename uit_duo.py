@@ -54,6 +54,7 @@ class Duo:
         self.session = requests.Session()
         self._username = uNID
         self._password = password
+        self._prompt_check_times = 3
         self._login_url = "https://go.utah.edu/cas/login"
         self._duo_api_url = "https://api-aba4bf07.duosecurity.com/frame/v4"
         self._test_url = "https://portal.app.utah.edu/api-proxy/password-change-api/status/01377551"
@@ -214,9 +215,9 @@ class Duo:
         log.debug(f"Duo authentication initiated, transaction ID: {txid}")
         txid = response.json()["response"]["txid"]
 
-        # Step 8 & 9: Check Duo authentication status (loop 3 times)
+        # Step 8 & 9: Check Duo authentication status
         log.debug("Checking Duo authentication status...")
-        for _ in range(3):
+        for _ in range(self._prompt_check_times):
             status_data = {"txid": txid, "sid": sid}
             response = self.session.post(
                 f"{self._duo_api_url}/status", data=status_data
@@ -241,7 +242,7 @@ class Duo:
 
             log.debug(f"Push status: {status}")
         else:  # If the loop completes without breaking
-            raise LoginError("Duo authentication failed, checked status 3 times.")
+            raise LoginError(f"Duo authentication failed, checked status {self._prompt_check_times} time(s).")
 
         # Step 10: Finalize Duo authentication with selected device
         log.debug("Finalizing Duo authentication...")
@@ -300,6 +301,7 @@ def get_form_args(html_doc: str, name) -> str:
         ]
     except (TypeError, KeyError):
         raise KeyError(f"{name} not found")
+
 
 
 def main() -> None:
