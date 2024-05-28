@@ -14,6 +14,7 @@ import webbrowser
 from getpass import getpass
 from socket import gethostbyname
 from socket import gaierror
+import urllib3
 
 # Third-party libraries
 from rich.logging import RichHandler
@@ -332,6 +333,9 @@ def ddi_search(ip: str) -> dict:
     """
     duo = Duo(uNID=UofU.unid, password=UofU.cisPassword)
     session = duo.login()  #TODO: find a better place for this
+    urllib3.disable_warnings()
+    session.verify = False
+    session.get("https://toast.utah.edu/login_helper")
     r = session.get("https://toast.utah.edu/infoblox/host", params={"ip": ip})
     r.raise_for_status()
     log.debug(f"DDI Search Response: {r.json()}")
