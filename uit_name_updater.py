@@ -15,6 +15,7 @@ from getpass import getpass
 from socket import gethostbyname
 from socket import gaierror
 import urllib3
+from threading import Thread
 
 # Third-party libraries
 from rich.logging import RichHandler
@@ -22,7 +23,7 @@ from rich.prompt import Confirm
 from rich.table import Table
 from rich import print as rprint
 from uit_duo import Duo
-from netmiko import ConnectHandler, SSHDetect
+from netmiko import ConnectHandler, SSHDetect, BaseConnection
 import orionsdk
 
 # Local libraries
@@ -385,6 +386,29 @@ def padder(number):
     return [number_str.zfill(i) for i in range(len(number_str), max_len + 1)]
 
 
+def change_switch_info(connection: BaseConnection, correct_name: str, building_number: str, room_number: str) -> None:
+    """
+    Updates the switch information with the correct name, building number, and room number.
+
+    Args:
+        connection (BaseConnection): The connection object used to communicate with the switch.
+        correct_name (str): The correct name for the switch.
+        building_number (str): The building number where the switch is located.
+        room_number (str): The room number where the switch is located.
+
+    Returns:
+        None
+    """
+    switch_output = ""
+    commands = switch_commands_generator(correct_name, building_number, room_number)
+    switch_output += connection.send_config_set(commands)
+    connection.set_base_prompt()
+    switch_output += connection.save_config()
+    log.debug(f"Output: {switch_output}")
+    connection.disconnect()  # Disconnect from the switch
+    log.debug("Switch connection closed.")
+
+
 def main() -> None:
     """
     Main function for updating switch names in Orion and InfoBlox.
@@ -427,7 +451,6 @@ def main() -> None:
 
     # -- Switch section ------------------------------
     log.debug("Entering Switch Section")
-    switch_output = ""
     device_dict = {
         "device_type": "autodetect",
         "host": ARGS.switch_ip,
@@ -439,21 +462,18 @@ def main() -> None:
     device_dict["device_type"] = best_match
     # log.debug(f"Device Dict: {device_dict}")  # Disabled for now because it shows the password #TODO: need to fix this
 
-    with ConnectHandler(**device_dict) as net_connect:
-        hostname = net_connect.send_command("show version", use_genie=True).get("version", {}).get("hostname")
-        if not hostname:
-            log.error("Unable to retrieve the hostname of the switch.")
-            exit(EXIT_GENERAL_ERROR)
-        log.debug(f"Current Hostname: {hostname}")
-        if hostname != correct_name:
-            log.debug("Mismatch between switch name and correct name.")
-            rprint(change_display_table("Switch Name Mismatch", hostname, correct_name))
-            if Confirm.ask(f"Would you like to change the switch name to '{correct_name}'?"):
-                commands = switch_commands_generator(correct_name, ARGS.building_number, ARGS.room_number)
-                switch_output += net_connect.send_config_set(commands)
-                net_connect.set_base_prompt()
-                switch_output += net_connect.save_config()
-                log.debug(f"Output: {switch_output}")
+    net_connect = ConnectHandler(**device_dict)
+    hostname = net_connect.send_command("show version", use_genie=True).get("version", {}).get("hostname")
+    if not hostname:
+        log.error("Unable to retrieve the hostname of the switch.")
+        exit(EXIT_GENERAL_ERROR)
+    log.debug(f"Current Hostname: {hostname}")
+    if hostname != correct_name:
+        log.debug("Mismatch between switch name and correct name.")
+        rprint(change_display_table("Switch Name Mismatch", hostname, correct_name))
+        if Confirm.ask(f"Would you like to change the switch name to '{correct_name}'?"):
+            thread = Thread(target=change_switch_info, args=(net_connect, correct_name, ARGS.building_number, ARGS.room_number))
+            thread.start()
 
     # -- Orion section ------------------------------
     log.debug("Entering Orion Section")
