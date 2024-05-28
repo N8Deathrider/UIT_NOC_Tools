@@ -302,49 +302,6 @@ def get_form_args(html_doc: str, name) -> str:
         raise KeyError(f"{name} not found")
 
 
-def check_status(device: Device, txid: str, times: int = 3):
-    """
-    Check the status of a push notification on the device.
-
-    Args:
-        device (Device): The device object representing the user's device.
-        txid (str): The transaction ID of the push notification.
-        times (int): The number of times to check the status.
-
-    Returns:
-        None
-
-    Raises:
-        LoginError: If the user denies the push notification, if the push notification times out,
-                    or if an unexpected status is received after checking the status multiple times.
-    """
-    for _ in range(times):
-        status = device.get_status(txid)  # Get the status of the push
-        if status == "allow":
-            # User accepted the push
-            log.debug("Authentication Push accepted.")
-            break
-        elif status == "pushed":
-            # Push was sent
-            log.debug("Push was sent.")
-            pass
-        elif status == "deny":
-            # User denied the push
-            log.error("Authentication Push denied.")
-            raise LoginError("Authentication Push denied.")
-        elif status == "timeout":
-            # Push timed out
-            log.error("Authentication Push timed out.")
-            raise LoginError("Authentication Push timed out.")
-        else:
-            # Unexpected status
-            log.error(f"Got an unexpected status: {status}")
-            raise LoginError(f"Got an unexpected status: {status}")
-    else:
-        log.error(f"Authentication Push status check failed. Checked {times} times.")
-        raise LoginError(f"Authentication Push status check failed. Checked {times} times.")
-
-
 def main() -> None:
     """
     #TODO: Add description
