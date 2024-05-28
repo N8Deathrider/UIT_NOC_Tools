@@ -206,12 +206,14 @@ class Duo:
             log.debug("Authentication failed. Starting login process...")
 
         # Step 1: Get execution value
+        log.debug("Getting execution value...")
         response:requests.Response = self.session.get(self._login_url)
         response.raise_for_status()
 
         execution_value = get_form_args(response.text, "execution")
 
         # Step 2: Login with credentials and execution value
+        log.debug("Logging in...")
         login_data = {
             "username": self._username,
             "password": self._password,
@@ -221,19 +223,26 @@ class Duo:
         response = self.session.post(self._login_url, data=login_data, allow_redirects=True)
         response.raise_for_status()
 
+        # Extract xsrf and auth_url from the response
+        log.debug("Extracting xsrf and auth_url...")
         xsrf = get_form_args(response.text, "_xsrf")
         auth_url = response.url
 
+        # Step 3: Get important cookies
+        log.debug("Getting important cookies...")
         response: requests.Response = self.session.post(auth_url, data={"_xsrf": xsrf})
         response.raise_for_status()
 
-        # Step 3: Handle Duo authentication (separate function)
+        # Step 4: Handle Duo authentication (separate function)
+        log.debug("Handling Duo authentication...")
         self.handle_duo_auth(xsrf, auth_url)
 
         # Store cookies in a file for future use
+        log.debug("Storing cookies in file...")
         self._store_cookies()
 
         # Login successful! Return the session with cookies
+        log.debug("Login successful, returning session.")
         return self.session
 
     def handle_duo_auth(self, xsrf: str, auth_url: str) -> None:
@@ -253,9 +262,12 @@ class Duo:
             ValueError: If query parameters are not found in parsed URLs.
         """
 
+        # Step 5: Get sid from auth_url
+        log.debug("Getting sid from auth_url...")
         sid = extract_query_parameter(auth_url, "sid")
 
-        # Step 5: Get Duo devices for authentication
+        # Step 6: Get Duo devices for authentication
+        log.debug("Getting Duo devices for authentication...")
         duo_data = {
             "post_auth_action": "OIDC_EXIT",
             "sid": sid,
@@ -267,8 +279,10 @@ class Duo:
 
         devices = response.json()["response"]["phones"]
         device = devices[0]  # Use the first device for simplicity
+        log.debug(f"Using device: {device['name']}")
 
         # Step 7: Initiate Duo authentication (push notification, etc.)
+        log.debug("Initiating Duo authentication...")
         push_data = {
             "device": device["index"],
             "sid": sid,
@@ -277,9 +291,11 @@ class Duo:
         response = self.session.post(self._duo_api_url + "/prompt", data=push_data)
         response.raise_for_status()
 
+        log.debug(f"Duo authentication initiated, transaction ID: {txid}")
         txid = response.json()["response"]["txid"]
 
         # Step 8 & 9: Check Duo authentication status (loop 3 times)
+        log.debug("Checking Duo authentication status...")
         for _ in range(3):
             status_data = {"txid": txid, "sid": sid}
             response = self.session.post(
@@ -289,11 +305,15 @@ class Duo:
 
             status = response.json()["response"]["status_code"]
             if status == "allow":
+                # User accepted the push
+                log.debug("Authentication Push accepted.")
                 break
-        else:
+            log.debug(f"Push status: {status}")
+        else:  # If the loop completes without breaking
             raise LoginError("Duo authentication failed, checked status 3 times.")
 
         # Step 10: Finalize Duo authentication with selected device
+        log.debug("Finalizing Duo authentication...")
         final_data = {
             "sid": sid,
             "txid": txid,
