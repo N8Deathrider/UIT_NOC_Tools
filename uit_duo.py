@@ -190,6 +190,21 @@ class Duo:
             ValueError: If query parameters are not found in parsed URLs.
         """
 
+        # Load cookies from file if available
+        log.debug("Loading cookies from file...")
+        self._load_cookies()
+
+        # Test authentication
+        log.debug("Testing authentication...")
+        response: requests.Response = self.session.get(self._test_url)
+        response.raise_for_status()
+
+        if response.ok:
+            log.debug("Authentication successful.")
+            return self.session
+        else:
+            log.debug("Authentication failed. Starting login process...")
+
         # Step 1: Get execution value
         response:requests.Response = self.session.get(self._login_url)
         response.raise_for_status()
@@ -214,6 +229,9 @@ class Duo:
 
         # Step 3: Handle Duo authentication (separate function)
         self.handle_duo_auth(xsrf, auth_url)
+
+        # Store cookies in a file for future use
+        self._store_cookies()
 
         # Login successful! Return the session with cookies
         return self.session
