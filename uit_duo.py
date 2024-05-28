@@ -131,7 +131,7 @@ class Duo:
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "html.parser")
-        if soup.find(id="login-area"):
+        if soup.find("a", attrs={"href": "logout"}):
             return True
         else:
             return False
