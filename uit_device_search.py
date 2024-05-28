@@ -31,8 +31,19 @@ from rich.prompt import Prompt
 from rich.table import Table
 
 # Local libraries
-from u1377551 import login_duo as login
+from uit_duo import Duo
 from u1377551 import rich_get_next_arg
+
+try:
+    from auth import UofU
+
+    uNID = UofU.unid
+    password = UofU.cisPassword
+except ImportError:
+    from getpass import getpass
+
+    uNID = input("Enter your uNID: ")
+    password = getpass("Enter your: cis password: ")
 
 # Standard exit codes
 EXIT_SUCCESS = 0  # Successful execution
@@ -454,7 +465,8 @@ def main_v2(max_retries: int = 25):
         exit(EXIT_MISSING_ITEM)
 
     # Creating the session and logging in
-    s: requests.Session = login()
+    duo = Duo(uNID=uNID, password=password)
+    s: requests.Session = duo.login()
     log.debug("Session created and logged in.")
 
     # Setting up the search arguments
@@ -509,4 +521,3 @@ if __name__ == "__main__":
     except Exception as e:  # If an unhandled exception occurs
         log.exception(f"An unhandled exception occurred. {e}")
         exit(EXIT_GENERAL_ERROR)
-
