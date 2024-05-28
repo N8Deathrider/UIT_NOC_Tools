@@ -245,8 +245,8 @@ class Duo:
         response = self.session.post(self._duo_api_url + "/prompt", data=push_data)
         response.raise_for_status()
 
-        log.debug(f"Duo authentication initiated, transaction ID: {txid}")
         txid = response.json()["response"]["txid"]
+        log.debug(f"Duo authentication initiated, transaction ID: {txid}")
 
         # Step 8 & 9: Check Duo authentication status
         log.debug("Checking Duo authentication status...")
