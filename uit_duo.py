@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-#TODO: Add description
+This module provides a class for performing login to the University of Utah platform with Duo authentication.
 """
 
 # Standard libraries
