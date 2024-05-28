@@ -198,6 +198,7 @@ class Duo:
 
         devices = response.json()["response"]["phones"]
         device = devices[0]  # Use the first device for simplicity
+        # Maybe add a device selection prompt in the future and a way to store the preferred device
         log.debug(f"Using device: {device['name']}")
 
         # Step 7: Initiate Duo authentication (push notification, etc.)
@@ -227,6 +228,17 @@ class Duo:
                 # User accepted the push
                 log.debug("Authentication Push accepted.")
                 break
+
+            if status == "deny":
+                # User denied the push
+                log.error("Authentication Push denied.")
+                raise LoginError("Authentication Push denied.")
+            
+            if status == "timeout":
+                # Push timed out
+                log.error("Authentication Push timed out.")
+                raise LoginError("Authentication Push timed out.")
+
             log.debug(f"Push status: {status}")
         else:  # If the loop completes without breaking
             raise LoginError("Duo authentication failed, checked status 3 times.")
