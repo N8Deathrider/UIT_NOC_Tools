@@ -11,7 +11,6 @@ import urllib.parse
 from getpass import getpass
 from pathlib import Path
 import pickle
-import urllib3
 
 # Third-party libraries
 from rich.logging import RichHandler
@@ -301,7 +300,6 @@ def get_form_args(html_doc: str, name) -> str:
         ]
     except (TypeError, KeyError):
         raise KeyError(f"{name} not found")
-
 
 
 def main() -> None:
