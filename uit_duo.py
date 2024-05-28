@@ -291,23 +291,24 @@ class Duo:
 
 def extract_query_parameter(url: str, query_parameter: str) -> str:
     """
-    Retrieves the sid from the given authentication URL.
+    Retrieves the query parameter from the given URL.
 
     Args:
-        auth_url (str): The authentication URL.
+        url (str): The URL to parse query args from.
+        query_parameter (str): The name of the query parameter to retrieve.
 
     Returns:
-        str: The sid extracted from the URL.
+        str: The value of the query_parameter extracted from the URL.
 
     Raises:
-        ValueError: If sid is not found in the URL.
+        ValueError: If the query_parameter value is not found in the URL.
     """
-    sid = urllib.parse.parse_qs(urllib.parse.urlparse(auth_url).query).get(
-        "sid", [None]
+    param_value = urllib.parse.parse_qs(urllib.parse.urlparse(url).query).get(
+        query_parameter, [None]
     )[0]
-    if sid is None:
-        raise ValueError("sid not found")
-    return sid
+    if param_value is None:
+        raise ValueError(f"{query_parameter} not found in the URL {url}")
+    return param_value
 
 
 def get_form_args(html_doc: str, name) -> str:
