@@ -173,141 +173,123 @@ class Duo:
             log.debug("Cookies file is empty.")
             pass
 
-    def _get_devices(self, sid: str) -> list[Device]:
+    def login(self) -> requests.Session:
         """
-        Retrieves a list of devices associated with the given session ID.
+        Performs login to the University of Utah platform with Duo authentication.
 
-        Args:
-            sid (str): The session ID.
-
-        Returns:
-            list[Device]: A list of Device objects representing the devices associated with the session ID.
-        """
-        response: requests.Response = self.session.get(
-            url=f"{self._api_url}/auth/prompt/data",
-            params={"post_auth_action": "OIDC_EXIT", "sid": sid}
-        )
-        response.raise_for_status()
-        return [Device(phone, self.session, self._api_url) for phone in response.json()["response"]["phones"]]
-
-    def _get_execution_value(self) -> str:
-        """
-        Retrieves the execution value from the login page.
-
-        Returns:
-            str: The execution value.
-        """
-        response: requests.Response = self.session.get(url=self._login_url)
-        response.raise_for_status()  # Raise an exception if the response is not 200
-        return get_form_args(response.text, "execution")
-
-    def _get_xsrf(self, execution: str) -> tuple[str, str]:
-        """
-        Get the XSRF token and the response URL after logging in.
-
-        Args:
-            execution (str): The execution value for authentication.
-
-        Returns:
-            tuple[str, str]: A tuple containing the XSRF token and the response URL.
-        """
-        response: requests.Response = self.session.post(
-            url=self._login_url,
-            data={
-                "username": self._username,
-                "password": self._password,
-                "_eventId": "submit",
-                "execution": execution,
-            }
-        )
-        response.raise_for_status()  # Raise an exception if the response is not 200
-
-        return get_form_args(response.text, "_xsrf"), response.url
-
-    def auth_test(self) -> bool:
-        """
-        Performs an authentication test by sending a GET request to the test URL.
-
-        Returns:
-            bool: True if the response is successful (status code 200), False otherwise.
-        """
-        response: requests.Response = self.session.get(self._test_url)
-        log.debug(f"Authentication test status code: {response.status_code}")
-        return response.ok
-
-    def login(self) -> None:
-        """
-        #TODO: Add description
-        """
-        xsrf, auth_url = self._get_xsrf(self._get_execution_value())
-
-        # TODO: What is this for?
-        third_response: requests.Response = self.session.post(url=auth_url, data={"_xsrf": xsrf})
-        third_response.raise_for_status()
-
-        sid = extract_sid(auth_url)  # Get the sid from the auth_url
-        devices = self._get_devices(sid)  # Get the devices that can receive a push
-        device: Device = devices[0]  # Use the first device
-
-        txid = device.push(sid)  # Send a push to the device
-
-        check_status(device, txid, 3)  # Check the status of the push
-
-        self._get_final_cookies(sid, txid, device.key, xsrf)
-
-    def _get_final_cookies(self, sid: str, txid: str, device_key: str, xsrf: str) -> requests.Session:
-        """
-        Sends a POST request to the DUO_URL to exit the Duo authentication process and retrieve the final cookies.
-
-        Args:
-            sid (str): The session ID.
-            txid (str): The transaction ID.
-            device_key (str): The device key.
-            xsrf (str): The XSRF token.
+        This method handles the entire login process, including:
+            - Obtaining initial execution value from the login page.
+            - Performing login with username, password, and execution value.
+            - Extracting xsrf and auth_url from the response.
+            - Completing Duo authentication with user interaction (push notification, etc.).
+            - Returning the session object with final authentication cookies.
 
         Raises:
-            requests.HTTPError: If the POST request fails.
+            requests.exceptions.RequestException: If any network request fails.
+            KeyError: If essential HTML form arguments are not found.
+            ValueError: If query parameters are not found in parsed URLs.
         """
-        response: requests.Response = self.session.post(
-            url=f"{self._api_url}/oidc/exit",
-            data={
-                "sid": sid,
-                "txid": txid,
-                # "factor": "Duo Push",  # This is not needed for the API to authenticate
-                "device_key": device_key,
-                "_xsrf": xsrf,
-                "dampen_choice": "true",
-            }
-        )
+
+        # Step 1: Get execution value
+        response:requests.Response = self.session.get(self._login_url)
         response.raise_for_status()
 
-    def authenticate(self) -> requests.Session:
-        """
-        Authenticates the user and returns a session object.
+        execution_value = get_form_args(response.text, "execution")
 
-        This method loads the cookies, checks if the authentication is successful,
-        and if not, it attempts to log in. If the authentication still fails,
-        an error is logged and a LoginError is raised.
+        # Step 2: Login with credentials and execution value
+        login_data = {
+            "username": self._username,
+            "password": self._password,
+            "execution": execution_value,
+            "_eventId": "submit",
+        }
+        response = self.session.post(self._login_url, data=login_data, allow_redirects=True)
+        response.raise_for_status()
 
-        Returns:
-            requests.Session: The authenticated session object.
+        xsrf = get_form_args(response.text, "_xsrf")
+        auth_url = response.url
 
-        Raises:
-            LoginError: If the authentication fails.
-        """
-        self._load_cookies()
-        if not self.auth_test():
-            self.login()
-            if not self.auth_test():
-                log.error("Authentication failed. Please check your credentials and try again.")
-                raise LoginError("Authentication failed. Please check your credentials and try again.")
+        response: requests.Response = self.session.post(auth_url, data={"_xsrf": xsrf})
+        response.raise_for_status()
 
-            self._store_cookies()
+        # Step 3: Handle Duo authentication (separate function)
+        self.handle_duo_auth(xsrf, auth_url)
 
+        # Login successful! Return the session with cookies
         return self.session
 
+    def handle_duo_auth(self, xsrf: str, auth_url: str) -> None:
+        """
+        Completes Duo two-factor authentication with user interaction.
 
-def extract_sid(auth_url: str) -> str:
+        This method interacts with the Duo API to initiate and confirm Duo
+        authentication based on the user's chosen method (push notification, etc.).
+
+        Args:
+            xsrf: The xsrf value extracted from the login response.
+            auth_url: The URL obtained after initial login processing.
+
+        Raises:
+            requests.exceptions.RequestException: If any network request fails.
+            KeyError: If essential HTML form arguments are not found.
+            ValueError: If query parameters are not found in parsed URLs.
+        """
+
+        sid = extract_query_parameter(auth_url, "sid")
+
+        # Step 5: Get Duo devices for authentication
+        duo_data = {
+            "post_auth_action": "OIDC_EXIT",
+            "sid": sid,
+        }
+        response = self.session.get(
+            self._duo_api_url + "/auth/prompt/data", params=duo_data
+        )
+        response.raise_for_status()
+
+        devices = response.json()["response"]["phones"]
+        device = devices[0]  # Use the first device for simplicity
+
+        # Step 7: Initiate Duo authentication (push notification, etc.)
+        push_data = {
+            "device": device["index"],
+            "sid": sid,
+            "factor": "Duo Push",
+        }
+        response = self.session.post(self._duo_api_url + "/prompt", data=push_data)
+        response.raise_for_status()
+
+        txid = response.json()["response"]["txid"]
+
+        # Step 8 & 9: Check Duo authentication status (loop 3 times)
+        for _ in range(3):
+            status_data = {"txid": txid, "sid": sid}
+            response = self.session.post(
+                f"{self._duo_api_url}/status", data=status_data
+            )
+            response.raise_for_status()
+
+            status = response.json()["response"]["status_code"]
+            if status == "allow":
+                break
+        else:
+            raise LoginError("Duo authentication failed, checked status 3 times.")
+
+        # Step 10: Finalize Duo authentication with selected device
+        final_data = {
+            "sid": sid,
+            "txid": txid,
+            "device_key": device["key"],
+            "_xsrf": xsrf,
+            "dampon_choice": "true",
+        }
+        response = self.session.post(self._duo_api_url + "/oidc/exit", data=final_data)
+        response.raise_for_status()
+
+        # Authentication
+
+
+def extract_query_parameter(url: str, query_parameter: str) -> str:
     """
     Retrieves the sid from the given authentication URL.
 
