@@ -136,8 +136,8 @@ class Duo:
         self._username = uNID
         self._password = password
         self._login_url = "https://go.utah.edu/cas/login"
-        self._api_url = "https://api-aba4bf07.duosecurity.com/frame/v4"
-        self._test_url = "https://portal.app.utah.edu/api-proxy/cis-api/user/current"
+        self._duo_api_url = "https://api-aba4bf07.duosecurity.com/frame/v4"
+        self._test_url = "https://portal.app.utah.edu/api-proxy/password-change-api/status/01377551"
         self.cookie_jar = Path.home().joinpath(".uit_duo_cookies")
 
         self.session.headers.update(
