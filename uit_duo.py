@@ -357,6 +357,14 @@ def main() -> None:
         uNID = input("Enter your uNID: ")
         password = getpass("Enter your: cis password: ")
 
+    import argparse
+    parser = argparse.ArgumentParser(description="University of Utah Duo Authentication")
+    parser.add_argument("-d", "--debug", help="Enable debug logging", action="store_true")
+    args = parser.parse_args()
+
+    if args.debug:
+        log.setLevel(logging.DEBUG)
+
     # Create Duo object and login
     duo = Duo(uNID, password)
     duo.login()
