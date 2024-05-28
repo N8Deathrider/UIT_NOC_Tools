@@ -329,7 +329,6 @@ def main() -> None:
     print("Login successful! And cookies should be updated in the file.")
 
 
-
 if __name__ == "__main__":
     try:
         main()
