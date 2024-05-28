@@ -148,7 +148,9 @@ class Duo:
         # Test authentication
         log.debug("Testing authentication...")
         response: requests.Response = self.session.get(self._test_url)
-        response.raise_for_status()
+        # response.raise_for_status()
+        # Commented out because the point of this is to test if the cookies are valid and if they are not, it will raise an error
+        # which is not what we want. We want to see if the cookies are valid and if they are not, we will re-authenticate.
 
         if response.ok:
             log.debug("Authentication successful.")
