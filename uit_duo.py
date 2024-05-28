@@ -88,7 +88,6 @@ class Duo:
         self._prompt_check_times = 3
         self._login_url = "https://go.utah.edu/cas/login"
         self._duo_api_url = "https://api-aba4bf07.duosecurity.com/frame/v4"
-        self._test_url = "https://portal.app.utah.edu/api-proxy/password-change-api/status/01377551"
         self.cookie_jar = Path.home().joinpath(".uit_duo_cookies")
 
         self.session.headers.update(
@@ -124,6 +123,20 @@ class Duo:
             log.debug("Cookies file is empty.")
             pass
 
+    def _test_authentication(self) -> bool:
+        """
+        Tests the current session authentication status.
+        """
+        response: requests.Response = self.session.get(self._login_url)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        if soup.find(id="login-area"):
+            return True
+        else:
+            return False
+
+
     def login(self) -> requests.Session:
         """
         Performs login to the University of Utah platform with Duo authentication.
@@ -147,12 +160,8 @@ class Duo:
 
         # Test authentication
         log.debug("Testing authentication...")
-        response: requests.Response = self.session.get(self._test_url)
-        # response.raise_for_status()
-        # Commented out because the point of this is to test if the cookies are valid and if they are not, it will raise an error
-        # which is not what we want. We want to see if the cookies are valid and if they are not, we will re-authenticate.
 
-        if response.ok:
+        if self._test_authentication():
             log.debug("Authentication successful.")
             return self.session
         else:
