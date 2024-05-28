@@ -20,7 +20,7 @@ from rich.logging import RichHandler
 from rich.prompt import Confirm
 from rich.table import Table
 from rich import print as rprint
-from u1377551 import login_duo
+from uit_duo import Duo
 from netmiko import ConnectHandler, SSHDetect
 import orionsdk
 
@@ -330,7 +330,8 @@ def ddi_search(ip: str) -> dict:
     Raises:
         requests.HTTPError: If the HTTP request to the API fails.
     """
-    session = login_duo()  #TODO: find a better place for this
+    duo = Duo(uNID=UofU.unid, password=UofU.cisPassword)
+    session = duo.login()  #TODO: find a better place for this
     r = session.get("https://toast.utah.edu/infoblox/host", params={"ip": ip})
     r.raise_for_status()
     log.debug(f"DDI Search Response: {r.json()}")
