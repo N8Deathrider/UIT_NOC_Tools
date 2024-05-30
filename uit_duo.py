@@ -160,7 +160,6 @@ class Duo:
 
         # Test authentication
         log.debug("Testing authentication...")
-
         if self._test_authentication():
             log.debug("Authentication successful.")
             return self.session
