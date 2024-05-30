@@ -474,6 +474,9 @@ def main() -> None:
         if Confirm.ask(f"Would you like to change the switch name to '{correct_name}'?"):
             thread = Thread(target=change_switch_info, args=(net_connect, correct_name, ARGS.building_number, ARGS.room_number))
             thread.start()
+        else:
+            net_connect.disconnect()  # Disconnect from the switch
+            log.debug("Switch connection closed.")
 
     # -- Orion section ------------------------------
     log.debug("Entering Orion Section")
