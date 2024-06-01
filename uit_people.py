@@ -107,12 +107,13 @@ def parse_search_results_page(html_doc: str) -> list[dict[str, str]]:
     return df.to_dict("records")
 
 
-def display_results_table(results: list[dict[str, str]]) -> None:
+def display_results_table(results: list[dict[str, str]], max_results: int | None = None) -> None:
     """
     Display the search results in a table.
 
     Args:
         results (list[dict[str, str]]): The search results to display.
+        max_results (int): The max number of results to display.
     """
     table: Table = Table(title="Search Results", row_styles=["none", "dim"])
     table.add_column("Name", style="cyan")
@@ -120,6 +121,9 @@ def display_results_table(results: list[dict[str, str]]) -> None:
     table.add_column("Email", style="green")
     table.add_column("Dept/Org", style="blue")
     table.add_column("Phone", style="yellow")
+
+    if max_results:
+        results = results[:max_results]
 
     for result in results:
         table.add_row(
