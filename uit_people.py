@@ -107,6 +107,32 @@ def parse_search_results_page(html_doc: str) -> list[dict[str, str]]:
     return df.to_dict("records")
 
 
+def display_results_table(results: list[dict[str, str]]) -> None:
+    """
+    Display the search results in a table.
+
+    Args:
+        results (list[dict[str, str]]): The search results to display.
+    """
+    table: Table = Table(title="Search Results")
+    table.add_column("Name", style="cyan")
+    table.add_column("Title", style="magenta")
+    table.add_column("Email", style="green")
+    table.add_column("Dept/Org", style="blue")
+    table.add_column("Phone", style="yellow")
+
+    for result in results:
+        table.add_row(
+            result["Name"],
+            result["Title"],
+            result["Email"],
+            result["Dept/Org"],
+            result["Phone"],
+        )
+
+    rprint(Panel(table))
+
+
 def basic_search(search_term: str) -> list[dict[str, str]]:
     """
     Perform a basic search for a given search term.
