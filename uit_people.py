@@ -164,6 +164,10 @@ def basic_search(search_term: str) -> list[dict[str, str]]:
     return parse_search_results_page(response.text)
 
 
+def advanced_search(search_term: str) -> list[dict[str, str]]:
+    ...
+
+
 def main() -> None:
     """
     #TODO: Add description
