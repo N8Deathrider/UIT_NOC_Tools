@@ -114,7 +114,7 @@ def display_results_table(results: list[dict[str, str]]) -> None:
     Args:
         results (list[dict[str, str]]): The search results to display.
     """
-    table: Table = Table(title="Search Results")
+    table: Table = Table(title="Search Results", row_styles=["none", "dim"])
     table.add_column("Name", style="cyan")
     table.add_column("Title", style="magenta")
     table.add_column("Email", style="green")
@@ -130,7 +130,7 @@ def display_results_table(results: list[dict[str, str]]) -> None:
             result["Phone"],
         )
 
-    rprint(Panel(table))
+    rprint(Panel(table, expand=False))
 
 
 def basic_search(search_term: str) -> list[dict[str, str]]:
@@ -169,7 +169,8 @@ def main() -> None:
     #TODO: Add description
     """
     search_results = basic_search("u1377551")
-    print(search_results)
+    display_results_table(search_results)
+    # TODO: add arg for displaying results as a table or some other format
 
 
 if __name__ == "__main__":
