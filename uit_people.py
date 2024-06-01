@@ -66,6 +66,23 @@ def get_form_args(html_doc: str, name) -> str:
         raise KeyError(f"{name} not found")
 
 
+def fix_email_string(email: str) -> str:
+    """
+    Fix the email string by removing any extra characters.
+
+    Args:
+        email (str): The email string to fix.
+
+    Returns:
+        str: The fixed email string.
+    """
+    return (
+        email.split('" + ">"')[0]
+        .replace('<!--  document.write("<a href=" + "mail" + "to:" + "', "")
+        .replace('" + "@" + "', "@")
+    )
+
+
 def parse_search_results_page(html_doc: str) -> list[dict[str, str]]:
     """
     Parse the search results page and return the search results as a list of dictionaries.
@@ -75,6 +92,7 @@ def parse_search_results_page(html_doc: str) -> list[dict[str, str]]:
     df[["Name", "Title"]] = df["Name & Title"].str.split("  ", n=1, expand=True)
     df.drop(columns=['Name & Title'], inplace=True)
     df['Title'] = df['Title'].str.strip()
+    df['Email'] = df['Email'].apply(fix_email_string)
     print(df.to_dict("records"))
 
 
