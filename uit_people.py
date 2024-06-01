@@ -13,7 +13,7 @@ from rich.logging import RichHandler
 from rich.table import Table
 from rich.panel import Panel
 import requests
-from rich import print, inspect  # DEBUG
+from rich import print as rprint
 from yarl import URL
 from bs4 import BeautifulSoup
 import pandas as pd
