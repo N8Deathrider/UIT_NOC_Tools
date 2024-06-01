@@ -104,7 +104,7 @@ def parse_search_results_page(html_doc: str) -> list[dict[str, str]]:
     df.drop(columns=["Name & Title"], inplace=True)
     df["Title"] = df["Title"].str.strip()
     df["Email"] = df["Email"].apply(fix_email_string)
-    print(df.to_dict("records"))
+    return df.to_dict("records")
 
 
 def basic_search(search_term: str) -> list[dict[str, str]]:
