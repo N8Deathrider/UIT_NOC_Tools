@@ -16,6 +16,7 @@ import requests
 from rich import print, inspect  # DEBUG
 from yarl import URL
 from bs4 import BeautifulSoup
+import pandas as pd
 
 # Local libraries
 
@@ -65,6 +66,18 @@ def get_form_args(html_doc: str, name) -> str:
         raise KeyError(f"{name} not found")
 
 
+def parse_search_results_page(html_doc: str) -> list[dict[str, str]]:
+    """
+    Parse the search results page and return the search results as a list of dictionaries.
+    """
+    dfs = pd.read_html(html_doc)
+    df = dfs[0]
+    df[["Name", "Title"]] = df["Name & Title"].str.split("  ", n=1, expand=True)
+    df.drop(columns=['Name & Title'], inplace=True)
+    df['Title'] = df['Title'].str.strip()
+    print(df.to_dict("records"))
+
+
 def basic_search(search_term: str) -> list[dict[str, str]]:
     """
     Perform a basic search for a given search term.
@@ -93,7 +106,7 @@ def basic_search(search_term: str) -> list[dict[str, str]]:
     response.raise_for_status()
 
     # Parse the search results
-    return response.text
+    return parse_search_results_page(response.text)
 
 
 def main() -> None:
