@@ -78,11 +78,7 @@ def basic_search(search_term: str) -> list[dict[str, str]]:
 
     # Perform the search
     search_data = {
-        "isAdvancedLinkSelected": "",
         "searchTerm": search_term,
-        "goBtn.x": "20",
-        "goBtn.y": "13",
-        "searchRole": "0",
         "_csrf": get_form_args(response.text, "_csrf"),
     }
     response: requests.Response = session.post(
