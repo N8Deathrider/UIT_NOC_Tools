@@ -69,15 +69,28 @@ def basic_search(search_term: str) -> list[dict[str, str]]:
     """
     #TODO Add description
     """
-    basic_search_data = {
+    # Create a session
+    session: requests.Session = requests.Session()
+
+    # Get the search page for cookies and CSRF token
+    response: requests.Response = session.get(BASE_URL / "uWho/basic.hml")
+    response.raise_for_status()
+
+    # Perform the search
+    search_data = {
+        "isAdvancedLinkSelected": "",
         "searchTerm": search_term,
+        "goBtn.x": "20",
+        "goBtn.y": "13",
+        "searchRole": "0",
+        "_csrf": get_form_args(response.text, "_csrf"),
     }
-    response: requests.Response = requests.post(
-        url=BASE_URL / "uWho/basic.hml",
-        data=basic_search_data,
-        headers={"User-Agent": "Mozilla/5.0"}
+    response: requests.Response = session.post(
+        url=BASE_URL / "uWho/basic.hml", data=search_data
     )
     response.raise_for_status()
+
+    # Parse the search results
     return response.text
 
 
