@@ -86,13 +86,24 @@ def fix_email_string(email: str) -> str:
 def parse_search_results_page(html_doc: str) -> list[dict[str, str]]:
     """
     Parse the search results page and return the search results as a list of dictionaries.
+
+    Parameters:
+    - html_doc (str): The HTML document containing the search results.
+
+    Returns:
+    - list[dict[str, str]]: A list of dictionaries representing the search results. Each dictionary contains the following keys:
+        - "Name" (str): The name of the person.
+        - "Title" (str): The persons job title.
+        - "Email" (str): The email address of the person.
+        - "Dept/Org" (str): The department or organization the person belongs to.
+        - "Phone" (str): The phone number of the person.
     """
     dfs = pd.read_html(html_doc)
     df = dfs[0]
     df[["Name", "Title"]] = df["Name & Title"].str.split("  ", n=1, expand=True)
-    df.drop(columns=['Name & Title'], inplace=True)
-    df['Title'] = df['Title'].str.strip()
-    df['Email'] = df['Email'].apply(fix_email_string)
+    df.drop(columns=["Name & Title"], inplace=True)
+    df["Title"] = df["Title"].str.strip()
+    df["Email"] = df["Email"].apply(fix_email_string)
     print(df.to_dict("records"))
 
 
