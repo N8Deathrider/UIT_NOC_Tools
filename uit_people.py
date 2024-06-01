@@ -67,7 +67,13 @@ def get_form_args(html_doc: str, name) -> str:
 
 def basic_search(search_term: str) -> list[dict[str, str]]:
     """
-    #TODO Add description
+    Perform a basic search for a given search term.
+
+    Args:
+        search_term (str): The term to search for.
+
+    Returns:
+        list[dict[str, str]]: A list of dictionaries representing the search results.
     """
     # Create a session
     session: requests.Session = requests.Session()
