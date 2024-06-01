@@ -15,6 +15,7 @@ from rich.panel import Panel
 import requests
 from rich import print, inspect  # DEBUG
 from yarl import URL
+from bs4 import BeautifulSoup
 
 # Local libraries
 
@@ -40,6 +41,28 @@ log: logging.Logger = logging.getLogger("rich")
 
 def get_args():
     ...
+
+
+def get_form_args(html_doc: str, name) -> str:
+    """
+    Retrieves the value of an HTML attribute with the specified name from the given HTML document.
+
+    Args:
+        html_doc (str): The HTML document as a string.
+        name: The name of the attribute to retrieve.
+
+    Returns:
+        str: The value of the attribute.
+
+    Raises:
+        KeyError: If the attribute with the specified name is not found.
+    """
+    try:
+        return BeautifulSoup(html_doc, "html.parser").find(attrs={"name": name})[
+            "value"
+        ]
+    except (TypeError, KeyError):
+        raise KeyError(f"{name} not found")
 
 
 def basic_search(search_term: str) -> list[dict[str, str]]:
