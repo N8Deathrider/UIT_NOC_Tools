@@ -251,6 +251,7 @@ class Duo:
             "factor": "Duo Push",
         }
         response = self.session.post(self._duo_api_url + "/prompt", data=push_data)
+        print(f"Push notification sent to device: {device['name']}")
         response.raise_for_status()
 
         txid = response.json()["response"]["txid"]
