@@ -7,6 +7,7 @@
 # Standard libraries
 import logging
 from sys import exit
+import argparse
 
 # Third-party libraries
 from rich.logging import RichHandler
@@ -40,8 +41,23 @@ logging.basicConfig(
 log: logging.Logger = logging.getLogger("rich")
 
 
-def get_args():
-    ...
+def get_args() -> argparse.Namespace:
+    """
+    Parse command line arguments for searching the University of Utah people directory.
+
+    Returns:
+        argparse.Namespace: The parsed command line arguments.
+    """
+    parser = argparse.ArgumentParser(description="Search the University of Utah people directory.")
+    parser.add_argument("search_term", type=str, help="The term to search for.")
+    parser.add_argument(
+        "--max-results",
+        "-m",
+        type=int,
+        help="The max number of results to display.",
+        default=None,
+    )
+    return parser.parse_args()
 
 
 def get_form_args(html_doc: str, name) -> str:
@@ -179,6 +195,7 @@ def main() -> None:
     search_results = basic_search("u1377551")
     display_results_table(search_results)
     # TODO: add arg for displaying results as a table or some other format
+    # TODO: add arg for specifying the number of results to display that defaults to None (all results)
 
 
 if __name__ == "__main__":
