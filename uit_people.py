@@ -197,7 +197,6 @@ def main() -> None:
     search_results = basic_search(args.search_term)
     display_results_table(search_results, args.max_results)
     # TODO: add arg for displaying results as a table or some other format
-    # TODO: add arg for specifying the number of results to display that defaults to None (all results)
 
 
 if __name__ == "__main__":
