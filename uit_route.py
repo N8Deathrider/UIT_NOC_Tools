@@ -118,7 +118,7 @@ def queue_search(query: str) -> str:
         "UIT - ISO - IAM (Identity and Access Mgmt)",
         "UIT - NCI - UMail & Collaboration",
         "CTO - Biomed",
-        "Storage Management Services and Backup (SMS)"
+        "Storage Management Services and Backup (SMS)",
         "Other"  # This is a placeholder for a custom queue name
     ]
     alt_queue_names: dict[str, str] = {
