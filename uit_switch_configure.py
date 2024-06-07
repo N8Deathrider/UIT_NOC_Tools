@@ -42,6 +42,41 @@ log: logging.Logger = logging.getLogger("rich")
 logging.getLogger("paramiko").setLevel(logging.WARNING)  # Set paramiko to only log warnings
 
 
+def style_gen() -> tuple[type[RegexHighlighter], Theme]:
+    """
+    Generate the syntax highlighter and theme for the switch configuration output.
+    """
+
+    name_fixes = (
+        ("-", "_"),
+        ("/", ""),
+        (" ", "_"),
+    )
+
+    class SyntaxHighlighter(RegexHighlighter):
+        """
+        Syntax highlighter for the switch configuration output.
+        """
+
+        base_style = "output."
+        highlights = []
+        for line in output_highlighting:
+            name = line[2]
+            for fix in name_fixes:
+                name = name.replace(*fix)
+            match = line[0]
+            highlights.append(f"(?P<{name}>{match})")
+
+    theme_map = {}
+    for line in output_highlighting:
+        name = line[2].replace("-", "_").replace("/", "").replace(" ", "_")
+        for fix in name_fixes:
+            name = name.replace(*fix)
+        theme_map[f"output.{name}"] = line[1]
+
+    return SyntaxHighlighter, Theme(theme_map)
+
+
 def get_args() -> argparse.Namespace:
     """
     Parse command line arguments for configuring switch interfaces.
