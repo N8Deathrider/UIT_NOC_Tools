@@ -111,6 +111,24 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def credentials() -> tuple[str, str]:
+    """
+    Get the username and password for the switch.
+
+    Returns:
+        tuple[str, str]: The username and password.
+    """
+    try:
+        from auth import SSH
+        username = SSH.username
+        password = SSH.password
+    except ImportError:
+        log.warning("No stored authentication credentials found.")
+        username = Prompt.ask("Username")
+        password = Prompt.ask("SSH Password", password=True)
+    return username, password
+
+
 def config_cmds_gen(interface_id: str, 
                     access_vlan: str | int, 
                     voice_vlan: str | int | None = None, 
@@ -343,16 +361,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        # Checking for authentication credentials
-        try:
-            from auth import SSH
-            USERNAME = SSH.username
-            PASSWORD = SSH.password
-        except ImportError:
-            log.warning("No stored authentication credentials found.")
-            USERNAME = Prompt.ask("Username")
-            PASSWORD = Prompt.ask("SSH Password", password=True)
-
+        USERNAME, PASSWORD = credentials()
         main()
     except KeyboardInterrupt:
         log.info("\nCtrl + c pressed. Exiting script...")
