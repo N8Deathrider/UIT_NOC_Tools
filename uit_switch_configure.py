@@ -17,7 +17,7 @@ from netmiko import ConnectHandler
 from rich.prompt import Prompt
 from rich.prompt import IntPrompt
 from rich.prompt import Confirm
-from rich.rule import Rule
+from rich.panel import Panel
 from rich.console import Console
 from rich import print as rprint
 from rich.logging import RichHandler
@@ -298,7 +298,7 @@ def main():
     pre_config_commands = pre_config_commands_gen(args.access_vlan, args.voice_vlan)
     log.debug(f"Pre-configuration commands: {pre_config_commands}")
 
-    with console.status("Getting switch details...") as status:
+    with console.status("[green]Getting switch details...") as status:
         switch = Switch(args.switch)
 
         status.update("Connecting to switch...")
@@ -329,6 +329,8 @@ def main():
             status.update("Saving configuration...")
             output += connection.save_config()
         status.update("Configuration complete, disconnecting...")
+
+    console.print(Panel(output, title="Configuration Output"), )
 
     if args.copy or args.style:
         if args.style:
