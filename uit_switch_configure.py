@@ -183,6 +183,13 @@ def main_v5():
     rprint(r)
 
 
+def main():
+    """
+    #TODO: Add docstring
+    """
+    ...
+
+
 if __name__ == "__main__":
     try:
         main_v5()
