@@ -62,33 +62,33 @@ colors = {
     "down": "#ea3323"
 }
 output_highlighting = [
-    [r"%\w+-0-\w+(?=:)", colors["emergency"]],
-    [r"%\w+-1-\w+(?=:)", colors["alert"]],
-    [r"%\w+-2-\w+(?=:)", colors["critical"]],
-    [r"%\w+-3-\w+(?=:)", colors["error"]],
-    [r"%\w+-4-\w+(?=:)", colors["warning"]],
-    [r"%\w+-5-\w+(?=:)", colors["notice"]],
-    [r"%\w+-6-\w+(?=:)", colors["informational"]],
-    [r"%\w+-7-\w+(?=:)", colors["debug"]],
-    [r"\b(Gi|GigabitEthernet)\d+\/([01]\/)?\d{1,2}\b", "#5ab8d4"],
-    [r"\b(Tw|TwoGigabitEthernet)\d+\/([01]\/)?\d{1,2}\b", "#56e2db"],
-    [r"\b(Te|TenGigabitEthernet)\d+\/([01]\/)?\d{1,2}\b", "#4b40e0"],
-    [r"\b(Fo|FortyGigabitEthernet)\d+\/([01]\/)?\d{1,2}\b", "#ff8ad8"],
-    [r"\b(Ap|AppGigabitEthernet)\d+\/([01]\/)?\d{1,2}\b", "#ff569e"],
-    [r"\b(Twe|TwentyFiveGigE)\d+\/([01]\/)?\d{1,2}\b", "#942193"],
-    [r"\b(Hu|HundredGigE)\d+\/([01]\/)?\d{1,2}\b", "#d783ff"],
-    [r"\b(Fa|FastEthernet)\d+\b", "#006699"],
-    [r"\b(Po|Port-channel)\d{1,3}\b", "#af39ee"],
-    [r"\b(Vl|Vlan|VLAN|vlan )\d+\b", "#009966"],
-    [r"(?!reliability 255\/255)(reliability \d{1,3}\/255)", colors["alert"]],
-    [r"(?![tr]xload 1\/255)([tr]xload \d{1,3}\/255)", colors["alert"]],
-    [r"(?!0 (in|out)put errors)(\d+ (in|out)put errors)", colors["error"]],
-    [r"(?!0 CRC)(\d+ CRC)", colors["error"]],
-    [r"(?!0 collisions)(\d+ collisions)", colors["warning"]],
-    [r"(?!Total output drops: 0)(Total output drops: \d+)", colors["warning"]],
-    [r"(\d+ interface resets)", colors["notice"]],
-    [r"(\d+ packets (in|out)put, \d+ bytes)", colors["informational"]],
-    [r"(?!0 unknown protocol drops)(\d+ unknown protocol drops)", colors["notice"]],
+    [r"%\w+-0-\w+(?=:)", colors["emergency"], "Emergency"],
+    [r"%\w+-1-\w+(?=:)", colors["alert"], "Alert"],
+    [r"%\w+-2-\w+(?=:)", colors["critical"], "Critical"],
+    [r"%\w+-3-\w+(?=:)", colors["error"], "Error"],
+    [r"%\w+-4-\w+(?=:)", colors["warning"], "Warning"],
+    [r"%\w+-5-\w+(?=:)", colors["notice"], "Notice"],
+    [r"%\w+-6-\w+(?=:)", colors["informational"], "Informational"],
+    [r"%\w+-7-\w+(?=:)", colors["debug"], "Debug"],
+    [r"\b(Gi|GigabitEthernet)\d+\/([01]\/)?\d{1,2}\b", "#5ab8d4", "GigabitEthernet"],
+    [r"\b(Tw|TwoGigabitEthernet)\d+\/([01]\/)?\d{1,2}\b", "#56e2db", "TwoGigabitEthernet"],
+    [r"\b(Te|TenGigabitEthernet)\d+\/([01]\/)?\d{1,2}\b", "#4b40e0", "TenGigabitEthernet"],
+    [r"\b(Fo|FortyGigabitEthernet)\d+\/([01]\/)?\d{1,2}\b", "#ff8ad8", "FortyGigabitEthernet"],
+    [r"\b(Ap|AppGigabitEthernet)\d+\/([01]\/)?\d{1,2}\b", "#ff569e", "AppGigabitEthernet"],
+    [r"\b(Twe|TwentyFiveGigE)\d+\/([01]\/)?\d{1,2}\b", "#942193", "TwentyFiveGigE"],
+    [r"\b(Hu|HundredGigE)\d+\/([01]\/)?\d{1,2}\b", "#d783ff", "HundredGigE"],
+    [r"\b(Fa|FastEthernet)\d+\b", "#006699", "FastEthernet"],
+    [r"\b(Po|Port-channel)\d{1,3}\b", "#af39ee", "Port-channel"],
+    [r"\b(Vl|Vlan|VLAN|vlan )\d+\b", "#009966", "Vlan"],
+    [r"(?!reliability 255\/255)(reliability \d{1,3}\/255)", colors["alert"], "Reliability"],
+    [r"(?![tr]xload 1\/255)([tr]xload \d{1,3}\/255)", colors["alert"], "Load"],
+    [r"(?!0 (in|out)put errors)(\d+ (in|out)put errors)", colors["error"], "Input/Output Errors"],
+    [r"(?!0 CRC)(\d+ CRC)", colors["error"], "CRC"],
+    [r"(?!0 collisions)(\d+ collisions)", colors["warning"], "Collisions"],
+    [r"(?!Total output drops: 0)(Total output drops: \d+)", colors["warning"], "Output Drops"],
+    [r"(\d+ interface resets)", colors["notice"], "Interface Resets"],
+    [r"(\d+ packets (in|out)put, \d+ bytes)", colors["informational"], "Packets"],
+    [r"(?!0 unknown protocol drops)(\d+ unknown protocol drops)", colors["notice"], "Unknown Protocol Drops"],
     # [r"((?<=is\s)down|notconnect(?=\s{3})|(?<=\()notconnect(?=\)))", colors["down"]],     # re.error: look-behind requires fixed-width pattern
     # [r"((?<=is\s)up|connected(?=\s{4})|(?<=\()connected(?=\)))", colors["up"]],           # re.error: look-behind requires fixed-width pattern
     # [r"((?<=is|to\s)up|connected(?=\s{4})|(?<=\()connected(?=\)))", colors["up"]],        # re.error: look-behind requires fixed-width pattern
@@ -578,8 +578,8 @@ def teams_html_gen(messages_text: str) -> str:
 
 
 def syntax_highlighting(text: str) -> str:
-    for filter, color in output_highlighting:
-        text = re.sub(filter, f"<span style=\"color:{color};\">\\g<0></span>", text, 0, re.MULTILINE)
+    for filter, color, name in output_highlighting:
+        text = re.sub(filter, f"<span name=\"{name}\"style=\"color:{color};\">\\g<0></span>", text, 0, re.MULTILINE)
     return text
 
 
