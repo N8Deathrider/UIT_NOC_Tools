@@ -102,10 +102,10 @@ def get_args() -> argparse.Namespace:
         type=int,
     )
     parser.add_argument(
-        "interface",
+        "interfaces",
         help="The interface(s) to configure",
         type=str,
-        dest="interfaces",
+        metavar="interface",
         nargs="+",
     )
 
@@ -116,8 +116,20 @@ def config_cmds_gen(
     interface_id: str,
     access_vlan: str | int,
     voice_vlan: str | int | None = None,
-    description: str | None = None,
-) -> list[str]:
+                    description: str | None = None) -> list[str]:
+    """
+    Generate a list of configuration commands for a given interface.
+
+    Args:
+        interface_id (str): The ID of the interface.
+        access_vlan (str | int): The VLAN ID for access.
+        voice_vlan (str | int | None, optional): The VLAN ID for voice traffic. Defaults to None.
+        description (str | None, optional): The description for the interface. Defaults to None.
+
+    Returns:
+        list[str]: A list of configuration commands.
+
+    """
     cmds = [
         f"#  Configuration {interface_id} Start  #",
         f"do show interface {interface_id} status",
