@@ -53,7 +53,13 @@ def get_args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: Parsed command line arguments.
     """
-    parser = argparse.ArgumentParser(description="Configure switch interfaces")
+    parser = argparse.ArgumentParser(description="Configure switch interface(s)")
+    parser.add_argument(
+        "--debug",
+        help=argparse.SUPPRESS,
+        action="store_true",
+    )
+
     parser.add_argument(
         "--voice-vlan",
         "-vv",
