@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-#TODO: Add description
+This script is designed to configure a switch port on a Cisco switch
+to a specified VLAN. It will also configure the port for voice VLAN
+if requested. It will also configure the port with a description if
+requested.
 """
 
 # Standard libraries
