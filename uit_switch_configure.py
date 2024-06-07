@@ -48,9 +48,61 @@ logging.getLogger("paramiko").setLevel(logging.WARNING)  # Set paramiko to only 
 
 def get_args() -> argparse.Namespace:
     """
-    #TODO: Add docstring
+    Parse command line arguments for configuring switch interfaces.
+
+    Returns:
+        argparse.Namespace: Parsed command line arguments.
     """
-    ...
+    parser = argparse.ArgumentParser(description="Configure switch interfaces")
+    parser.add_argument(
+        "--voice-vlan",
+        "-vv",
+        dest="voice_vlan",
+        help="Voice VLAN number",
+        type=int,
+    )
+    parser.add_argument(
+        "--description",
+        "-d",
+        dest="description",
+        help="Description for the interface",
+        type=str,
+    )
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--copy",
+        "-c",
+        dest="copy",
+        help="Copy the output to the clipboard",
+        action="store_true",
+    )
+    group.add_argument(
+        "--style",
+        "-s",
+        dest="style",
+        help="Style the switch output and then copy it to the clipboard",
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "switch",
+        help="The switch to connect to",
+        type=str,
+    )
+    parser.add_argument(
+        "access_vlan",
+        help="The access VLAN number",
+        type=int,
+    )
+    parser.add_argument(
+        "interface",
+        help="The interface(s) to configure",
+        type=str,
+        nargs="+",
+    )
+
+    return parser.parse_args()
 
 
 def config_cmds_gen(
@@ -195,7 +247,7 @@ def main():
     """
     #TODO: Add docstring
     """
-    ...
+    ARGS = get_args()
 
 
 if __name__ == "__main__":
