@@ -328,6 +328,14 @@ def main():
 
             status.update("Saving configuration...")
             output += connection.save_config()
+        status.update("Configuration complete, disconnecting...")
+
+    if args.copy or args.style:
+        if args.style:
+            ...  # TODO: Add styling to the output from the uit_style module
+
+        pc.copy(output)
+        console.print("Output copied to clipboard")
 
 
 
