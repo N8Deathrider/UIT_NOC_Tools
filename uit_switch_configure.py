@@ -18,12 +18,12 @@ from rich.prompt import Prompt
 from rich.prompt import IntPrompt
 from rich.prompt import Confirm
 from rich.rule import Rule
+from rich.console import Console
 from rich import print as rprint
 from rich.logging import RichHandler
 import pyperclip as pc
 
 # Local libraries
-from auth import SSH
 from SwitchInfo import Switch
 from SwitchInfo.Switch import gen_connection_dictionary
 
@@ -288,9 +288,10 @@ def main():
     """
     #TODO: Add docstring
     """
-    ARGS = get_args()
+    args = get_args()
+    console = Console()
 
-    if ARGS.debug:  # Set log level to debug if debug is set
+    if args.debug:  # Set log level to debug if debug is set
         log.setLevel(logging.DEBUG)
 
     log.debug(f"Arguments: {ARGS}")  # Log the arguments
