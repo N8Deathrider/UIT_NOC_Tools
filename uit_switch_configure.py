@@ -157,6 +157,29 @@ def config_cmds_gen(interface_id: str,
     return cmds
 
 
+def pre_config_commands_gen(access_vlan: str | int, voice_vlan: str | int | None = None) -> list[str]:
+    """
+    Generate a list of pre-configuration commands.
+
+    Args:
+        access_vlan (str | int): The access VLAN number.
+        voice_vlan (str | int | None, optional): The voice VLAN number. Defaults to None.
+
+    Returns:
+        list[str]: A list of pre-configuration commands.
+    """
+    cmds = [
+        "show clock",
+        "show users",
+        f"show vlan brief | include {access_vlan}",
+    ]
+
+    if voice_vlan:
+        cmds[2] = f"show vlan brief | include ({access_vlan}|{voice_vlan})_"
+
+    return cmds
+
+
 def main_v5():
     """
     This improves on V4 by allowing a comma separated list of
