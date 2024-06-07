@@ -105,6 +105,7 @@ def get_args() -> argparse.Namespace:
         "interface",
         help="The interface(s) to configure",
         type=str,
+        dest="interfaces",
         nargs="+",
     )
 
@@ -254,6 +255,11 @@ def main():
     #TODO: Add docstring
     """
     ARGS = get_args()
+
+    if ARGS.debug:  # Set log level to debug if debug is set
+        log.setLevel(logging.DEBUG)
+
+    log.debug(f"Arguments: {ARGS}")  # Log the arguments
 
 
 if __name__ == "__main__":
