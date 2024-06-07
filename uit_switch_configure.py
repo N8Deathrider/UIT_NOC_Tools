@@ -294,7 +294,12 @@ def main():
     if args.debug:  # Set log level to debug if debug is set
         log.setLevel(logging.DEBUG)
 
-    log.debug(f"Arguments: {ARGS}")  # Log the arguments
+    log.debug(f"Arguments: {args}")  # Log the arguments
+
+    pre_config_commands = pre_config_commands_gen(args.access_vlan, args.voice_vlan)
+    log.debug(f"Pre-configuration commands: {pre_config_commands}")
+
+
 
 
 if __name__ == "__main__":
