@@ -112,10 +112,9 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def config_cmds_gen(
-    interface_id: str,
-    access_vlan: str | int,
-    voice_vlan: str | int | None = None,
+def config_cmds_gen(interface_id: str, 
+                    access_vlan: str | int, 
+                    voice_vlan: str | int | None = None, 
                     description: str | None = None) -> list[str]:
     """
     Generate a list of configuration commands for a given interface.
