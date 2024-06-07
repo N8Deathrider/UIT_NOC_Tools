@@ -299,6 +299,35 @@ def main():
     pre_config_commands = pre_config_commands_gen(args.access_vlan, args.voice_vlan)
     log.debug(f"Pre-configuration commands: {pre_config_commands}")
 
+    connection_dictionary = gen_connection_dictionary(args.switch, USERNAME, PASSWORD)
+
+    with console.status("Connecting to switch...") as status:
+        with ConnectHandler(**connection_dictionary) as connection:
+            # TODO: Need to add validation for the access vlan, voice vlan, and interface ids to ensure they are valid and raise an error if they are not
+            # Probably should go right here before we start configuring the switch with something like:
+            # status.update("Validating arguments..")
+            output = connection.find_prompt()
+            for command in pre_config_commands:
+                output += connection.send_command(
+                    command_string=command, strip_prompt=False, strip_command=False
+                )
+
+            for interface_id in args.interfaces:
+                status.update(f"Configuring interface {interface_id}...")
+                output += connection.send_config_set(
+                    config_commands=config_cmds_gen(
+                        interface_id=interface_id,
+                        access_vlan=args.access_vlan,
+                        voice_vlan=args.voice_vlan,
+                        description=args.description,
+                    ),
+                    cmd_verify=True,
+                    strip_prompt=False,
+                    strip_command=False,
+                )
+
+            status.update("Saving configuration...")
+            output += connection.save_config()
 
 
 
