@@ -196,7 +196,15 @@ def pre_config_commands_gen(access_vlan: str | int, voice_vlan: str | int | None
 
 def main():
     """
-    #TODO: Add docstring
+    Main function for configuring a switch.
+
+    This function takes command line arguments, connects to a switch, and performs the configuration based on the provided arguments.
+
+    Args:
+        None
+
+    Returns:
+        None
     """
     args = get_args()
     console = Console()
