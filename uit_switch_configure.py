@@ -22,7 +22,7 @@ import pyperclip as pc
 from SwitchInfo import Switch
 
 # Local libraries
-
+from uit_style import style_switch_output
 
 # Standard exit codes
 EXIT_SUCCESS = 0  # No errors
@@ -246,7 +246,7 @@ def main():
 
     if args.copy or args.style:
         if args.style:
-            ...  # TODO: Add styling to the output from the uit_style module
+            output = f"[code]{style_switch_output(output)}[/code]"
 
         pc.copy(output)
         console.print("Styled output copied to clipboard." if args.style else "Output copied to clipboard.")
