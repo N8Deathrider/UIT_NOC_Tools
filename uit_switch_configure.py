@@ -9,6 +9,7 @@ requested.
 
 # Standard libraries
 import logging
+import argparse
 from sys import exit
 
 # Third-party libraries
@@ -43,6 +44,13 @@ logging.basicConfig(
 )
 log: logging.Logger = logging.getLogger("rich")
 logging.getLogger("paramiko").setLevel(logging.WARNING)  # Set paramiko to only log warnings
+
+
+def get_args() -> argparse.Namespace:
+    """
+    #TODO: Add docstring
+    """
+    ...
 
 
 def config_cmds_gen(
