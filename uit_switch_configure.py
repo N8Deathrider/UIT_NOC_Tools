@@ -228,13 +228,14 @@ def main():
 
             for interface_id in args.interfaces:
                 status.update(f"Configuring interface {interface_id}...")
+                config_commands = config_cmds_gen(
+                    interface_id=interface_id,
+                    access_vlan=args.access_vlan,
+                    voice_vlan=args.voice_vlan,
+                    description=args.description,
+                )
                 output += connection.send_config_set(
-                    config_commands=config_cmds_gen(
-                        interface_id=interface_id,
-                        access_vlan=args.access_vlan,
-                        voice_vlan=args.voice_vlan,
-                        description=args.description,
-                    ),
+                    config_commands=config_commands,
                     cmd_verify=True,
                     strip_prompt=False,
                     strip_command=False,
