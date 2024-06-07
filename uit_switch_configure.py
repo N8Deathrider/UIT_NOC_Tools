@@ -298,7 +298,17 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main_v5()
+        # Checking for authentication credentials
+        try:
+            from auth import SSH
+            USERNAME = SSH.username
+            PASSWORD = SSH.password
+        except ImportError:
+            log.warning("No stored authentication credentials found.")
+            USERNAME = Prompt.ask("Username")
+            PASSWORD = Prompt.ask("SSH Password", password=True)
+
+        main()
     except KeyboardInterrupt:
         log.info("\nCtrl + c pressed. Exiting script...")
         exit(EXIT_KEYBOARD_INTERRUPT)
