@@ -25,7 +25,6 @@ import pyperclip as pc
 
 # Local libraries
 from SwitchInfo import Switch
-from SwitchInfo.Switch import gen_connection_dictionary
 
 
 # Standard exit codes
@@ -299,10 +298,11 @@ def main():
     pre_config_commands = pre_config_commands_gen(args.access_vlan, args.voice_vlan)
     log.debug(f"Pre-configuration commands: {pre_config_commands}")
 
-    connection_dictionary = gen_connection_dictionary(args.switch, USERNAME, PASSWORD)
+    with console.status("Getting switch details...") as status:
+        switch = Switch(args.switch)
 
-    with console.status("Connecting to switch...") as status:
-        with ConnectHandler(**connection_dictionary) as connection:
+        status.update("Connecting to switch...")
+        with ConnectHandler(**switch.connection_dictionary(USERNAME, PASSWORD)) as connection:
             # TODO: Need to add validation for the access vlan, voice vlan, and interface ids to ensure they are valid and raise an error if they are not
             # Probably should go right here before we start configuring the switch with something like:
             # status.update("Validating arguments..")
