@@ -251,7 +251,7 @@ def main():
             ...  # TODO: Add styling to the output from the uit_style module
 
         pc.copy(output)
-        console.print("Output copied to clipboard")
+        console.print("Styled output copied to clipboard." if args.style else "Output copied to clipboard.")
 
 
 if __name__ == "__main__":
