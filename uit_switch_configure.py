@@ -15,16 +15,13 @@ from sys import exit
 # Third-party libraries
 from netmiko import ConnectHandler
 from rich.prompt import Prompt
-from rich.prompt import IntPrompt
-from rich.prompt import Confirm
 from rich.panel import Panel
 from rich.console import Console
-from rich import print as rprint
 from rich.logging import RichHandler
 import pyperclip as pc
+from SwitchInfo import Switch
 
 # Local libraries
-from SwitchInfo import Switch
 
 
 # Standard exit codes
