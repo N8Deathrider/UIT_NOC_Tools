@@ -220,7 +220,7 @@ def main_v5():
 
     print("Now attempting to configure the requested interface(s)")
     with ConnectHandler(
-        **switch.connection_dictionary(SSH.username, SSH.password)
+        **switch.connection_dictionary(USERNAME, PASSWORD)
     ) as connection:
         output += connection.find_prompt()
         for command in pre_config_commands:
