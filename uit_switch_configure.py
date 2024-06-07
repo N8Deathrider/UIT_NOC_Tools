@@ -245,7 +245,7 @@ def main():
             output += connection.save_config()
         status.update("Configuration complete, disconnecting...")
 
-    console.print(Panel(output, title="Configuration Output"), )
+    console.print(Panel(output, title="Configuration Output", border_style="red"), )
 
     if args.copy or args.style:
         if args.style:
