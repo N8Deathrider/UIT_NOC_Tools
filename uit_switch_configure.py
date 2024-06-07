@@ -197,110 +197,6 @@ def pre_config_commands_gen(access_vlan: str | int, voice_vlan: str | int | None
     return cmds
 
 
-def main_v5():
-    """
-    This improves on V4 by allowing a comma separated list of
-    interfaces that will all be configured the same
-    """
-    r = Rule(style="red")
-    output: str = ""
-
-    switch = Switch(Prompt.ask("What switch?"))  # Get the switch
-
-    description: bool = Confirm.ask("Description?")  # Get if there is a description
-    if description:  # Set up description var if there is a description
-        desired_description = Prompt.ask("\033[1F\033[0KDescription")
-
-    voice_vlan: bool = Confirm.ask("Voice VLAN?")  # Get if there is a voice vlan
-    if voice_vlan:  # Set up voice vlan vars if there is a voice vlan
-        desired_voice_vlan_number = IntPrompt.ask("\033[1F\033[0KVoice VLAN Number")
-
-    access_vlan_number = IntPrompt.ask(
-        "Access VLAN Number"
-    )  # Get the access vlan number
-    interface_ids = Prompt.ask("Port(s)").split(",")  # Get the interface id
-
-    # TODO: add description to the top of the commands listing all ports to be configured and to what vlan(s)
-    pre_config_commands = (
-        [
-            "show clock",
-            "show users",
-            f"show vlan brief | include ({access_vlan_number}|{desired_voice_vlan_number})_",
-        ]
-        if voice_vlan
-        else [
-            "show clock",
-            "show users",
-            f"show vlan brief | include {access_vlan_number}",
-        ]
-    )
-
-    print("Now attempting to configure the requested interface(s)")
-    with ConnectHandler(
-        **switch.connection_dictionary(USERNAME, PASSWORD)
-    ) as connection:
-        output += connection.find_prompt()
-        for command in pre_config_commands:
-            output += connection.send_command(
-                command_string=command, strip_prompt=False, strip_command=False
-            )
-
-        if voice_vlan and description:
-            for interface_id in interface_ids:
-                output += connection.send_config_set(
-                    config_commands=config_cmds_gen(
-                        interface_id=interface_id,
-                        access_vlan=access_vlan_number,
-                        voice_vlan=desired_voice_vlan_number,
-                        description=desired_description,
-                    ),
-                    cmd_verify=True,
-                    strip_prompt=False,
-                    strip_command=False,
-                )
-        elif voice_vlan:
-            for interface_id in interface_ids:
-                output += connection.send_config_set(
-                    config_commands=config_cmds_gen(
-                        interface_id=interface_id,
-                        access_vlan=access_vlan_number,
-                        voice_vlan=desired_voice_vlan_number,
-                    ),
-                    cmd_verify=True,
-                    strip_prompt=False,
-                    strip_command=False,
-                )
-        elif description:
-            for interface_id in interface_ids:
-                output += connection.send_config_set(
-                    config_commands=config_cmds_gen(
-                        interface_id=interface_id,
-                        access_vlan=access_vlan_number,
-                        description=desired_description,
-                    ),
-                    cmd_verify=True,
-                    strip_prompt=False,
-                    strip_command=False,
-                )
-        else:
-            for interface_id in interface_ids:
-                output += connection.send_config_set(
-                    config_commands=config_cmds_gen(
-                        interface_id=interface_id, access_vlan=access_vlan_number
-                    ),
-                    cmd_verify=True,
-                    strip_prompt=False,
-                    strip_command=False,
-                )
-
-        output += connection.save_config()
-
-    print("Here is the output of the config")
-    rprint(r)
-    print(output)
-    rprint(r)
-
-
 def main():
     """
     #TODO: Add docstring
@@ -356,7 +252,6 @@ def main():
 
         pc.copy(output)
         console.print("Output copied to clipboard")
-
 
 
 if __name__ == "__main__":
