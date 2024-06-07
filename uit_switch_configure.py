@@ -42,6 +42,7 @@ logging.basicConfig(
     handlers=[RichHandler()]
 )
 log: logging.Logger = logging.getLogger("rich")
+logging.getLogger("paramiko").setLevel(logging.WARNING)  # Set paramiko to only log warnings
 
 
 def config_cmds_gen(
