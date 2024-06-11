@@ -242,7 +242,8 @@ def main():
         None
     """
     args = get_args()
-    console = Console()
+    SyntaxHighlighter, theme = style_gen()
+    console = Console(highlighter=SyntaxHighlighter(), theme=theme)
 
     if args.debug:  # Set log level to debug if debug is set
         log.setLevel(logging.DEBUG)
