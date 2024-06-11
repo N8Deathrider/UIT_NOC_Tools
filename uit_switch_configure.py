@@ -14,6 +14,7 @@ from sys import exit
 
 # Third-party libraries
 from netmiko import ConnectHandler
+from netmiko import BaseConnection
 from rich.prompt import Prompt
 from rich.panel import Panel
 from rich.console import Console
@@ -239,13 +240,13 @@ def pre_config_commands_gen(access_vlan: str | int, voice_vlan: str | int | None
     return cmds
 
 
-def validate_vlans(connection, vlan_id) -> bool:
+def validate_vlans(connection: BaseConnection, vlan_id: int) -> bool:
     """
     Validate the provided VLAN ID.
 
     Args:
-        connection (netmiko.ConnectHandler): The connection to the switch.
-        vlan_id (str | int): The VLAN ID to validate.
+        connection (BaseConnection): The connection to the switch.
+        vlan_id (int): The VLAN ID to validate.
 
     Returns:
         bool: True if the VLAN ID is valid, False otherwise.
