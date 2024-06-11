@@ -263,8 +263,8 @@ def style_slow_connection() -> str:
     message: str = "Hello, to troubleshoot a slow connection, we will need a few things.\n\n"
     required_info: list = [
         "The MAC address and IP address of a device experiencing the issue. How to find your MAC address: https://uofu.service-now.com/it?id=uu_kb_article&sys_id=bcc37bb2131f53843c69d7028144b077",
-        "The website you're trying to visit that is slow.",
-        "How you are connected to the University of Utah network. (wired, wireless, VPN, etc.)",
+        "The website / destination you're trying to visit that is slow or not working.",
+        "How the device is connected to the University of Utah network. (wired, wireless, VPN, etc.)",
         "How long this issue has been going on.",
         "The results of visiting https://speedtest.uen.net and running a speed test.",
         "What kind of device is experiencing this issue.",
