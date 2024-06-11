@@ -258,6 +258,21 @@ def validate_vlans(connection: BaseConnection, vlan_id: int) -> bool:
     return False
 
 
+def validate_interface(connection: BaseConnection, interface_id: str) -> bool:
+    """
+    Validate the provided interface ID.
+
+    Args:
+        connection (BaseConnection): The connection to the switch.
+        interface_id (str): The interface ID to validate.
+
+    Returns:
+        bool: True if the interface ID is valid, False otherwise.
+    """
+    response = connection.send_command(f"show interface {interface_id} status")
+    return "% Invalid input detected at '^' marker." not in response
+
+
 def main():
     """
     Main function for configuring a switch.
@@ -294,6 +309,11 @@ def main():
                 status.update("Validating Voice VLAN...")
                 if not validate_vlans(connection, args.voice_vlan):
                     raise ValueError(f"Voice VLAN {args.voice_vlan} is not valid.")
+            for interface_id in args.interfaces:
+                status.update(f"Validating interface {interface_id} exists...")
+                if not validate_interface(connection, interface_id):
+                    raise ValueError(f"Interface {interface_id} is not valid.")
+            status.update("Validations complete...")
             output = connection.find_prompt()
             for command in pre_config_commands:
                 output += connection.send_command(
