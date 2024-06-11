@@ -304,16 +304,19 @@ def main():
         with ConnectHandler(**switch.connection_dictionary(USERNAME, PASSWORD)) as connection:
             status.update("Validating Access VLAN...")
             if not validate_vlans(connection, args.access_vlan):
+                status.stop()
                 log.error(f"Access VLAN {args.access_vlan} is not valid.")
                 exit(EXIT_INVALID_ARGUMENT)  # TODO: look into possibly instead configuring the VLAN if trunked
             if args.voice_vlan:
                 status.update("Validating Voice VLAN...")
                 if not validate_vlans(connection, args.voice_vlan):
+                    status.stop()
                     log.error(f"Voice VLAN {args.voice_vlan} is not valid.")
                     exit(EXIT_INVALID_ARGUMENT)  # TODO: look into possibly instead configuring the VLAN if trunked
             for interface_id in args.interfaces:
                 status.update(f"Validating interface {interface_id} exists...")
                 if not validate_interface(connection, interface_id):
+                    status.stop()
                     log.error(f"Interface {interface_id} is not valid.")
                     exit(EXIT_INVALID_ARGUMENT)
             status.update("Validations complete...")
