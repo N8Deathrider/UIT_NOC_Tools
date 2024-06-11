@@ -95,6 +95,13 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "-q",
+        "--quiet",
+        help="Suppress printing switch output",
+        action="store_true",
+    )
+
+    parser.add_argument(
         "--voice-vlan",
         "-vv",
         dest="voice_vlan",
