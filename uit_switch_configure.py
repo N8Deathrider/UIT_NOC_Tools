@@ -232,6 +232,24 @@ def pre_config_commands_gen(access_vlan: str | int, voice_vlan: str | int | None
     return cmds
 
 
+def validate_vlans(connection, vlan_id) -> bool:
+    """
+    Validate the provided VLAN ID.
+
+    Args:
+        connection (netmiko.ConnectHandler): The connection to the switch.
+        vlan_id (str | int): The VLAN ID to validate.
+
+    Returns:
+        bool: True if the VLAN ID is valid, False otherwise.
+    """
+    vlans = connection.send_command("show vlan", use_textfsm=True)
+    for vlan in vlans:
+        if vlan["vlan_id"] == str(vlan_id):
+            return True
+    return False
+
+
 def main():
     """
     Main function for configuring a switch.
@@ -263,7 +281,12 @@ def main():
         with ConnectHandler(**switch.connection_dictionary(USERNAME, PASSWORD)) as connection:
             # TODO: Need to add validation for the access vlan, voice vlan, and interface ids to ensure they are valid and raise an error if they are not
             # Probably should go right here before we start configuring the switch with something like:
-            # status.update("Validating arguments..")
+            status.update("Validating arguments..")
+            if not validate_vlans(connection, args.access_vlan):
+                raise ValueError(f"Access VLAN {args.access_vlan} is not valid.")
+            if args.voice_vlan:
+                if not validate_vlans(connection, args.voice_vlan):
+                    raise ValueError(f"Voice VLAN {args.voice_vlan} is not valid.")
             output = connection.find_prompt()
             for command in pre_config_commands:
                 output += connection.send_command(
