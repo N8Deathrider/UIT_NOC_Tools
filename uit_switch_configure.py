@@ -286,12 +286,11 @@ def main():
 
         status.update("Connecting to switch...")
         with ConnectHandler(**switch.connection_dictionary(USERNAME, PASSWORD)) as connection:
-            # TODO: Need to add validation for the access vlan, voice vlan, and interface ids to ensure they are valid and raise an error if they are not
-            # Probably should go right here before we start configuring the switch with something like:
-            status.update("Validating arguments..")
+            status.update("Validating Access VLAN...")
             if not validate_vlans(connection, args.access_vlan):
                 raise ValueError(f"Access VLAN {args.access_vlan} is not valid.")
             if args.voice_vlan:
+                status.update("Validating Voice VLAN...")
                 if not validate_vlans(connection, args.voice_vlan):
                     raise ValueError(f"Voice VLAN {args.voice_vlan} is not valid.")
             output = connection.find_prompt()
