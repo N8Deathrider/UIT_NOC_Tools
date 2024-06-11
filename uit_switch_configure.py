@@ -18,11 +18,14 @@ from rich.prompt import Prompt
 from rich.panel import Panel
 from rich.console import Console
 from rich.logging import RichHandler
+from rich.highlighter import RegexHighlighter
+from rich.theme import Theme
 import pyperclip as pc
 from SwitchInfo import Switch
 
 # Local libraries
 from uit_style import style_switch_output
+from uit_style import output_highlighting
 
 # Standard exit codes
 EXIT_SUCCESS = 0  # No errors
