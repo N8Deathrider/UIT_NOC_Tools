@@ -56,7 +56,7 @@ except ImportError:
     uNID = input("Enter your uNID: ")
     ORION_PASSWORD = getpass("Enter your CIS password: ")
     WIAN_PASSWORD = getpass("Enter your WIAN password: ")
-    ORION_USERNAME = f"ad\{uNID}"
+    ORION_USERNAME = f"ad\\{uNID}"
     class SSH:
         username = uNID
         password = WIAN_PASSWORD
