@@ -24,6 +24,7 @@ from rich.table import Table
 from rich import print as rprint
 from uit_duo import Duo
 from netmiko import ConnectHandler, SSHDetect, BaseConnection
+from netmiko import NetmikoAuthenticationException
 import orionsdk
 
 # Local libraries
@@ -457,7 +458,11 @@ def main() -> None:
         "username": SSH.username,
         "password": SSH.password
     }
-    guesser = SSHDetect(**device_dict)
+    try:
+        guesser = SSHDetect(**device_dict)
+    except NetmikoAuthenticationException:
+        log.error("Authentication error. Please check the username and password.")
+        exit(EXIT_GENERAL_ERROR)
     best_match = guesser.autodetect()
     device_dict["device_type"] = best_match
     # log.debug(f"Device Dict: {device_dict}")  # Disabled for now because it shows the password #TODO: need to fix this
