@@ -99,34 +99,7 @@ def table_gen(switches: list) -> Table:
     return table
 
 
-def main2() -> None:
-    """
-    This is the main function that performs the main logic of the program.
-
-    It retrieves command line arguments, sets up the message template, and iterates over the specified switches to calculate and display their uptime.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-    ARGS = get_args()
-    MESSAGE = "[cyan]The switch [purple]\[[green]{switch}[purple]][cyan] has been up for [purple]\[[green]{standard_date}[purple]][cyan] days; it was restarted was [purple]\[[green]{nice_date}[purple]][cyan] reason is [purple]\[[green]{reason}[purple]][cyan]"
-
-    if ARGS.debug:
-        log.setLevel(logging.DEBUG)
-
-    log.debug(f"Arguments: {ARGS}")
-
-    for current_switch in ARGS.switch:
-        switch: Switch = Switch(current_switch)
-        uptime = switch.uptime
-        log.debug(f"Uptime: {uptime}")
-        rprint(MESSAGE.format(switch=current_switch, standard_date=uptime[0], nice_date=uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A"), reason=uptime[2]))
-
-
-def main3() -> None:
+def main() -> None:
     """
     This is the main function that performs the main logic of the program.
 
@@ -150,7 +123,7 @@ def main3() -> None:
 
 if __name__ == "__main__":
     try:
-        main3()
+        main()
         exit(EXIT_SUCCESS)
     except KeyboardInterrupt:
         log.info("\nCtrl + c pressed. Exiting script...")
