@@ -121,6 +121,7 @@ def main() -> None:
     table = table_gen(ARGS.switch)
     rprint(table)
 
+
 if __name__ == "__main__":
     try:
         main()
