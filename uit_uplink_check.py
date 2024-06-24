@@ -106,7 +106,10 @@ def get_mac(connection: netmiko.BaseConnection) -> tuple[str, str]:
     )
     log.debug(f"Mac info: {mac_info}")
 
-    mac = mac_info[0].get("mac")
+    mac = mac_info[0].get("mac_address")
+    if mac is None:
+        log.error("MAC address not found. Exiting script...")
+        exit(EXIT_GENERAL_ERROR)
     log.debug(f"Got mac address: {mac = }")
 
     vlan_id = mac_info[0].get("interface").removeprefix("Vlan")
