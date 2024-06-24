@@ -233,6 +233,9 @@ def main():
     # It is used here to display a status message while the data is being gathered and make the script look more professional
     with console.status("[bold green]Gathering data...") as status:
 
+        if ARGS.debug:
+            status.stop()
+
         for target in targets:
             log.debug(f"New target: {target = }")
             status.update(f"[bold green]Gathering data for {target.get('fqdn') or target.get('switch')}...")
