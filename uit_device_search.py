@@ -15,7 +15,6 @@ the required search arguments when calling the 'start_search' function.
 """
 
 # Standard libraries
-import json
 import logging
 from sys import exit
 from time import sleep
