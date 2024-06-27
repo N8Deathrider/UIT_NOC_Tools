@@ -122,14 +122,14 @@ def get_args() -> argparse.Namespace:
         "--copy",
         "-c",
         dest="copy",
-        help="Copy the output to the clipboard",
+        help="Copy the output to the clipboard without styling",
         action="store_true",
     )
     group.add_argument(
-        "--style",
-        "-s",
-        dest="style",
-        help="Style the switch output and then copy it to the clipboard",
+        "--no-copy",
+        "-nc",
+        dest="no_copy",
+        help="Do not copy the switch output to the clipboard",
         action="store_true",
     )
 
@@ -348,12 +348,14 @@ def main():
     if not args.quiet:
         console.print(Panel(output, title="Switch Configuration Output", border_style="red", highlight=True))
 
-    if args.copy or args.style:
-        if args.style:
+        if args.no_copy:
+            return
+
+        if not args.copy:
             output = f"[code]{style_switch_output(output)}[/code]"
 
         pc.copy(output)
-        console.print("Styled output copied to clipboard." if args.style else "Output copied to clipboard.")
+        console.print("Output copied to clipboard." if args.copy else "Styled output copied to clipboard.")
 
 
 if __name__ == "__main__":
