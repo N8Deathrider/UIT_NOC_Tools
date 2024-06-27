@@ -89,6 +89,8 @@ output_highlighting = [
     [r"(\d+ interface resets)", colors["notice"], "Interface Resets"],
     [r"(\d+ packets (in|out)put, \d+ bytes)", colors["informational"], "Packets"],
     [r"(?!0 unknown protocol drops)(\d+ unknown protocol drops)", colors["notice"], "Unknown Protocol Drops"],
+    [r"(\(connected\)|\s{2}connected)", colors["up"], "Connected"],
+    [r"(\(notconnect\)|\s{2}notconnect)", colors["down"], "Not Connected"],
     # [r"((?<=is\s)down|notconnect(?=\s{3})|(?<=\()notconnect(?=\)))", colors["down"]],     # re.error: look-behind requires fixed-width pattern
     # [r"((?<=is\s)up|connected(?=\s{4})|(?<=\()connected(?=\)))", colors["up"]],           # re.error: look-behind requires fixed-width pattern
     # [r"((?<=is|to\s)up|connected(?=\s{4})|(?<=\()connected(?=\)))", colors["up"]],        # re.error: look-behind requires fixed-width pattern
