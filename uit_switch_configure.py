@@ -355,9 +355,9 @@ def main():
         status.update("Configuration complete, disconnecting...")
 
     if not args.quiet:
-        console.print(Rule(title="[bold red]Switch Configuration Output", style="red"))
+        console.print(Rule(title="[bold red]Switch Configuration Output", style="red", align="left"), width=100)
         console.print(output, highlight=True)
-        console.print(Rule(title="[bold red]End of Output", style="red"))
+        console.print(Rule(title="[bold red]End of Output", style="red", align="left"), width=100)
 
         if args.no_copy:
             return
