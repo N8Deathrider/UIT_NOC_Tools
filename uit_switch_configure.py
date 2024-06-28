@@ -117,6 +117,13 @@ def get_args() -> argparse.Namespace:
         type=str,
     )
 
+    parser.add_argument(
+        "--dry-run",
+        "-dr",
+        help="Do not make any changes to the switch",
+        action="store_true",
+    )
+
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "--copy",
