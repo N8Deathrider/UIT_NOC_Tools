@@ -341,12 +341,13 @@ def main():
                     voice_vlan=args.voice_vlan,
                     description=args.description,
                 )
-                output += connection.send_config_set(
-                    config_commands=config_commands,
-                    cmd_verify=True,
-                    strip_prompt=False,
-                    strip_command=False,
-                )
+                if not args.dry_run:
+                    output += connection.send_config_set(
+                        config_commands=config_commands,
+                        cmd_verify=True,
+                        strip_prompt=False,
+                        strip_command=False,
+                    )
 
             status.update("Saving configuration...")
             output += connection.save_config()
