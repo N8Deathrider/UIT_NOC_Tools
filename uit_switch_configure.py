@@ -238,7 +238,7 @@ def pre_config_commands_gen(access_vlan: str | int, voice_vlan: str | int | None
     cmds = [
         "show clock",
         "show users",
-        f"show vlan brief | include {access_vlan}",
+        f"show vlan brief | include {access_vlan}_",
     ]
 
     if voice_vlan:
@@ -349,8 +349,9 @@ def main():
                         strip_command=False,
                     )
 
-            status.update("Saving configuration...")
-            output += connection.save_config()
+            if not args.dry_run:
+                status.update("Saving configuration...")
+                output += connection.save_config()
         status.update("Configuration complete, disconnecting...")
 
     if not args.quiet:
