@@ -16,7 +16,7 @@ from sys import exit
 from netmiko import ConnectHandler
 from netmiko import BaseConnection
 from rich.prompt import Prompt
-from rich.panel import Panel
+from rich.rule import Rule
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.highlighter import RegexHighlighter
@@ -346,7 +346,9 @@ def main():
         status.update("Configuration complete, disconnecting...")
 
     if not args.quiet:
-        console.print(Panel(output, title="Switch Configuration Output", border_style="red", highlight=True))
+        console.print(Rule(title="[bold red]Switch Configuration Output", style="red"))
+        console.print(output, highlight=True)
+        console.print(Rule(title="[bold red]End of Output", style="red"))
 
         if args.no_copy:
             return
