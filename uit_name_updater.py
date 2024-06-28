@@ -263,7 +263,7 @@ def name_generator(function_descriptor: str, count: str, building_number: str,
     # This is a temp fix for when current room numbers are listed as 'mdf' rather than a proper number.
     # This will be removed once all room numbers are properly listed.
     # If proper room number is known, it should be used instead of 'mdf'.
-    if room_number != "mdf":  # If the room number is not 'mdf' (main distribution frame)
+    if room_number not in ["mdf", "lab"]:  # If the room number is not 'mdf' or 'lab' (temporary fix until all room numbers are properly listed)
         room_number = room_number.zfill(4) # Pad the room number with 0's to 4 digits
 
     switch_name = f"{function_descriptor}{count}-{building_number.zfill(4)}{building_short_name}-{room_number}-{distribution_node}".lower()
