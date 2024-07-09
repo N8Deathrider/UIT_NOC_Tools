@@ -446,7 +446,7 @@ def get_args() -> argparse.Namespace:
     )
 
     g.add_argument(  # CSV to Table
-        "-csv", action="store_true", help="csv: converts a csv to a table"
+        "-csv", action="store_true", help="csv: converts a csv in your clipboard to a table"
     )
 
     g.add_argument(  # Slow Connection
@@ -605,6 +605,8 @@ def csv_to_table(csv_data: str) -> str:
         console.print(table)
 
     table_string = capture.get()
+
+    console.print(table)
 
     return table_string
 
