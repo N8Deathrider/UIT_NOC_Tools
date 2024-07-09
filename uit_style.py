@@ -81,7 +81,6 @@ output_highlighting = [
     [r"\b(Po|Port-channel)\d{1,3}\b", "#af39ee", "Port-channel"],
     [r"\b(Vl|Vlan|VLAN|vlan )\d+\b", "#009966", "Vlan"],
     [r"(?!reliability 255\/255)(reliability \d{1,3}\/255)", colors["alert"], "Reliability"],
-    [r"(?![tr]xload 1\/255)([tr]xload \d{1,3}\/255)", colors["alert"], "Load"],
     [r"(?!0 (in|out)put errors)(\d+ (in|out)put errors)", colors["error"], "Input/Output Errors"],
     [r"(?!0 CRC)(\d+ CRC)", colors["error"], "CRC"],
     [r"(?!0 collisions)(\d+ collisions)", colors["warning"], "Collisions"],
