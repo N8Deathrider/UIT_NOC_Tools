@@ -392,13 +392,19 @@ def main():
                     voice_vlan=args.voice_vlan,
                     description=args.description,
                 )
-                if not args.dry_run:
-                    output += connection.send_config_set(
-                        config_commands=config_commands,
-                        cmd_verify=True,
-                        strip_prompt=False,
-                        strip_command=False,
+                if args.dry_run:  # If dry run is set, generate dry run commands replacing the actual commands
+                    config_commands = dry_run_cmds_gen(
+                        interface_id=interface_id,
+                        access_vlan=args.access_vlan,
+                        voice_vlan=args.voice_vlan,
+                        description=args.description,
                     )
+                output += connection.send_config_set(
+                    config_commands=config_commands,
+                    cmd_verify=True,
+                    strip_prompt=False,
+                    strip_command=False,
+                )
 
             if not args.dry_run:
                 status.update("Saving configuration...")
