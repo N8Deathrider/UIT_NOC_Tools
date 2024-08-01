@@ -179,6 +179,53 @@ def credentials() -> tuple[str, str]:
     return username, password
 
 
+def dry_run_cmds_gen(
+    interface_id: str,
+    access_vlan: str | int,
+    voice_vlan: str | int | None = None,
+    description: str | None = None,
+) -> list[str]:
+    """
+    Generate a list of configuration commands for a given interface.
+
+    Args:
+        interface_id (str): The ID of the interface.
+        access_vlan (str | int): The VLAN ID for access.
+        voice_vlan (str | int | None, optional): The VLAN ID for voice traffic. Defaults to None.
+        description (str | None, optional): The description for the interface. Defaults to None.
+
+    Returns:
+        list[str]: A list of configuration commands.
+
+    """
+    cmds = [
+        f"#  DryRun Configuration {interface_id} Start  #",
+        f"do show interface {interface_id} status",
+        f"do show mac address-table interface {interface_id}",
+        f"do show running-config interface {interface_id}",
+        f"# Would now run: default interface {interface_id}",
+        f"# Would now run: interface {interface_id}",
+        "# Would now run: shutdown",
+        "# Would now run: switchport mode access",
+        f"# Would now run: switchport access vlan {access_vlan}",
+        "# Would now run: spanning-tree portfast",
+        "# Would now run: no shutdown",
+        "# Would now run: exit",
+        f"do show running-config interface {interface_id}",
+        f"do show interface {interface_id} status",
+        f"do show mac address-table interface {interface_id}",
+        f"#  DryRun Configuration {interface_id} End  #",
+    ]
+
+    if voice_vlan:
+        cmds.insert(8, f"# Would now run: switchport voice vlan {voice_vlan}")
+
+    if description:
+        cmds.insert(7, f"# Would now run: description {description}")
+
+    return cmds
+
+
 def config_cmds_gen(interface_id: str, 
                     access_vlan: str | int, 
                     voice_vlan: str | int | None = None, 
