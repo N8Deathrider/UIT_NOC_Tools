@@ -465,7 +465,10 @@ def main() -> None:
         exit(EXIT_GENERAL_ERROR)
     best_match = guesser.autodetect()
     device_dict["device_type"] = best_match
-    # log.debug(f"Device Dict: {device_dict}")  # Disabled for now because it shows the password #TODO: need to fix this
+    if ARGS.debug:
+        dev_device_dict = device_dict.copy()
+        dev_device_dict["password"] = "********"
+        log.debug(f"Device dictionary: {device_dict}")
 
     net_connect = ConnectHandler(**device_dict)
     hostname = net_connect.send_command("show version", use_genie=True).get("version", {}).get("hostname")
