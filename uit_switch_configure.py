@@ -179,6 +179,8 @@ def credentials() -> tuple[str, str]:
     return username, password
 
 
+# TODO: find a better way to do this so that the dry run commands are not repeated
+# making it easier to maintain when changes are made
 def dry_run_cmds_gen(
     interface_id: str,
     access_vlan: str | int,
@@ -226,10 +228,12 @@ def dry_run_cmds_gen(
     return cmds
 
 
-def config_cmds_gen(interface_id: str, 
-                    access_vlan: str | int, 
-                    voice_vlan: str | int | None = None, 
-                    description: str | None = None) -> list[str]:
+def config_cmds_gen(
+    interface_id: str,
+    access_vlan: str | int,
+    voice_vlan: str | int | None = None,
+    description: str | None = None,
+) -> list[str]:
     """
     Generate a list of configuration commands for a given interface.
 
