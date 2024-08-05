@@ -5,7 +5,6 @@
 """
 
 # Standard libraries
-import argparse
 import logging
 from sys import exit
 
@@ -44,10 +43,6 @@ logging.basicConfig(
     handlers=[RichHandler()]
 )
 log: logging.Logger = logging.getLogger("rich")
-
-
-def get_args() -> None:
-    pass
 
 
 def main() -> None:
