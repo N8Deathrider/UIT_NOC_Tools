@@ -510,6 +510,7 @@ def main() -> None:
         if name != full_name:
             rprint(change_display_table("InfoBlox Name Mismatch", name, full_name))
             print("There is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
+            print("The current FQHN should be added as an alias for backwards compatibility.")
             rprint(f"The proper switch name for '[green]{ARGS.switch_ip}[/green]' should be: '[green]{correct_name}[/green]' with the domain '[green]{domain_name}[/green]'")
             break
 
