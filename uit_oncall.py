@@ -12,7 +12,9 @@ from sys import exit
 from rich.logging import RichHandler
 
 # Local libraries
-
+import requests
+from rich.console import Console
+from rich.table import Table
 
 # Standard exit codes
 EXIT_SUCCESS = 0  # No errors
