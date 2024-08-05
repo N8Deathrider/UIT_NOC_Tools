@@ -45,6 +45,19 @@ logging.basicConfig(
 log: logging.Logger = logging.getLogger("rich")
 
 
+def table_maker(oncall: dict) -> Table:
+    """
+    """
+    table = Table(title="[bold red]On-Call Information", style="red", show_lines=False)
+    table.add_column("uNID", style="yellow")
+    table.add_column("Name", style="cyan")
+    table.add_column("Email", style="magenta")
+    table.add_column("Phone", style="green")
+
+    table.add_row(oncall[0], oncall[1], oncall[2], oncall[3])
+    
+    return table
+
 def main() -> None:
     """
     #TODO: Add description
