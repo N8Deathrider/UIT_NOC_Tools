@@ -59,6 +59,14 @@ def main() -> None:
     s.get("https://toast.utah.edu/login_helper")
     log.debug("Session created and logged in.")
 
+    response: requests.Response = s.get("https://toast.utah.edu/oncall/oncallinfo")
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        log.error(f"An error occurred: {e}")
+        exit(EXIT_GENERAL_ERROR)
+    print(response.json()["result"][1])
+
 
 if __name__ == "__main__":
     try:
