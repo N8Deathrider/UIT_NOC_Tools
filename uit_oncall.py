@@ -45,8 +45,20 @@ logging.basicConfig(
 log: logging.Logger = logging.getLogger("rich")
 
 
-def table_maker(oncall: dict) -> Table:
+def table_maker(oncall: list) -> Table:
     """
+    Create a table with on-call information.
+
+    Args:
+        oncall (list): A list containing the on-call information. The list should have the following elements:
+            - uNID (str): The uNID of the on-call person.
+            - Name (str): The name of the on-call person.
+            - Email (str): The email address of the on-call person.
+            - Phone (str): The phone number of the on-call person.
+
+    Returns:
+        Table: A `Table` object containing the on-call information.
+
     """
     table = Table(title="[bold red]On-Call Information", style="red", show_lines=False)
     table.add_column("uNID", style="yellow")
