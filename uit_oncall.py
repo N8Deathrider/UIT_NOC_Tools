@@ -5,16 +5,29 @@
 """
 
 # Standard libraries
+import argparse
 import logging
 from sys import exit
 
 # Third-party libraries
-from rich.logging import RichHandler
-
-# Local libraries
 import requests
 from rich.console import Console
 from rich.table import Table
+from rich.logging import RichHandler
+
+# Local libraries
+from uit_duo import Duo
+
+try:
+    from auth import UofU
+
+    uNID = UofU.unid
+    password = UofU.cisPassword
+except ImportError:
+    from getpass import getpass
+
+    uNID = input("Enter your uNID: ")
+    password = getpass("Enter your: cis password: ")
 
 # Standard exit codes
 EXIT_SUCCESS = 0  # No errors
@@ -33,11 +46,15 @@ logging.basicConfig(
 log: logging.Logger = logging.getLogger("rich")
 
 
+def get_args() -> None:
+    pass
+
+
 def main() -> None:
     """
     #TODO: Add description
     """
-    ...
+    console = Console()
 
 
 if __name__ == "__main__":
