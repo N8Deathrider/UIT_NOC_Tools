@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-#TODO: Add description
+This script retrieves on-call information from a specified URL and displays it in a table format.
+
+The script uses Duo authentication to log in and create a session. It then sends a GET request to the specified URL
+to retrieve the on-call information. The retrieved information is displayed in a table using the rich library.
+
+The script requires the following dependencies:
+- requests
+- rich
 """
 
 # Standard libraries
