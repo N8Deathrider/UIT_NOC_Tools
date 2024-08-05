@@ -72,7 +72,16 @@ def table_maker(oncall: list) -> Table:
 
 def main() -> None:
     """
-    #TODO: Add description
+    Main function that performs the on-call information retrieval.
+
+    This function creates a session, logs in using Duo authentication,
+    and retrieves the on-call information from the specified URL.
+
+    Raises:
+        requests.exceptions.HTTPError: If an HTTP error occurs during the request.
+
+    Returns:
+        None
     """
     console = Console()
 
