@@ -78,7 +78,8 @@ def main() -> None:
     except requests.exceptions.HTTPError as e:
         log.error(f"An error occurred: {e}")
         exit(EXIT_GENERAL_ERROR)
-    print(response.json()["result"][1])
+    
+    console.print(table_maker(response.json()["result"]))
 
 
 if __name__ == "__main__":
