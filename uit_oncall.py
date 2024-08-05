@@ -51,6 +51,14 @@ def main() -> None:
     """
     console = Console()
 
+    # Creating a session and logging in
+    duo = Duo(uNID=uNID, password=password)
+    s: requests.Session = duo.login()
+    requests.urllib3.disable_warnings()
+    s.verify = False
+    s.get("https://toast.utah.edu/login_helper")
+    log.debug("Session created and logged in.")
+
 
 if __name__ == "__main__":
     try:
