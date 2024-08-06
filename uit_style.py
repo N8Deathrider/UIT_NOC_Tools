@@ -696,6 +696,8 @@ def main() -> None:
         wrapped_styled_text = style_slow_connection()
     elif ARGS.mac:  # MAC
         styled_text = style_code(style_mac(ARGS.mac[0]))
+    elif ARGS.wrong_ticket:  # Wrong Ticket
+        wrapped_styled_text = style_wrong_ticket(ARGS.wrong_ticket[0], ARGS.wrong_ticket[1], ARGS.wrong_ticket[2])
 
     if not wrapped_styled_text:
         wrapped_styled_text = sn_code_tag_wrapper(styled_text)
