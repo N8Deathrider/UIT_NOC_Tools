@@ -641,7 +641,13 @@ def sn_code_tag_wrapper(text: str) -> str:
 
 def main() -> None:
     """
-    #TODO: Add docstring
+    Main function that processes command line arguments and applies styling to text.
+
+    Args:
+        None
+
+    Returns:
+        None
     """
     ARGS = get_args()
 
