@@ -287,6 +287,14 @@ def style_mac(mac: str) -> str:
         return str(mac_address)
 
 
+def style_wrong_ticket(created_type: str, ticket_name: str, ticket_link: str) -> str:
+    return f"""Hello, for this, you will need to create a "{ticket_name}" ticket instead of a "{created_type}". This ensures that all the necessary information is included and the ticket gets sent to the correct team.
+To create a "{ticket_name}", please visit https://orderit.utah.edu and then on that page select "Service Catalogue". On the next page, select the tab labeled "A-Z Index" and then select the "{ticket_name.upper()[0]}" section. Under that section you should see an option for "{ticket_name}".
+
+Alternatively, you can follow this link:
+{ticket_link}"""
+
+
 ###################
 # OTHER FUNCTIONS #
 ###################
