@@ -470,6 +470,14 @@ def get_args() -> argparse.Namespace:
         help="MAC address: converts the MAC address to cisco formats and puts it in a code tag",
     )
 
+    g.add_argument(  # Wrong Ticket
+        "-wt",
+        "--wrong-ticket",
+        nargs=3,
+        metavar=(f"{O}ticket_type{R}", f"{O}ticket_name{R}", f"{O}ticket_link{R}"),
+        help="wrong ticket: template text for when tickets are created under the wrong category"
+    )
+
     g.add_argument(  # Version
         "-v", "--version", action="version", version="%(prog)s 2.0"
     )
