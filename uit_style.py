@@ -474,7 +474,7 @@ def get_args() -> argparse.Namespace:
         "-wt",
         "--wrong-ticket",
         nargs=3,
-        metavar=(f"{O}ticket_type{R}", f"{O}ticket_name{R}", f"{O}ticket_link{R}"),
+        metavar=(f"{O}current_ticket_type{R}", f"{O}correct_ticket_type_name{R}", f"{O}correct_ticket_type_link{R}"),
         help="wrong ticket: template text for when tickets are created under the wrong category"
     )
 
