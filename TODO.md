@@ -6,7 +6,7 @@
 - [ ] Refactor [uit_key_interfaces](uit_key_interfaces.py) to use rich and logging
 - [X] Add missing exit codes to [uit_key_interfaces](uit_key_interfaces.py)
 - [ ] Completely refactor [uit_bsb](uit_bsb.py)
-- [ ] Refactor and fix [uit_people](uit_people)
+- [X] Refactor and fix [uit_people](uit_people)
 - [X] Refactor [uit_statusio](uit_statusio)
 - [X] Refactor [uit_uptime](uit_uptime)
-- [ ] Add some validation for things like interfaces and vlans in [uit_switch_configure](uit_switch_configure.py)
+- [X] Add some validation for things like interfaces and vlans in [uit_switch_configure](uit_switch_configure.py)
