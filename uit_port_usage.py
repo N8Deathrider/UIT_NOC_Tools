@@ -55,6 +55,12 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--debug",
+        action="store_true",
+        help=argparse.SUPPRESS
+    )
+
+    parser.add_argument(
         "-d",
         "--days",
         type=int,
