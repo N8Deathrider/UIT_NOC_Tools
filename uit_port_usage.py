@@ -66,7 +66,6 @@ def get_args() -> argparse.Namespace:
         "-d",
         "--days",
         type=int,
-        default=90,
         metavar="days",
         help="Maximum Amount of Idle Days"
     )
