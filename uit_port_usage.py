@@ -118,6 +118,22 @@ def start_report(session: requests.Session, switch: str, days: int | None = None
     # TODO: Add error handling
 
 
+def get_report_data(session: requests.Session, report_id: str | int) -> str:
+    """
+    """
+    url = BASE_URL / "report"
+
+    if isinstance(report_id, str):
+        report_id = int(report_id)
+
+    response: requests.Response = session.get(url, params={"id": report_id})
+
+    response.raise_for_status()
+    # TODO: Add error handling
+
+    return response.json()["data"]
+
+
 def main() -> None:
     """
     #TODO: Add description
