@@ -97,25 +97,25 @@ def start_report(session: requests.Session, switch: str, days: int | None = None
 
     inputs = {
         "input_switchnameorip": switch,
-        "input_maximumamountofidledays": days if days else ""
+        "input_maximumamountofidledays": days or ""
     }
 
     form_data = {
         "type": "report_portusage",
-        "inputs": json.dumps(inputs)
+        "inputs": json.dumps(inputs, separators=(",", ":"))
+        # The separators argument is used to prevent spaces from being added to the JSON string. 
+        # This is necessary for the TOAST API validation for some reason.
     }
     log.debug(f"Form data: {form_data}")
 
-    response: requests.Response = session.post(
-        url,
-        data=form_data
-    )
+    response: requests.Response = session.post(url, data=form_data)
     log.debug(f"Response: {response}")
 
     response.raise_for_status()
 
     log.debug(f"Response JSON: {response.json()}")
     return response.json()["result"]
+    # TODO: Add error handling
 
 
 def main() -> None:
