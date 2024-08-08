@@ -24,7 +24,7 @@ from rich.table import Table
 from rich import print as rprint
 from uit_duo import Duo
 from netmiko import ConnectHandler, SSHDetect, BaseConnection
-from netmiko import NetmikoAuthenticationException
+from netmiko import NetmikoAuthenticationException, NetmikoTimeoutException
 import orionsdk
 
 # Local libraries
@@ -462,6 +462,9 @@ def main() -> None:
         guesser = SSHDetect(**device_dict)
     except NetmikoAuthenticationException:
         log.error("Authentication error. Please check the username and password.")
+        exit(EXIT_GENERAL_ERROR)
+    except NetmikoTimeoutException:
+        log.error("Connection timed out. Please check the IP address and try again.")
         exit(EXIT_GENERAL_ERROR)
     best_match = guesser.autodetect()
     device_dict["device_type"] = best_match
