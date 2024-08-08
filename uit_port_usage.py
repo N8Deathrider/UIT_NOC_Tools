@@ -81,7 +81,7 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def start_report(session: requests.Session, switch: str, days: int | None = None) -> str:
+def start_report(session: requests.Session, switch: str, days: int | None = None) -> int:
     """
     Start the report for the specified switch.
 
@@ -91,7 +91,7 @@ def start_report(session: requests.Session, switch: str, days: int | None = None
         days (int): Maximum amount of idle days.
 
     Returns:
-        str: Report ID.
+        int: Report ID.
     """
     url = BASE_URL / "report"
 
@@ -114,7 +114,7 @@ def start_report(session: requests.Session, switch: str, days: int | None = None
     response.raise_for_status()
 
     log.debug(f"Response JSON: {response.json()}")
-    return response.json()["result"]
+    return int(response.json()["result"])
     # TODO: Add error handling
 
 
