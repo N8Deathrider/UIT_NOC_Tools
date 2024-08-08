@@ -43,7 +43,10 @@ logging.basicConfig(
 log: logging.Logger = logging.getLogger("rich")
 
 
-def get_
+def get_args() -> argparse.Namespace:
+    """
+    """
+    raise NotImplementedError
 
 
 def main() -> None:
