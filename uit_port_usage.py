@@ -12,6 +12,7 @@ from sys import exit
 # Third-party libraries
 import requests
 from rich.logging import RichHandler
+from yarl import URL
 
 # Local libraries
 from uit_duo import Duo
@@ -42,6 +43,7 @@ logging.basicConfig(
 )
 log: logging.Logger = logging.getLogger("rich")
 
+BASE_URL = URL("https://toast.utah.edu/reports")
 
 def get_args() -> argparse.Namespace:
     """
@@ -84,11 +86,11 @@ def main() -> None:
     #TODO: Add description
     """
     ARGS = get_args()
-    
+
     if ARGS.debug:
         log.setLevel(logging.DEBUG)
         log.debug("Debug mode enabled.")
-    
+
     log.debug(f"Arguments: {ARGS}")
 
     # Create Duo object
@@ -99,11 +101,11 @@ def main() -> None:
     s: requests.Session = duo.login()
     log.debug("Session created.")
     
-    # Nessisary actions for TOAST login
+    # Necessary actions for TOAST login
     requests.urllib3.disable_warnings()
     s.verify = False
     s.get("https://toast.utah.edu/login_helper")
-    log.debug("Nessisary actions for TOAST login completed.")
+    log.debug("Necessary actions for TOAST login completed.")
 
 
 if __name__ == "__main__":
