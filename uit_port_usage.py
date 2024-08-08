@@ -143,6 +143,10 @@ def main() -> None:
     s.verify = False
     s.get("https://toast.utah.edu/login_helper")
     log.debug("Necessary actions for TOAST login completed.")
+    
+    # Start report
+    report_id = start_report(s, ARGS.switch, ARGS.days)
+    log.debug(f"Report ID: {report_id}")
 
 
 if __name__ == "__main__":
