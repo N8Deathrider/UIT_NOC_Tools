@@ -140,6 +140,38 @@ def get_report_data(session: requests.Session, report_id: str | int) -> list[lis
     return data
 
 
+def display_report(data: list[list[str]], switch) -> None:
+    """
+    Display a port usage report for a given switch.
+
+    Args:
+        data (list[list[str]]): The data to be displayed in the report.
+        switch: The name of the switch for which the report is generated.
+
+    Returns:
+        None
+    """
+    table = Table(title=f"Port Usage Report for: [bold]{switch}", style="red")
+
+    headers = data.pop(0)
+
+    uptime_header = headers.pop()
+
+    uptime_data = data.pop(0)
+    uptime_data.pop(0)  # Remove the first element, which is the same as the header.
+    uptime_data.pop(0)  # Remove the new first element, which is an empty string.
+
+    for header in headers:
+        table.add_column(header)
+
+    for row in data:
+        table.add_row(*row)
+
+    table.caption = f"{uptime_header}: {','.join(uptime_data)}"
+
+    rprint(table)
+
+
 def main() -> None:
     """
     #TODO: Add description
