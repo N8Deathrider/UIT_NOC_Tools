@@ -6,6 +6,7 @@
 
 # Standard libraries
 import argparse
+import json
 import logging
 from sys import exit
 
@@ -78,6 +79,40 @@ def get_args() -> argparse.Namespace:
     )
 
     return parser.parse_args()
+
+
+def start_report(session: requests.Session, switch: str, days: int | None = None) -> str:
+    """
+    Start the report for the specified switch.
+
+    Args:
+        session (requests.Session): Session object.
+        switch (str): Switch name or IP address.
+        days (int): Maximum amount of idle days.
+
+    Returns:
+        str: Report ID.
+    """
+    url = BASE_URL / "report"
+
+    inputs = {
+        "input_switchnameorip": switch,
+        "input_maximumamountofidledays": days if days else ""
+    }
+
+    form_data = {
+        "type": "report_portusage",
+        "inputs": json.dumps(inputs)
+    }
+
+    response: requests.Response = session.post(
+        url,
+        data=form_data
+    )
+
+    response.raise_for_status()
+
+    return response.json()["result"]
 
 
 def main() -> None:
