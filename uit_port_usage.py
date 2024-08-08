@@ -45,8 +45,32 @@ log: logging.Logger = logging.getLogger("rich")
 
 def get_args() -> argparse.Namespace:
     """
+    Parse command line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command line arguments.
     """
-    raise NotImplementedError
+    parser = argparse.ArgumentParser(
+        description="This script will check when the last packet was sent or received on each port on a specified switch using a report run by TOAST. It will return a list of ports that have not had any traffic within a specified amount of time (default of 90 days)."
+    )
+
+    parser.add_argument(
+        "-d",
+        "--days",
+        type=int,
+        default=90,
+        metavar="days",
+        help="Maximum Amount of Idle Days"
+    )
+
+    parser.add_argument(
+        "switch",
+        type=str,
+        metavar="switch_name_or_ip",
+        help="The switch to retrieve port usage data from."
+    )
+
+    return parser.parse_args()
 
 
 def main() -> None:
