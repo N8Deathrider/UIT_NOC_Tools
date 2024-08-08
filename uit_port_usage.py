@@ -9,6 +9,7 @@ import argparse
 import json
 import logging
 from sys import exit
+from time import sleep
 
 # Third-party libraries
 import requests
@@ -163,6 +164,11 @@ def main() -> None:
     # Start report
     report_id = start_report(s, ARGS.switch, ARGS.days)
     log.debug(f"Report ID: {report_id}")
+    
+    # Get report data
+    sleep(2)
+    # Sleep for 2 seconds to allow the report to be generated, the API method to check report status does not work.
+    report_data = get_report_data(s, report_id)
 
 
 if __name__ == "__main__":
