@@ -14,6 +14,7 @@ from time import sleep
 # Third-party libraries
 import requests
 from rich.logging import RichHandler
+from rich.table import Table
 from yarl import URL
 
 # Local libraries
@@ -47,6 +48,7 @@ log: logging.Logger = logging.getLogger("rich")
 
 BASE_URL = URL("https://toast.utah.edu/reports")
 
+
 def get_args() -> argparse.Namespace:
     """
     Parse command line arguments.
@@ -58,11 +60,7 @@ def get_args() -> argparse.Namespace:
         description="This script will check when the last packet was sent or received on each port on a specified switch using a report run by TOAST. It will return a list of ports that have not had any traffic within a specified amount of time (default of 90 days)."
     )
 
-    parser.add_argument(
-        "--debug",
-        action="store_true",
-        help=argparse.SUPPRESS
-    )
+    parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
 
     parser.add_argument(
         "-d",
@@ -104,7 +102,7 @@ def start_report(session: requests.Session, switch: str, days: int | None = None
     form_data = {
         "type": "report_portusage",
         "inputs": json.dumps(inputs, separators=(",", ":"))
-        # The separators argument is used to prevent spaces from being added to the JSON string. 
+        # The separators argument is used to prevent spaces from being added to the JSON string.
         # This is necessary for the TOAST API validation for some reason.
     }
     log.debug(f"Form data: {form_data}")
@@ -121,6 +119,17 @@ def start_report(session: requests.Session, switch: str, days: int | None = None
 
 def get_report_data(session: requests.Session, report_id: str | int) -> list[list[str]]:
     """
+    Retrieves report data from the specified report ID.
+
+    Args:
+        session (requests.Session): The session object used to make the HTTP request.
+        report_id (str | int): The ID of the report to retrieve.
+
+    Returns:
+        list[list[str]]: A list of lists containing the report data, where each inner list represents a row of data.
+
+    Raises:
+        requests.HTTPError: If the HTTP request to retrieve the report fails.
     """
     url = BASE_URL / "report"
 
@@ -206,6 +215,9 @@ def main() -> None:
     sleep(2)
     # Sleep for 2 seconds to allow the report to be generated, the API method to check report status does not work.
     report_data = get_report_data(s, report_id)
+
+    # Display report
+    display_report(report_data, ARGS.switch)
 
 
 if __name__ == "__main__":
