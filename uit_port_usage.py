@@ -119,7 +119,7 @@ def start_report(session: requests.Session, switch: str, days: int | None = None
     # TODO: Add error handling
 
 
-def get_report_data(session: requests.Session, report_id: str | int) -> str:
+def get_report_data(session: requests.Session, report_id: str | int) -> list[list[str]]:
     """
     """
     url = BASE_URL / "report"
@@ -132,7 +132,12 @@ def get_report_data(session: requests.Session, report_id: str | int) -> str:
     response.raise_for_status()
     # TODO: Add error handling
 
-    return response.json()["data"]
+    data = response.json()["data"].splitlines()
+
+    for index, line in enumerate(data):
+        data[index] = line.split(",")
+
+    return data
 
 
 def main() -> None:
@@ -150,21 +155,21 @@ def main() -> None:
     # Create Duo object
     duo = Duo(uNID, password)
     log.debug("Duo object created.")
-    
+
     # Create session
     s: requests.Session = duo.login()
     log.debug("Session created.")
-    
+
     # Necessary actions for TOAST login
     requests.urllib3.disable_warnings()
     s.verify = False
     s.get("https://toast.utah.edu/login_helper")
     log.debug("Necessary actions for TOAST login completed.")
-    
+
     # Start report
     report_id = start_report(s, ARGS.switch, ARGS.days)
     log.debug(f"Report ID: {report_id}")
-    
+
     # Get report data
     sleep(2)
     # Sleep for 2 seconds to allow the report to be generated, the API method to check report status does not work.
