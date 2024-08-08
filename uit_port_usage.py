@@ -15,6 +15,7 @@ from time import sleep
 import requests
 from rich.logging import RichHandler
 from rich.table import Table
+from rich import print as rprint
 from yarl import URL
 
 # Local libraries
@@ -111,10 +112,10 @@ def start_report(session: requests.Session, switch: str, days: int | None = None
     log.debug(f"Response: {response}")
 
     response.raise_for_status()
+    # TODO: Add error handling
 
     log.debug(f"Response JSON: {response.json()}")
     return int(response.json()["result"])
-    # TODO: Add error handling
 
 
 def get_report_data(session: requests.Session, report_id: str | int) -> list[list[str]]:
