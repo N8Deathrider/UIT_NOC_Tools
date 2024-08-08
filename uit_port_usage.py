@@ -84,6 +84,11 @@ def main() -> None:
     #TODO: Add description
     """
     ARGS = get_args()
+    
+    if ARGS.debug:
+        log.setLevel(logging.DEBUG)
+        log.debug("Debug mode enabled.")
+    
     log.debug(f"Arguments: {ARGS}")
 
     # Create Duo object
