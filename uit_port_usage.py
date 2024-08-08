@@ -104,14 +104,17 @@ def start_report(session: requests.Session, switch: str, days: int | None = None
         "type": "report_portusage",
         "inputs": json.dumps(inputs)
     }
+    log.debug(f"Form data: {form_data}")
 
     response: requests.Response = session.post(
         url,
         data=form_data
     )
+    log.debug(f"Response: {response}")
 
     response.raise_for_status()
 
+    log.debug(f"Response JSON: {response.json()}")
     return response.json()["result"]
 
 
