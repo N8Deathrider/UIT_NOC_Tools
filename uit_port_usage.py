@@ -53,7 +53,22 @@ def main() -> None:
     """
     #TODO: Add description
     """
-    ...
+    ARGS = get_args()
+    log.debug(f"Arguments: {ARGS}")
+
+    # Create Duo object
+    duo = Duo(uNID, password)
+    log.debug("Duo object created.")
+    
+    # Create session
+    s: requests.Session = duo.login()
+    log.debug("Session created.")
+    
+    # Nessisary actions for TOAST login
+    requests.urllib3.disable_warnings()
+    s.verify = False
+    s.get("https://toast.utah.edu/login_helper")
+    log.debug("Nessisary actions for TOAST login completed.")
 
 
 if __name__ == "__main__":
