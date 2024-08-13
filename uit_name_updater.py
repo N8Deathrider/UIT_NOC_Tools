@@ -65,6 +65,9 @@ except ImportError:
             "username": username,
             "password": password
         }
+    class UofU:
+        unid = uNID
+        cisPassword = ORION_PASSWORD
 
 
 class Orion:
