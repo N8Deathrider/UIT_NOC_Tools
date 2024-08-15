@@ -87,15 +87,15 @@ def get_uptime(switch: str, results: list) -> None:
         days_up = str(switch_obj.uptime[0])
     except NetMikoAuthenticationException as e:
         # log.error(f"Authentication error occurred while connecting to {switch}")
-        results[results.index(switch)] = (switch, "Authentication error", "", "", "")
+        results[switch] = (switch, "Authentication error", "", "", "")
         return
     except NetMikoTimeoutException as e:
         # log.error(f"Connection timeout occurred while connecting to {switch}")
-        results[results.index(switch)] = (switch, "Connection timeout", "", "", "")
+        results[switch] = (switch, "Connection timeout", "", "", "")
         return
     except Exception as e:
         log.exception(f"An unhandled error occurred occurred while connecting to {switch}: {e}")
-        results[results.index(switch)] = (switch, "Error", "", "", "")
+        results[switch] = (switch, "Error", "", "", "")
 
     results[switch] = (switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason"))
 
