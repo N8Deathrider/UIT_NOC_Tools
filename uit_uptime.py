@@ -27,6 +27,7 @@ import argparse
 from threading import Thread
 
 # Third-party libraries
+from netmiko.exceptions import NetMikoTimeoutException, NetMikoAuthenticationException
 from rich.logging import RichHandler
 from rich import print as rprint
 from rich.table import Table
@@ -79,7 +80,19 @@ def get_uptime(switch: str, results: list) -> None:
     Returns:
         None: This function does not return anything. It updates the results list in-place.
     """
-    switch_obj = Switch(switch)
+    try:
+        switch_obj = Switch(switch)
+    except NetMikoAuthenticationException as e:
+        log.error(f"Authentication error: {e}")
+        results[results.index(switch)] = (switch, "Authentication error", "", "", "")
+        return
+    except NetMikoTimeoutException as e:
+        log.error(f"Connection timeout: {e}")
+        results[results.index(switch)] = (switch, "Connection timeout", "", "", "")
+        return
+    except Exception as e:
+        log.exception(f"An unhandled error occurred: {e}")
+        results[results.index(switch)] = (switch, "Error", "", "", "")
     
     uptime = switch_obj.uptime[3]
     restart_timestamp = switch_obj.uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A")
