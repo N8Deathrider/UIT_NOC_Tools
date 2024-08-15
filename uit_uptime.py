@@ -157,16 +157,25 @@ def main() -> None:
         threads = []
         chunk_size = 20
 
-        for i in range(0, len(ARGS.switch), chunk_size):
-            chunk = ARGS.switch[i:i+chunk_size]
-            for switch in chunk:
+        if len(ARGS.switch) <= 45:
+            for switch in ARGS.switch:
                 thread = Thread(target=get_uptime, args=(switch, results))
                 threads.append(thread)
                 thread.start()
-
+                
             for thread in threads:
                 thread.join()
-                threads.clear()
+        else:
+            for i in range(0, len(ARGS.switch), chunk_size):
+                chunk = ARGS.switch[i:i+chunk_size]
+                for switch in chunk:
+                    thread = Thread(target=get_uptime, args=(switch, results))
+                    threads.append(thread)
+                    thread.start()
+
+                for thread in threads:
+                    thread.join()
+                    threads.clear()
 
         status.update("[green]Generating table...")
         table = table_gen(results.values())
