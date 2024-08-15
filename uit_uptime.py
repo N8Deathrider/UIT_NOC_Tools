@@ -147,6 +147,10 @@ def main() -> None:
 
     with console.status("[green]Retrieving uptime information...") as status:
         results = ARGS.switch
+        if len(ARGS.switch) == 1:
+            status.update(f"[green]Retrieving uptime information for [cyan]1[green] switch...")
+        else:
+            status.update(f"[green]Retrieving uptime information for [cyan]{len(ARGS.switch)}[green] switches...")
         threads = []
         for switch in ARGS.switch:
             thread = Thread(target=get_uptime, args=(switch, results))
