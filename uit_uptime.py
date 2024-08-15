@@ -87,7 +87,7 @@ def get_uptime(switch: str, results: list) -> None:
     results[results.index(switch)] = (switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason"))
 
 
-def table_gen(switches: list) -> Table:
+def table_gen(results: list) -> Table:
     """
     Generate a table with the uptime information for the specified switches.
 
@@ -97,7 +97,6 @@ def table_gen(switches: list) -> Table:
     Returns:
         Table: The table with the uptime information.
     """
-    console = Console()
     table = Table(title="Switch Uptime Information")
     table.add_column("Switch", style="cyan", no_wrap=False)
     table.add_column("Uptime", style="magenta", no_wrap=True)
@@ -105,16 +104,9 @@ def table_gen(switches: list) -> Table:
     table.add_column("Restart timestamp", style="green", no_wrap=True)
     table.add_column("Reason", style="bright_blue", no_wrap=True)
 
-    with console.status("[green]Retrieving uptime information...") as status:
-        for switch in switches:
-            status.update(f"[green]Retrieving uptime information for [cyan]{switch}[/cyan]...")
-            switch_obj = Switch(switch)
-            uptime = switch_obj.uptime[3]
-            restart_timestamp = switch_obj.uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A")
-            days_up = str(switch_obj.uptime[0])
-            row = (switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason"))
-            log.debug(f"Row: {row}")
-            table.add_row(*row)
+    for result in results:
+        table.add_row(*result)
+        log.debug(f"Row added: {result}")
 
     return table
 
