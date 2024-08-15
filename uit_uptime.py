@@ -97,7 +97,7 @@ def get_uptime(switch: str, results: list) -> None:
         log.exception(f"An unhandled error occurred occurred while connecting to {switch}: {e}")
         results[results.index(switch)] = (switch, "Error", "", "", "")
 
-    results[results.index(switch)] = (switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason"))
+    results[switch] = (switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason"))
 
 
 def table_gen(results: list) -> Table:
@@ -151,7 +151,9 @@ def main() -> None:
         else:
             status.update(f"[green]Retrieving uptime information for [cyan]{len(ARGS.switch)}[green] switches...")
 
-        results = ARGS.switch
+        results = {}
+        for switch in ARGS.switch:
+            results[switch] = (switch, "this did", "not get", "changed for", "some reason")
         threads = []
         chunk_size = 20
 
@@ -167,7 +169,7 @@ def main() -> None:
                 threads.clear()
 
         status.update("[green]Generating table...")
-        table = table_gen(results)
+        table = table_gen(results.values())
         status.stop()
         rprint(table)
 
