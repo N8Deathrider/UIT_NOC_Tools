@@ -94,7 +94,7 @@ def get_uptime(switch: str, results: list) -> None:
         results[results.index(switch)] = (switch, "Connection timeout", "", "", "")
         return
     except Exception as e:
-        log.exception(f"An unhandled error occurred occurred while connecting to {switch}")
+        log.exception(f"An unhandled error occurred occurred while connecting to {switch}: {e}")
         results[results.index(switch)] = (switch, "Error", "", "", "")
 
     results[results.index(switch)] = (switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason"))
