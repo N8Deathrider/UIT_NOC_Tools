@@ -146,19 +146,25 @@ def main() -> None:
     log.debug(f"Arguments: {ARGS}")
 
     with console.status("[green]Retrieving uptime information...") as status:
-        results = ARGS.switch
         if len(ARGS.switch) == 1:
             status.update(f"[green]Retrieving uptime information for [cyan]1[green] switch...")
         else:
             status.update(f"[green]Retrieving uptime information for [cyan]{len(ARGS.switch)}[green] switches...")
-        threads = []
-        for switch in ARGS.switch:
-            thread = Thread(target=get_uptime, args=(switch, results))
-            threads.append(thread)
-            thread.start()
 
-        for thread in threads:
-            thread.join()
+        results = ARGS.switch
+        threads = []
+        chunk_size = 20
+
+        for i in range(0, len(ARGS.switch), chunk_size):
+            chunk = ARGS.switch[i:i+chunk_size]
+            for switch in chunk:
+                thread = Thread(target=get_uptime, args=(switch, results))
+                threads.append(thread)
+                thread.start()
+
+            for thread in threads:
+                thread.join()
+                threads.clear()
 
         status.update("[green]Generating table...")
         table = table_gen(results)
