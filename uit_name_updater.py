@@ -636,10 +636,11 @@ def main() -> None:
             rprint(change_display_table("InfoBlox Name Mismatch", name, full_name))
             print("There is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
             rprint("[bold]A ticket should now be automatically created for this change.")
-            if create_ticket(ARGS.switch_ip, ARGS.switch_ip, name, full_name):
-                print("Ticket created successfully.")
-            else:
-                print("Ticket creation failed.")
+            if Confirm.ask(f"Would you like a ticket to be created for this change?"):
+                if create_ticket(ARGS.switch_ip, ARGS.switch_ip, name, full_name):
+                    print("Ticket created successfully.")
+                else:
+                    print("Ticket creation failed.")
             rprint(f"The proper switch name for '[green]{ARGS.switch_ip}[/green]' should be: '[green]{correct_name}[/green]' with the domain '[green]{domain_name}[/green]'")
             break
 
