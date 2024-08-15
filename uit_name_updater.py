@@ -635,7 +635,6 @@ def main() -> None:
         if name != full_name:
             rprint(change_display_table("InfoBlox Name Mismatch", name, full_name))
             print("There is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
-            rprint("[bold]A ticket should now be automatically created for this change.")
             if Confirm.ask(f"Would you like a ticket to be created for this change?"):
                 if create_ticket(ARGS.switch_ip, ARGS.switch_ip, name, full_name):
                     print("Ticket created successfully.")
