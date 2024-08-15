@@ -92,7 +92,7 @@ def table_gen(results: list) -> Table:
     Generate a table with the uptime information for the specified switches.
 
     Args:
-        switches (list): The list of switches to get uptime information for.
+        results (list): The list of results containing uptime information for switches.
 
     Returns:
         Table: The table with the uptime information.
