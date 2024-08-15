@@ -24,6 +24,7 @@ Exit Codes:
 import logging
 from sys import exit
 import argparse
+from threading import Thread
 
 # Third-party libraries
 from rich.logging import RichHandler
