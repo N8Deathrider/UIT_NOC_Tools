@@ -525,7 +525,7 @@ def create_ticket(dns_ip: str, dns_pop_ip: str, dns_fqhn: str, dns_pop_fqhn: str
 
     log.debug(f"Response: {response.json()}")
     if response.ok:
-        log.info("Ticket created successfully.")
+        log.debug("Ticket created successfully.")
         return True
     else:
         log.error("Ticket creation failed.")
