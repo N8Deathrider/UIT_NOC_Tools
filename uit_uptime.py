@@ -125,13 +125,28 @@ def main() -> None:
     """
     ARGS = get_args()
 
+    console = Console()
+
     if ARGS.debug:
         log.setLevel(logging.DEBUG)
 
     log.debug(f"Arguments: {ARGS}")
 
-    table = table_gen(ARGS.switch)
-    rprint(table)
+    with console.status("[green]Retrieving uptime information...") as status:
+        results = ARGS.switch
+        threads = []
+        for switch in ARGS.switch:
+            thread = Thread(target=get_uptime, args=(switch, results))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        status.update("[green]Generating table...")
+        table = table_gen(results)
+        status.stop()
+        rprint(table)
 
 
 if __name__ == "__main__":
