@@ -9,6 +9,7 @@ It generates a new name for the device based on the given parameters and updates
 import argparse
 import ipaddress
 import logging
+import re
 from sys import exit
 import webbrowser
 from getpass import getpass
@@ -18,14 +19,16 @@ import urllib3
 from threading import Thread
 
 # Third-party libraries
+import requests
 from rich.logging import RichHandler
 from rich.prompt import Confirm
 from rich.table import Table
 from rich import print as rprint
-from uit_duo import Duo
+from uit_duo import Duo, get_form_args
 from netmiko import ConnectHandler, SSHDetect, BaseConnection
 from netmiko import NetmikoAuthenticationException, NetmikoTimeoutException
 import orionsdk
+from yarl import URL
 
 # Local libraries
 
@@ -411,6 +414,120 @@ def change_switch_info(connection: BaseConnection, correct_name: str, building_n
     log.debug(f"Output: {switch_output}")
     connection.disconnect()  # Disconnect from the switch
     log.debug("Switch connection closed.")
+
+
+def create_ticket(dns_ip: str, dns_pop_ip: str, dns_fqhn: str, dns_pop_fqhn: str) -> None:
+    """
+    Creates a ticket in ServiceNow for the switch name change.
+
+    Args:
+    - dns_ip (str): The current IP address of the DNS record.
+    - dns_pop_ip (str): The proposed IP address of the DNS record.
+    - dns_fqhn (str): The current fully qualified host name of the DNS record.
+    - dns_pop_fqhn (str): The proposed fully qualified host name of the DNS record.
+
+    Returns:
+    None
+    """
+
+    base_url = URL("https://uofu.service-now.com/")
+
+    # sys_id for the DNS Update Request catalog item
+    sys_id = "a7abab2913c28340af4150782244b0c3"
+
+    duo = Duo(uNID=UofU.unid, password=UofU.cisPassword)
+
+    session: requests.Session = duo.login()
+
+    response: requests.Response = session.get(base_url, allow_redirects=True)
+
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        log.error(f"HTTP Error: {e}")
+
+    sysparm_url = URL(response.url).query.get("sysparm_url")
+
+    response: requests.Response = session.get(sysparm_url, allow_redirects=True)
+
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        log.error(f"HTTP Error: {e}")
+
+    saml_response = get_form_args(response.text, "SAMLResponse")
+    # TODO: Add error handling for when the SAMLResponse is not found
+
+    response: requests.Response = session.post(base_url / "navpage.do", data={"SAMLResponse": saml_response})
+
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        log.error(f"HTTP Error: {e}")
+
+    response: requests.Response = session.get(base_url / "it", params={"id": "uu_catalog_item", "sys_id": sys_id})
+
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        log.error(f"HTTP Error: {e}")
+
+    reg = re.compile(r"window\.g_ck = '(.*?)'")
+
+    match = reg.search(response.text)
+    # TODO: Add error handling for when the regex doesn't match
+
+    # The X-Usertoken header is required to access the ServiceNow API
+    session.headers.update({"X-Usertoken": match.group(1)})
+
+    response: requests.Response = session.get(base_url / "api/now/sp/page", params={"id": "uu_catalog_item", "sys_id": sys_id})
+
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        log.error(f"HTTP Error: {e}")
+
+    user_info = response.json()["result"]["user_info"]
+
+    response: requests.Response = session.post(
+        base_url / "api/sn_sc/v1/servicecatalog/items" / sys_id / "order_now",
+        json={
+            "sysparm_quantity": "1",
+            "variables": {
+                "requester": user_info["sys_id"],
+                "requester_phone": user_info["phone"],
+                "requester_vs": "true",  # TODO: Figure out what this is and if it needs to be dynamic
+                "addl_info_vs": "",
+                "requester_unid": user_info["user_name"],
+                "dns_prop_fqhn": dns_pop_fqhn,
+                "addl_info_label": "",
+                "addl_info": "The current FQHN will be added as an alias for backwards compatibility.",
+                "dns_prop_ip": dns_pop_ip,
+                "requester_email": user_info["email"],
+                "dns_fqhn": dns_fqhn,
+                "requester_info_label": "",
+                "requester_department": user_info["department"],
+                "dns_ip": dns_ip,
+                "dns_mac": "",
+                "dns_req_type": "dns_update",
+                "requester_cont_start": "true",
+            },
+            "sysparm_item_guid": sys_id,
+            "get_portal_messages": "true",
+            "sysparm_no_validation": "true",
+        },
+    )
+
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        log.error(f"HTTP Error: {e}")
+
+    log.debug(f"Response: {response.json()}")
+    if response.ok:
+        log.info("Ticket created successfully.")
+    else:
+        log.error("Ticket creation failed.")
 
 
 def main() -> None:
