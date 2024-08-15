@@ -67,6 +67,26 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def get_uptime(switch: str, results: list) -> None:
+    """
+    Get the uptime information for the specified switch.
+
+    Args:
+        switch (str): The switch address to get uptime information for.
+        results (list): The list of results to update with the uptime information.
+
+    Returns:
+        None: This function does not return anything. It updates the results list in-place.
+    """
+    switch_obj = Switch(switch)
+    
+    uptime = switch_obj.uptime[3]
+    restart_timestamp = switch_obj.uptime[1].format("ddd, MMM D YYYY [a]t, h:mm A")
+    days_up = str(switch_obj.uptime[0])
+    
+    results[results.index(switch)] = (switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason"))
+
+
 def table_gen(switches: list) -> Table:
     """
     Generate a table with the uptime information for the specified switches.
