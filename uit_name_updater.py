@@ -487,7 +487,7 @@ def create_ticket(dns_ip: str, dns_pop_ip: str, dns_fqhn: str, dns_pop_fqhn: str
     except requests.HTTPError as e:
         log.error(f"HTTP Error: {e}")
 
-    user_info = response.json()["result"]["user_info"]
+    user_info = response.json()["result"]["user"]
 
     response: requests.Response = session.post(
         base_url / "api/sn_sc/v1/servicecatalog/items" / sys_id / "order_now",
