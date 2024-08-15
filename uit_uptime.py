@@ -87,15 +87,15 @@ def get_uptime(switch: str, results: list) -> None:
         days_up = str(switch_obj.uptime[0])
     except NetMikoAuthenticationException as e:
         # log.error(f"Authentication error occurred while connecting to {switch}")
-        results[switch] = (switch, "Authentication error", "", "", "")
+        results[switch] = (switch, "", "", "", "Authentication error")
         return
     except NetMikoTimeoutException as e:
         # log.error(f"Connection timeout occurred while connecting to {switch}")
-        results[switch] = (switch, "Connection timeout", "", "", "")
+        results[switch] = (switch, "", "", "", "Connection timeout")
         return
     except Exception as e:
         log.exception(f"An unhandled error occurred occurred while connecting to {switch}: {e}")
-        results[switch] = (switch, "Error", "", "", "")
+        results[switch] = (switch, "", "", "", "Error")
 
     results[switch] = (switch, uptime.get("uptime"), days_up, restart_timestamp , uptime.get("reload_reason"))
 
@@ -165,7 +165,7 @@ def main() -> None:
                 
             for thread in threads:
                 thread.join()
-        else:
+        else:  #FIXME: This is not working as expected, some times some entries are not updated
             for i in range(0, len(ARGS.switch), chunk_size):
                 chunk = ARGS.switch[i:i+chunk_size]
                 for switch in chunk:
