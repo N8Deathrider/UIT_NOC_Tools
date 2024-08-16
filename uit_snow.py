@@ -14,7 +14,7 @@ from rich.logging import RichHandler
 from yarl import URL
 
 # Local libraries
-from uit_duo import Duo
+from uit_duo import Duo, get_form_args
 
 
 # Standard exit codes
@@ -41,3 +41,29 @@ class SNow:
 
     def auth(self) -> None:
         self._session: requests.Session = self._duo.login()
+
+        response: requests.Response = self._session.get(self.base_url, allow_redirects=True)
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as e:
+            log.error(f"HTTP Error: {e}")
+
+        sysparm_url = URL(response.url).query.get("sysparm_url")
+
+        response: requests.Response = self._session.get(sysparm_url, allow_redirects=True)
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as e:
+            log.error(f"HTTP Error: {e}")
+
+        saml_response = get_form_args(response.text, "SAMLResponse")
+        # TODO: Add error handling for when the SAMLResponse is not found
+
+        response: requests.Response = self._session.post(
+            self.base_url / "navpage.do",
+            data={"SAMLResponse": saml_response}
+        )
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as e:
+            log.error(f"HTTP Error: {e}")
