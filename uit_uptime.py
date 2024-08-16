@@ -165,7 +165,7 @@ def main() -> None:
                 
             for thread in threads:
                 thread.join()
-        else:  #FIXME: This is not working as expected, some times some entries are not updated
+        else:
             for i in range(0, len(ARGS.switch), chunk_size):
                 chunk = ARGS.switch[i:i+chunk_size]
                 for switch in chunk:
@@ -175,7 +175,7 @@ def main() -> None:
 
                 for thread in threads:
                     thread.join()
-                    threads.clear()
+                threads.clear()
 
         status.update("[green]Generating table...")
         table = table_gen(results.values())
