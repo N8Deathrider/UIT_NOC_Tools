@@ -6,6 +6,7 @@
 
 # Standard libraries
 import logging
+import re
 from sys import exit
 
 # Third-party libraries
@@ -40,6 +41,7 @@ class SNow:
         self.base_url = URL("https://uofu.service-now.com/")
 
     def auth(self) -> None:
+        regex = re.compile(r"window\.g_ck = '(.*?)'")
         self._session: requests.Session = self._duo.login()
 
         response: requests.Response = self._session.get(self.base_url, allow_redirects=True)
