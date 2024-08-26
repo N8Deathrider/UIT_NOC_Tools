@@ -96,6 +96,16 @@ def switch_commands_generator(switch_name: str) -> list:
     ]
 
 
+def get_switch_hostname(connection: BaseConnection) -> str:
+    """
+    Get the hostname of a switch.
+
+    :param connection: The connection to the switch.
+    :return: The hostname of the switch.
+    """
+    return connection.send_command("show run", use_genie=True)["version"]["hostname"]
+
+
 def main() -> None:
     """
     #TODO: Add description
