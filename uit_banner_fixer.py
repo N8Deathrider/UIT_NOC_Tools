@@ -56,6 +56,12 @@ def get_args() -> argparse.Namespace:
         description="A script for fixing the banner on UIT switches."
     )
     parser.add_argument(
+        "--debug",
+        action="store_true",
+        help=argparse.SUPPRESS
+    )
+
+    parser.add_argument(
         "switch_address",
         type=str,
         help="The IP address of the switch.",
@@ -120,7 +126,7 @@ def main() -> None:
     log.debug("Entering Switch Section")
     device_dict = {
         "device_type": "autodetect",
-        "host": ARGS.switch_ip,
+        "host": ARGS.switch_address,
         "username": SSH.username,
         "password": SSH.password,
     }
@@ -135,6 +141,15 @@ def main() -> None:
         dev_device_dict = device_dict.copy()
         dev_device_dict["password"] = "********"
         log.debug(f"Device dictionary: {device_dict}")
+
+    with ConnectHandler(**device_dict) as conn:
+        hostname = get_switch_hostname(conn)
+        log.debug(f"Hostname: {hostname}")
+        commands = switch_commands_generator(hostname)
+        log.debug(f"Commands: {commands}")
+        conn.send_config_set(commands)
+        conn.save_config()
+        log.info(f"Banner successfully set on {hostname}")
 
 
 if __name__ == "__main__":
