@@ -179,8 +179,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     try:
-        # main()
-        raise NotImplementedError("This script is not yet finished.")
+        main()
     except KeyboardInterrupt:
         log.info("\nCtrl + c pressed. Exiting script...")
         exit(EXIT_KEYBOARD_INTERRUPT)
