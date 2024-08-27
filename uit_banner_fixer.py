@@ -145,6 +145,8 @@ def change_maker(switch_address: str) -> None:
     best_match = guesser.autodetect()
     device_dict["device_type"] = best_match
 
+    del guesser  # Clean up the SSHDetect object to free up memory
+
     dev_device_dict = device_dict.copy()
     dev_device_dict["password"] = "********"
     log.debug(f"Device dictionary: {dev_device_dict}")
