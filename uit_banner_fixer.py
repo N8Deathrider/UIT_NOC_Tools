@@ -185,29 +185,34 @@ def main() -> None:
     chunk_size = 40
     log.debug(f"Chunk size: {chunk_size}")
 
-    if len(ARGS.switch_address) <= 45:
-        for switch in ARGS.switch_address:
-            thread = Thread(target=change_maker, args=(switch,))
-            threads.append(thread)
-            thread.start()
+    with CONSOLE.status(f"[bold green]Setting banners on {len(ARGS.switch_address)} switches...") as status:
+        if ARGS.debug:
+            status.stop()
 
-        for thread in threads:
-            thread.join()
-    else:
-        for i in range(0, len(ARGS.switch_address), chunk_size):
-            chunk = ARGS.switch[i : i + chunk_size]
-            for switch in chunk:
-                thread = Thread(target=change_maker, args=(switch))
+        if len(ARGS.switch_address) <= 45:
+            for switch in ARGS.switch_address:
+                thread = Thread(target=change_maker, args=(switch,))
                 threads.append(thread)
                 thread.start()
 
             for thread in threads:
                 thread.join()
-            threads.clear()
+        else:
+            for i in range(0, len(ARGS.switch_address), chunk_size):
+                chunk = ARGS.switch[i : i + chunk_size]
+                for switch in chunk:
+                    thread = Thread(target=change_maker, args=(switch))
+                    threads.append(thread)
+                    thread.start()
+
+                for thread in threads:
+                    thread.join()
+                threads.clear()
 
 
 if __name__ == "__main__":
     try:
+        CONSOLE = Console()
         main()
     except KeyboardInterrupt:
         log.info("\nCtrl + c pressed. Exiting script...")
