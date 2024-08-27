@@ -14,7 +14,7 @@ from sys import exit
 from rich.logging import RichHandler
 from rich.console import Console
 from netmiko import ConnectHandler, SSHDetect, BaseConnection
-from netmiko import NetmikoAuthenticationException
+from netmiko import NetmikoAuthenticationException, NetmikoTimeoutException
 
 # Local libraries
 
@@ -110,6 +110,54 @@ def get_switch_hostname(connection: BaseConnection) -> str:
     :return: The hostname of the switch.
     """
     return connection.send_command("show run", use_genie=True)["version"]["hostname"]
+
+
+def change_maker(switch_address: str) -> None:
+    """
+    Change the banner on a network switch.
+
+    Args:
+        switch_address (str): The IP address or hostname of the switch.
+
+    Raises:
+        NetmikoAuthenticationException: If there is an authentication error.
+        NetmikoTimeoutException: If the connection times out.
+
+    Returns:
+        None
+    """
+    device_dict = {
+        "device_type": "autodetect",
+        "host": switch_address,
+        "username": SSH.username,
+        "password": SSH.password,
+    }
+
+    try:
+        guesser = SSHDetect(**device_dict)
+    except NetmikoAuthenticationException:
+        log.error(f"{switch_address} - Authentication error. Please check the username and password.")
+    except NetmikoTimeoutException:
+        log.error(f"{switch_address} - Connection timed out. Please check the IP address.")
+
+    best_match = guesser.autodetect()
+    device_dict["device_type"] = best_match
+
+    dev_device_dict = device_dict.copy()
+    dev_device_dict["password"] = "********"
+    log.debug(f"Device dictionary: {device_dict}")
+
+    with ConnectHandler(**device_dict) as conn:
+        hostname = get_switch_hostname(conn)
+        log.debug(f"Hostname: {hostname}")
+
+        commands = switch_commands_generator(hostname)
+        log.debug(f"Commands: {commands}")
+
+        conn.send_config_set(commands)
+        conn.save_config()
+
+        log.info(f"Banner successfully set on {hostname}")
 
 
 def main() -> None:
