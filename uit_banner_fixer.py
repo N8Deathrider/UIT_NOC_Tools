@@ -145,7 +145,7 @@ def change_maker(switch_address: str) -> None:
 
     dev_device_dict = device_dict.copy()
     dev_device_dict["password"] = "********"
-    log.debug(f"Device dictionary: {device_dict}")
+    log.debug(f"Device dictionary: {dev_device_dict}")
 
     with ConnectHandler(**device_dict) as conn:
         hostname = get_switch_hostname(conn)
