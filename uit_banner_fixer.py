@@ -171,33 +171,9 @@ def main() -> None:
 
     log.debug(f"Arguments: {ARGS}")
 
-    log.debug("Entering Switch Section")
-    device_dict = {
-        "device_type": "autodetect",
-        "host": ARGS.switch_address,
-        "username": SSH.username,
-        "password": SSH.password,
-    }
-    try:
-        guesser = SSHDetect(**device_dict)
-    except NetmikoAuthenticationException:
-        log.error("Authentication error. Please check the username and password.")
-        exit(EXIT_GENERAL_ERROR)
-    best_match = guesser.autodetect()
-    device_dict["device_type"] = best_match
-    if ARGS.debug:
-        dev_device_dict = device_dict.copy()
-        dev_device_dict["password"] = "********"
-        log.debug(f"Device dictionary: {device_dict}")
+    for switch in ARGS.switch_address:
+        change_maker(switch)
 
-    with ConnectHandler(**device_dict) as conn:
-        hostname = get_switch_hostname(conn)
-        log.debug(f"Hostname: {hostname}")
-        commands = switch_commands_generator(hostname)
-        log.debug(f"Commands: {commands}")
-        conn.send_config_set(commands)
-        conn.save_config()
-        log.info(f"Banner successfully set on {hostname}")
 
 
 if __name__ == "__main__":
