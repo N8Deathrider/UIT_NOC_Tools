@@ -155,6 +155,9 @@ def change_maker(switch_address: str) -> None:
         hostname = get_switch_hostname(conn)
         log.debug(f"Hostname: {hostname}")
 
+        if CONSOLE:  # If the console exists
+            CONSOLE.log(f"Setting banner on {hostname}...")
+
         commands = switch_commands_generator(hostname)
         log.debug(f"Commands: {commands}")
 
