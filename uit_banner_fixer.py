@@ -34,6 +34,7 @@ logging.basicConfig(
     handlers=[RichHandler()]
 )
 log: logging.Logger = logging.getLogger("rich")
+logging.getLogger("paramiko").setLevel(logging.WARNING)
 
 
 try:
