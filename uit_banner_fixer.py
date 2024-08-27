@@ -9,6 +9,7 @@ import argparse
 import logging
 from getpass import getpass
 from sys import exit
+from threading import Thread
 
 # Third-party libraries
 from rich.logging import RichHandler
@@ -172,9 +173,30 @@ def main() -> None:
 
     log.debug(f"Arguments: {ARGS}")
 
-    for switch in ARGS.switch_address:
-        change_maker(switch)
+    threads = []
 
+    chunk_size = 40
+    log.debug(f"Chunk size: {chunk_size}")
+
+    if len(ARGS.switch_address) <= 45:
+        for switch in ARGS.switch_address:
+            thread = Thread(target=change_maker, args=(switch,))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+    else:
+        for i in range(0, len(ARGS.switch_address), chunk_size):
+            chunk = ARGS.switch[i : i + chunk_size]
+            for switch in chunk:
+                thread = Thread(target=change_maker, args=(switch))
+                threads.append(thread)
+                thread.start()
+
+            for thread in threads:
+                thread.join()
+            threads.clear()
 
 
 if __name__ == "__main__":
