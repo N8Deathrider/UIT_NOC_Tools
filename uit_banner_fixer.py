@@ -161,9 +161,12 @@ def change_maker(switch_address: str) -> None:
         conn.send_config_set(commands)
         conn.save_config()
 
-        # log.info(f"Banner successfully set on {hostname}")
-        CONSOLE.log(f"Banner successfully set on {hostname}")
-        # Using rich console for better output with the status bar as the normal log.info() output messes up the status bar
+        if CONSOLE:  # If the console exists
+            # Use the console to print the log message so that it doesn't interfere with the status message
+            CONSOLE.log(f"Banner successfully set on {hostname}")
+        else:
+            # If the console doesn't exist, use the logger to print the log message
+            log.info(f"Banner successfully set on {hostname}")
 
 
 def main() -> None:
