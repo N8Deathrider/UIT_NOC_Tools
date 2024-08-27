@@ -109,7 +109,7 @@ def get_switch_hostname(connection: BaseConnection) -> str:
     :param connection: The connection to the switch.
     :return: The hostname of the switch.
     """
-    return connection.send_command("show run", use_genie=True)["version"]["hostname"]
+    return connection.send_command("show version", use_genie=True)["version"]["hostname"]
 
 
 def change_maker(switch_address: str) -> None:
