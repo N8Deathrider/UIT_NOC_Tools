@@ -367,22 +367,22 @@ def view_orion_node_page(node_id: int):
     webbrowser.open(node_url)
 
 
-def change_display_table(table_title: str, current_name: str, potential_name: str):
+def change_display_table(table_title: str, current_name: str, proposed_name: str):
     """
-    Creates a display table with the given table title, current name, and potential name.
+    Creates a display table with the given table title, current name, and proposed name.
 
     Args:
         table_title (str): The title of the table.
         current_name (str): The current name.
-        potential_name (str): The potential name.
+        proposed_name (str): The proposed name.
 
     Returns:
-        Table: The display table with the title, current name, and potential name.
+        Table: The display table with the title, current name, and proposed name.
     """
     table = Table(title=table_title, show_header=False, style="red")
 
     table.add_row("[bold]Current Name:", current_name)
-    table.add_row("[bold]Potential Name:", potential_name)
+    table.add_row("[bold]Proposed Name:", proposed_name)
 
     return table
 
