@@ -11,7 +11,7 @@ import ipaddress
 import logging
 import re
 from sys import exit
-import webbrowser
+import webbrowser  # TODO: Evaluate if this is needed
 from socket import gethostbyname
 from socket import gaierror
 import urllib3
