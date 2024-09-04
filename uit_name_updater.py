@@ -12,7 +12,6 @@ import logging
 import re
 from sys import exit
 import webbrowser
-from getpass import getpass
 from socket import gethostbyname
 from socket import gaierror
 import urllib3
@@ -57,6 +56,7 @@ try:
     ORION_USERNAME, ORION_PASSWORD = f"ad\\{UofU.unid}", UofU.cisPassword
 except ImportError:
     print("No auth.py file found.")
+    from getpass import getpass
     uNID = input("Enter your uNID: ")
     ORION_PASSWORD = getpass("Enter your CIS password: ")
     WIAN_PASSWORD = getpass("Enter your WIAN password: ")
