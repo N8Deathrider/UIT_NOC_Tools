@@ -104,7 +104,7 @@ def get_table_data(status: str = "active") -> pd.DataFrame:
     }
     response = requests.post(url=URL, data=post_data)
     dfs = pd.read_html(StringIO(response.text))
-    df = dfs[1]
+    df = dfs[1].fillna("")
     df.set_index("Building Number", inplace=True, drop=False)
     return df
 
