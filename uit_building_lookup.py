@@ -116,6 +116,9 @@ def build_rich_table(df: pd.DataFrame, building_numbers: list[int]) -> Table:
         header_style="bold",
         show_lines=True,
     )
+
+    df = df.drop(["NASF", "NSF", "GSF", "Location Code"], axis=1, inplace=False)
+
     for column in df.columns:
         table.add_column(column)
     for row in df.itertuples(index=False):
