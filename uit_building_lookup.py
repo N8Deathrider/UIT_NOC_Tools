@@ -82,7 +82,7 @@ def get_table_data() -> pd.DataFrame:
     response = requests.post(url=URL, data=post_data)
     dfs = pd.read_html(StringIO(response.text))
     df = dfs[1]
-    df.set_index("Building Number", inplace=True)
+    df.set_index("Building Number", inplace=True, drop=False)
     return df
 
 
