@@ -10,6 +10,8 @@ import logging
 from sys import exit
 
 # Third-party libraries
+import pandas as pd
+import requests
 from rich.console import Console
 from rich.table import Table
 from rich.logging import RichHandler
