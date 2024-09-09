@@ -75,8 +75,8 @@ def get_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
-# TODO: add arguments for all buildings, active buildings, or inactive buildings with the default being active
-def get_table_data() -> pd.DataFrame:
+
+def get_table_data(status: str = "active") -> pd.DataFrame:
     """
     Fetches table data from a URL and returns it as a pandas DataFrame.
 
@@ -84,12 +84,14 @@ def get_table_data() -> pd.DataFrame:
         pd.DataFrame: The table data as a pandas DataFrame.
     """
     URL = "https://www.space.utah.edu/htdocs/requestBuildingList.php"
+    if status not in ["active", "inactive", "all"]:
+        raise ValueError("Invalid status. Must be one of 'active', 'inactive', or 'all'.")
     post_data = {
         "tried": "yes",
         "form_change": "no",
         "fetch_button": "Fetch+List",
         "delivery": "online",
-        "status": "active"
+        "status": status
     }
     response = requests.post(url=URL, data=post_data)
     dfs = pd.read_html(StringIO(response.text))
