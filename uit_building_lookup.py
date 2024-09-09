@@ -7,6 +7,7 @@
 # Standard libraries
 import argparse
 import logging
+from io import StringIO
 from sys import exit
 
 # Third-party libraries
@@ -79,7 +80,7 @@ def get_table_data() -> pd.DataFrame:
         "status": "active"
     }
     response = requests.post(url=URL, data=post_data)
-    dfs = pd.read_html(response.text)
+    dfs = pd.read_html(StringIO(response.text))
     df = dfs[1]
     return df
 
