@@ -36,7 +36,7 @@ logging.basicConfig(
 )
 log: logging.Logger = logging.getLogger("rich")
 
-
+# TODO: Add argument for All buildings, Active buildings, or Inactive buildings with choices and Active as default
 def get_args() -> argparse.Namespace:
     """
     Parse command line arguments and return the parsed arguments.
@@ -63,7 +63,7 @@ def get_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
-
+# TODO: add arguments for all buildings, active buildings, or inactive buildings with the default being active
 def get_table_data() -> pd.DataFrame:
     """
     Fetches table data from a URL and returns it as a pandas DataFrame.
