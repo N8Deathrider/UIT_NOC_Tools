@@ -100,7 +100,8 @@ def main() -> None:
     table_data = get_table_data()
     log.debug(f"Table data (First 5 rows): {table_data.head()}")
 
-    print(table_data.loc[ARGS.building_number])
+    selected_row = table_data.loc[ARGS.building_number]
+    print(selected_row)
 
 
 if __name__ == "__main__":
