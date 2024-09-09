@@ -67,6 +67,15 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "-s",
+        "--status",
+        default="active",
+        help="The status of the building(s) to lookup. Default is 'active'.",
+        choices=["active", "inactive", "all"],
+        type=str
+    )
+
+    parser.add_argument(
         "building_number",
         type=int,
         help="The building number to lookup",
@@ -144,7 +153,7 @@ def main() -> None:
 
     log.debug(f"ARGS: {ARGS}")
 
-    table_data = get_table_data()
+    table_data = get_table_data(status=ARGS.status)
     log.debug(f"Table data (First 5 rows): {table_data.head()}")
 
     console.print(build_rich_table(table_data, ARGS.building_number))
