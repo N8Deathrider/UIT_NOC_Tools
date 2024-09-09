@@ -57,8 +57,8 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "building_number",
         type=int,
-        help="The building number to lookup"
-        # TODO: look at adding more arguments so that multiple buildings can be looked up at once
+        help="The building number to lookup",
+        nargs="+"
     )
 
     return parser.parse_args()
@@ -121,8 +121,7 @@ def main() -> None:
     table_data = get_table_data()
     log.debug(f"Table data (First 5 rows): {table_data.head()}")
 
-    selected_row = table_data.loc[ARGS.building_number]
-    print(selected_row)
+    console.print(build_rich_table(table_data, ARGS.building_number))
 
 
 if __name__ == "__main__":
