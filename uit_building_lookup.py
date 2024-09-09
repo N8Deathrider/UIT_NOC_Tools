@@ -86,6 +86,27 @@ def get_table_data() -> pd.DataFrame:
     return df
 
 
+def build_rich_table(df: pd.DataFrame, building_numbers: list[int]) -> Table:
+    """
+    Converts a pandas DataFrame to a rich Table.
+
+    Args:
+        df (pd.DataFrame): The pandas DataFrame to convert.
+        building_numbers (list[int]): The building numbers to include in the rich Table.
+
+    Returns:
+        Table: The rich Table.
+    """
+    table = Table()
+    for column in df.columns:
+        table.add_column(column)
+    for row in df.itertuples(index=False):
+        if row[0] in building_numbers:
+            row = map(str, list(row))
+            table.add_row(*row)
+    return table
+
+
 def main() -> None:
     """
     #TODO: Add description
