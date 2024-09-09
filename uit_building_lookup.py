@@ -97,7 +97,13 @@ def build_rich_table(df: pd.DataFrame, building_numbers: list[int]) -> Table:
     Returns:
         Table: The rich Table.
     """
-    table = Table()
+    table = Table(
+        title="Building Information",
+        show_header=True,
+        style="red",
+        header_style="bold",
+        show_lines=True,
+    )
     for column in df.columns:
         table.add_column(column)
     for row in df.itertuples(index=False):
