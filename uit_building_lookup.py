@@ -1,7 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-#TODO: Add description
+This script is used to lookup building information at UIT.
+
+It fetches table data from a URL, converts it to a pandas DataFrame, and displays the information in a rich table.
+
+Usage:
+    python uit_building_lookup.py [options] building_number(s)
+
+Options:
+    --debug     Enable debug mode
+    building_number(s)   The building number(s) to lookup
+
+Example:
+    python uit_building_lookup.py --debug 12345 67890
 """
 
 # Standard libraries
@@ -115,7 +127,10 @@ def build_rich_table(df: pd.DataFrame, building_numbers: list[int]) -> Table:
 
 def main() -> None:
     """
-    #TODO: Add description
+    Entry point of the program.
+    
+    This function retrieves command line arguments, sets the logging level based on the debug flag,
+    retrieves table data, and prints a rich table based on the provided building number.
     """
     ARGS = get_args()
 
