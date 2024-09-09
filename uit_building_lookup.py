@@ -63,6 +63,27 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def get_table_data() -> pd.DataFrame:
+    """
+    Fetches table data from a URL and returns it as a pandas DataFrame.
+
+    Returns:
+        pd.DataFrame: The table data as a pandas DataFrame.
+    """
+    URL = "https://www.space.utah.edu/htdocs/requestBuildingList.php"
+    post_data = {
+        "tried": "yes",
+        "form_change": "no",
+        "fetch_button": "Fetch+List",
+        "delivery": "online",
+        "status": "active"
+    }
+    response = requests.post(url=URL, data=post_data)
+    dfs = pd.read_html(response.text)
+    df = dfs[1]
+    return df
+
+
 def main() -> None:
     """
     #TODO: Add description
