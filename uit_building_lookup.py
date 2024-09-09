@@ -56,7 +56,7 @@ def get_args() -> argparse.Namespace:
 
     parser.add_argument(
         "building_number",
-        type=str,
+        type=int,
         help="The building number to lookup"
         # TODO: look at adding more arguments so that multiple buildings can be looked up at once
     )
@@ -96,9 +96,6 @@ def main() -> None:
         log.setLevel(logging.DEBUG)
 
     log.debug(f"ARGS: {ARGS}")
-
-    # Remove leading zeros from building number because the table data does not have leading zeros
-    building_number = ARGS.building_number.lstrip("0")
 
     table_data = get_table_data()
     log.debug(f"Table data (First 5 rows): {table_data.head()}")
