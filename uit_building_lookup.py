@@ -100,6 +100,8 @@ def main() -> None:
     table_data = get_table_data()
     log.debug(f"Table data (First 5 rows): {table_data.head()}")
 
+    print(table_data.loc[ARGS.building_number])
+
 
 if __name__ == "__main__":
     try:
