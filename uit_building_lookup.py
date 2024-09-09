@@ -82,6 +82,7 @@ def get_table_data() -> pd.DataFrame:
     response = requests.post(url=URL, data=post_data)
     dfs = pd.read_html(StringIO(response.text))
     df = dfs[1]
+    df.set_index("Building Number", inplace=True)
     return df
 
 
@@ -89,7 +90,18 @@ def main() -> None:
     """
     #TODO: Add description
     """
-    ...
+    ARGS = get_args()
+
+    if ARGS.debug:
+        log.setLevel(logging.DEBUG)
+
+    log.debug(f"ARGS: {ARGS}")
+
+    # Remove leading zeros from building number because the table data does not have leading zeros
+    building_number = ARGS.building_number.lstrip("0")
+
+    table_data = get_table_data()
+    log.debug(f"Table data (First 5 rows): {table_data.head()}")
 
 
 if __name__ == "__main__":
