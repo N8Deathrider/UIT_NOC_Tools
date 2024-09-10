@@ -408,12 +408,17 @@ def change_switch_info(connection: BaseConnection, correct_name: str, building_n
     """
     switch_output = ""
     commands = switch_commands_generator(correct_name, building_number, room_number)
-    switch_output += connection.send_config_set(commands)
-    connection.set_base_prompt()
-    switch_output += connection.save_config()
-    log.debug(f"Output: {switch_output}")
-    connection.disconnect()  # Disconnect from the switch
-    log.debug("Switch connection closed.")
+    try:
+        switch_output += connection.send_config_set(commands)
+    except ValueError as e:
+        log.error(e)
+    else:
+        connection.set_base_prompt()
+        switch_output += connection.save_config()
+        log.debug(f"Output: {switch_output}")
+    finally:
+        connection.disconnect()  # Disconnect from the switch
+        log.debug("Switch connection closed.")
 
 
 def create_ticket(dns_ip: str, dns_pop_ip: str, dns_fqhn: str, dns_pop_fqhn: str) -> None:
