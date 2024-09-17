@@ -765,8 +765,8 @@ def main() -> None:
     # Get the InfoBlox data
     ddi_data = ddi_search(ARGS.switch_ip).get("result")
     
-    # Get the record objects
-    objects = ddi_data["objects"]  # I did it like this to raise an error if it doesn't exist
+    # Check if DNS change is allowed
+    ddi_name = dns_change_allowed_checker(ddi_data)
     
     # Get the dns names
     ddi_names = ddi_data.get("names", "").split(", ")
