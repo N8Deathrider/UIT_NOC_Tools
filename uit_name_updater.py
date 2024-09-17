@@ -407,7 +407,8 @@ def dns_changer_playwright(
     browser = playwright.chromium.launch(headless=False)
     context = browser.new_context()  # TODO: add logic for saving and reusing session info
     page = context.new_page()
-    aliases = remove_duplicates(aliases.append(current_dns))  # Add the current DNS to the aliases list and remove duplicates
+    aliases.append(current_dns)  # Add the current DNS to the aliases list
+    aliases = remove_duplicates(aliases)  # Remove duplicates from the aliases list
     page.goto("https://ddi.utah.edu/ui/")
 
     # Login
