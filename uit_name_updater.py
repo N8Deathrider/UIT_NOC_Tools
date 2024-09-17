@@ -27,6 +27,7 @@ from uit_duo import Duo, get_form_args
 from netmiko import ConnectHandler, SSHDetect, BaseConnection
 from netmiko import NetmikoAuthenticationException, NetmikoTimeoutException
 import orionsdk
+from playwright.sync_api import Playwright, sync_playwright
 from yarl import URL
 
 # Local libraries
@@ -348,6 +349,10 @@ def ddi_search(ip: str) -> dict:
     r.raise_for_status()
     log.debug(f"DDI Search Response: {r.json()}")
     return r.json()
+
+
+def dns_changer_playwright(playwright: Playwright, ip_address: str, desired_dns: str, aliases: list[str] = []) -> None:
+    pass
 
 
 def view_orion_node_page(node_id: int):
