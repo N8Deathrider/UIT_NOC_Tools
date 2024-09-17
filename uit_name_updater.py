@@ -270,7 +270,7 @@ def dns_change_allowed_checker(results: dict) -> str | None:
     Returns:
         str | None: The host record if DNS change is allowed, otherwise None.
     """
-    objects = results.get("objects", results["result"]["objects"])
+    objects = results.get("objects") or results["result"]["objects"]
     joined_objects = "".join(objects)
     host_record_count = joined_objects.count("record:host")
 
