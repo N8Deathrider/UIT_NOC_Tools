@@ -486,7 +486,7 @@ def dns_changer_playwright(
         expect(page.get_by_text("Operation not possible due to uniqueness constraint")).to_be_hidden()
         expect(page.get_by_text("Missing value for extensible attribute 'Device Type'.")).to_be_hidden()
     except AssertionError:  # If error message is present, print message and close browser
-        print("Error encountered, please resolve manually.")
+        print("Error encountered saving new name, please resolve manually.")
         context.close()
         browser.close()
 
@@ -513,7 +513,7 @@ def dns_changer_playwright(
         expect(page.get_by_text("Operation not possible due to uniqueness constraint")).to_be_hidden()
         expect(page.get_by_text("Missing value for extensible attribute 'Device Type'.")).to_be_hidden()
     except AssertionError:  # If error message is present, print message and close browser
-        print("Error encountered, please resolve manually.")
+        print("Error encountered adding aliases, please resolve manually.")
         context.close()
         browser.close()
 
