@@ -516,6 +516,7 @@ def dns_changer_playwright(
         print("Error encountered adding aliases, please resolve manually.")
         context.close()
         browser.close()
+        print(f"Aliases that should be added: {','.join(aliases)}")
 
     # ---------------------
     context.close()
