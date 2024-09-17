@@ -429,7 +429,20 @@ def dns_changer_playwright(
         page.locator("div.ib-ur-host-editor div.x-grid3-row-last").click()  # Click on the new row to reveal the input field
         page.locator("div.ib-ur-host-editor input.x-form-field").last.fill(alias)  # Fill in the alias
         page.locator("div.ib-ur-host-editor input.x-form-field").last.press("Enter")  # Press enter to save the alias
-    
+
+    # Save changes
+    page.get_by_role("button", name="Save & Close").click()
+    sleep(1)  # Wait for save to complete
+    try:  # Check for error message
+        expect(page.get_by_text("Operation not possible due to uniqueness constraint")).to_be_hidden()
+    except AssertionError:  # If error message is present, print message and close browser
+        print("Operation not possible due to uniqueness constraint, please resolve manually.")
+        context.close()
+        browser.close()
+
+    # ---------------------
+    context.close()
+    browser.close()
 
 
 def view_orion_node_page(node_id: int):
