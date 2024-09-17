@@ -407,6 +407,7 @@ def dns_changer_playwright(
     browser = playwright.chromium.launch(headless=False)
     context = browser.new_context()  # TODO: add logic for saving and reusing session info
     page = context.new_page()
+    current_dns = current_dns.strip("net.utah.edu")  # Remove the domain from the current DNS
     aliases.append(current_dns)  # Add the current DNS to the aliases list
     aliases = remove_duplicates(aliases)  # Remove duplicates from the aliases list
     page.goto("https://ddi.utah.edu/ui/")
@@ -428,11 +429,11 @@ def dns_changer_playwright(
     page.get_by_role("button", name="Search").click()
 
     # Select correct record
-    page.get_by_text(f"Internal/{current_dns}").click()
+    page.get_by_text(f"Internal/{current_dns}.net.utah.edu").click()
 
     # Get current name
     old_dns = page.get_by_label("Name").input_value()
-    assert old_dns == current_dns.strip("net.utah.edu"), f"Old DNS: {old_dns}"  # Should be the same as current_dns
+    assert old_dns == current_dns, f"Old DNS: {old_dns}\nCurrent DNS: {current_dns}"  # Should be the same as current_dns
 
     # Update DNS
     page.get_by_label("Name").fill(desired_dns.strip("net.utah.edu"))
@@ -449,7 +450,7 @@ def dns_changer_playwright(
         browser.close()
 
     # Select correct record again
-    page.get_by_text(f"Internal/{current_dns}").click()
+    page.get_by_text(f"Internal/{current_dns}").net.utah.edu.click()
 
     # Select Aliases tab
     page.get_by_role("link", name="Aliases").click()
