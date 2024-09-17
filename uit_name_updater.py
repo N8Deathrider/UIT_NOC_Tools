@@ -406,7 +406,7 @@ def dns_changer_playwright(
 ) -> None:
     log.debug("Opening InfoBlox in Playwright")
     log.debug(f"Current DNS: '{current_dns}' Desired DNS: '{desired_dns}' Aliases: '{aliases}'")
-    browser = playwright.chromium.launch(headless=False)
+    browser = playwright.chromium.launch(headless=True)
     context = browser.new_context()  # TODO: add logic for saving and reusing session info
     page = context.new_page()
     current_dns = current_dns.removesuffix(".net.utah.edu")  # Remove the domain from the current DNS
