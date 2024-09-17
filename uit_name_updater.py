@@ -403,7 +403,7 @@ def dns_changer_playwright(
 
     # Update DNS
     page.get_by_label("Name").fill(desired_dns.strip("net.utah.edu"))
-    
+
     # Save changes
     page.get_by_role("button", name="Save & Close").click()
     sleep(1)  # Wait for save to complete
@@ -413,6 +413,23 @@ def dns_changer_playwright(
         print("Operation not possible due to uniqueness constraint, please resolve manually.")
         context.close()
         browser.close()
+
+    # Select correct record again
+    page.get_by_text(f"Internal/{current_dns}").click()
+
+    # Select Aliases tab
+    page.get_by_role("link", name="Aliases").click()
+
+    # Add aliases
+    for alias in aliases:
+        if page.locator("div.ib-inner.ib-ur-host-editor em.x-unselectable > button.ib_h_icon_add").count() > 1:
+            sleep(1)  # Wait for the duplicate button to be removed
+        page.locator("div.ib-inner.ib-ur-host-editor em.x-unselectable > button.ib_h_icon_add").click()
+        sleep(1)  # Wait for the new row to be added and ready for input
+        page.locator("div.ib-ur-host-editor div.x-grid3-row-last").click()  # Click on the new row to reveal the input field
+        page.locator("div.ib-ur-host-editor input.x-form-field").last.fill(alias)  # Fill in the alias
+        page.locator("div.ib-ur-host-editor input.x-form-field").last.press("Enter")  # Press enter to save the alias
+    
 
 
 def view_orion_node_page(node_id: int):
