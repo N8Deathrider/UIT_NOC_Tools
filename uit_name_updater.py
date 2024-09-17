@@ -849,23 +849,6 @@ def main() -> None:
 
     log.debug("Exiting InfoBlox Section")
 
-    # -- demark section ------------------------------
-    log.debug("Entering Demark Section")
-
-    if ARGS.function_descriptor == "dx":
-        for alias_number in padder(ARGS.building_number):
-            demark_alias = f"dx{ARGS.count}-{alias_number}{domain_name}"
-            try:
-                demark_ip = gethostbyname(demark_alias)
-                log.debug(f"Resolved {demark_alias} to {demark_ip}")
-                if demark_ip != ARGS.switch_ip:
-                    rprint(
-                        f"[green]'{demark_alias}'[/green] resolves to [red]'{demark_ip}'[/red] but should resolve to [green]'{ARGS.switch_ip}'[/green]."
-                    )
-            except gaierror:
-                log.debug(f"Unable to resolve {demark_alias}")
-                rprint(f"[green]'{demark_alias}'[/green] also needs to be added.")
-
 
 if __name__ == "__main__":
     try:
