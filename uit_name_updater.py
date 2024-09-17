@@ -326,6 +326,28 @@ def name_generator(function_descriptor: str, count: str, building_number: str,
     return switch_name
 
 
+def demark_alias_generator(building_number: str, switch_count: str, ip_address: str) -> list[str]:
+    demark_aliases = []
+    building_numbers = []
+    building_number = str(int(building_number))  # Convert the building number to an integer and then back to a string to remove leading 0's
+    for number in range(5):
+        building_numbers.append(building_number.zfill(number))
+    building_numbers = remove_duplicates(building_numbers)
+
+    for building_number in building_numbers:
+        demark_alias = f"dx{switch_count}-{building_number}.net.utah.edu"
+        try:
+            demark_ip = gethostbyname(demark_alias)
+            log.debug(f"Resolved {demark_alias} to {demark_ip}")
+            if demark_ip != ip_address:
+                log.warning(f"'{demark_alias}' resolves to '{demark_ip}' but should resolve to '{ip_address}'.")
+        except gaierror:
+            log.debug(f"Unable to resolve {demark_alias}")
+            demark_aliases.append(demark_alias)
+
+    return demark_aliases
+
+
 def location_generator(building_number: str, room_number: str) -> str:
     """
     Generates a location string for a network device based on the given building and room numbers.
@@ -790,8 +812,14 @@ def main() -> None:
             else:
                 print("Ticket creation failed. Please create the ticket manually.")
             with sync_playwright() as p:
-                dns_changer_playwright(playwright=p, ip_address=ARGS.switch_ip, desired_dns=full_name, current_dns=ddi_name)  # TODO: Add aliases if dx
-            
+                dns_changer_playwright(
+                    playwright=p,
+                    ip_address=ARGS.switch_ip,
+                    desired_dns=full_name,
+                    current_dns=ddi_name,
+                    aliases=aliases
+                )  # TODO: Add aliases if dx
+
             # Check if the DNS name was changed
             ddi_data = ddi_search(ARGS.switch_ip).get("result")
             if full_name in ddi_data.get("names", "").split(", "):
