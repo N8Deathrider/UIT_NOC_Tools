@@ -809,6 +809,12 @@ def main() -> None:
     # Get the dns names
     ddi_names = ddi_data.get("names", "").split(", ")
     
+    # Get the aliases
+    if ARGS.function_descriptor == "dx":
+        aliases = demark_alias_generator(ARGS.building_number, ARGS.count, ARGS.switch_ip)
+    else:
+        aliases = []
+    
     if full_name not in ddi_names:  # If the full name is not in the list of names
         log.debug("Mismatch between switch name and InfoBlox name.")
         rprint(change_display_table("InfoBlox Name Mismatch", ddi_name, full_name))
