@@ -327,6 +327,22 @@ def name_generator(function_descriptor: str, count: str, building_number: str,
 
 
 def demark_alias_generator(building_number: str, switch_count: str, ip_address: str) -> list[str]:
+    """
+    Generates a list of demark aliases for a given building when they do not exist already.
+
+    Args:
+        building_number (str): The building number.
+        switch_count (str): The switch count.
+        ip_address (str): The IP address.
+
+    Returns:
+        list[str]: A list of demark aliases.
+
+    Raises:
+        None
+    """
+
+
     demark_aliases = []
     building_numbers = []
     building_number = str(int(building_number))  # Convert the building number to an integer and then back to a string to remove leading 0's
@@ -818,7 +834,7 @@ def main() -> None:
             ddi_data = ddi_search(ARGS.switch_ip).get("result")
             if full_name in ddi_data.get("names", "").split(", "):
                 print("DNS name changed successfully.")
-        else:
+        else:  # If the DNS name cannot be changed automatically or the user chooses not to
             print("Please change the DNS name manually.")
             if Confirm.ask("Would you like a ticket to be created for this change?", default=True):
                 if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name, full_name):
@@ -827,6 +843,9 @@ def main() -> None:
                     print("Ticket creation failed.")
 
             rprint(f"The proper switch name for '[green]{ARGS.switch_ip}[/green]' should be: '[green]{correct_name}[/green]' with the domain '[green]{domain_name}[/green]'")
+
+            if ARGS.function_descriptor == "dx" and aliases:
+                rprint(f"Aliases that should be added: {'\n'.join(aliases)}")
 
     log.debug("Exiting InfoBlox Section")
 
