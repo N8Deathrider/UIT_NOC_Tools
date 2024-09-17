@@ -155,7 +155,9 @@ def remove_duplicates(lst: list) -> list:
     Returns:
         list: The list with duplicates removed.
     """
-    return list(dict.fromkeys(lst))
+    res = []
+    [res.append(x) for x in lst if x not in res]
+    return res
 
 
 def get_args() -> argparse.Namespace:
