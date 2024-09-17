@@ -771,19 +771,30 @@ def main() -> None:
     # Get the dns names
     ddi_names = ddi_data.get("names", "").split(", ")
     
-    # Check for a mismatch
-    for name in ddi_names:
-        if name != full_name:  # If there is a mismatch
-            log.debug("Mismatch between preferred name and InfoBlox name.")
-            rprint(change_display_table("InfoBlox Name Mismatch", name, full_name))
-            print("There is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
-            if Confirm.ask(f"Would you like a ticket to be created for this change?", default=True):
-                if create_ticket(ARGS.switch_ip, ARGS.switch_ip, name, full_name):  #TODO: make this also assign it to the creator
+    if full_name not in ddi_names and ddi_name:  # If the correct name is not in the list of names and DNS change is allowed
+        log.debug("Mismatch between switch name and InfoBlox name.")
+        rprint(change_display_table("InfoBlox Name Mismatch", ddi_name, full_name))
+        if Confirm.ask(f"Would you like to try automatically changing the DNS name to '{full_name}'?"):
+            if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name, full_name):
+                print("Ticket created successfully.")
+            else:
+                print("Ticket creation failed. Please create the ticket manually.")
+            with sync_playwright() as p:
+                dns_changer_playwright(playwright=p, ip_address=ARGS.switch_ip, desired_dns=full_name, current_dns=ddi_name)  # TODO: Add aliases if dx
+            
+            # Check if the DNS name was changed
+            ddi_data = ddi_search(ARGS.switch_ip).get("result")
+            if full_name in ddi_data.get("names", "").split(", "):
+                print("DNS name changed successfully.")
+        else:
+            print("Please change the DNS name manually.")
+            if Confirm.ask("Would you like a ticket to be created for this change?", default=True):
+                if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name, full_name):
                     print("Ticket created successfully.")
                 else:
                     print("Ticket creation failed.")
+
             rprint(f"The proper switch name for '[green]{ARGS.switch_ip}[/green]' should be: '[green]{correct_name}[/green]' with the domain '[green]{domain_name}[/green]'")
-            break
 
     log.debug("Exiting InfoBlox Section")
 
