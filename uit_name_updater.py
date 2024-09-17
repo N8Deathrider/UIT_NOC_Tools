@@ -824,10 +824,12 @@ def main() -> None:
         # If the ddi_name is None meaning the DNS change is not allowed, the user will have to change it manually
         # and should not be prompted to try automatically changing it
         if ddi_name and Confirm.ask(f"Would you like to try automatically changing the DNS name to '{full_name}'?"):
-            if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name, full_name):
-                print("Ticket created successfully.")
-            else:
-                print("Ticket creation failed. Please create the ticket manually.")
+            if Confirm.ask("Would you like a ticket to be created for this change?", default=True):
+                if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name, full_name):
+                    print("Ticket created successfully.")
+                else:
+                    print("Ticket creation failed.")
+
             with sync_playwright() as p:
                 dns_changer_playwright(
                     playwright=p,
