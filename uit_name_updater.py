@@ -372,9 +372,33 @@ def dns_changer_playwright(
     aliases: list[str] = [],
 ) -> None:
     browser = playwright.chromium.launch(headless=False)
-    context = browser.new_context()
+    context = browser.new_context()  # TODO: add logic for saving and reusing session info
     page = context.new_page()
     aliases = remove_duplicates(aliases.append(current_dns))  # Add the current DNS to the aliases list and remove duplicates
+    page.goto("https://ddi.utah.edu/ui/")
+
+    # Login
+    page.get_by_label("Username").fill(UofU.unid)
+    page.get_by_label("Password").fill(UofU.cisPassword)
+    page.get_by_role("button", name="Login").click()
+
+    # Search for IP
+    page.get_by_role("link", name="Search").click()
+    page.get_by_role("link", name="Advanced").click()
+    page.locator(
+        'input[name="contentsPanelID\\:panel\\:emtabpanel\\:panel\\:lazyContent\\:content\\:filterPanel\\:filterForm\\:searchTextField"]'
+    ).fill(ip_address)
+    page.locator(
+        'select[name="contentsPanelID\\:panel\\:emtabpanel\\:panel\\:lazyContent\\:content\\:filterPanel\\:filterForm\\:filters\\:1\\:userFilter\\:valueDropDownWidget"]'
+    ).select_option("63")
+    page.get_by_role("button", name="Search").click()
+
+    # Select correct record
+    page.get_by_text(f"Internal/{current_dns}").click()
+
+    # Get current name
+    old_dns = page.get_by_label("Name").input_value()
+    assert old_dns == current_dns.strip("net.utah.edu"), f"Old DNS: {old_dns}"  # Should be the same as current_dns
 
 
 def view_orion_node_page(node_id: int):
