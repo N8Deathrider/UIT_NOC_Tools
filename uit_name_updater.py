@@ -463,7 +463,7 @@ def dns_changer_playwright(
     page.get_by_role("link", name="Advanced").click()
     page.locator(
         'input[name="contentsPanelID\\:panel\\:emtabpanel\\:panel\\:lazyContent\\:content\\:filterPanel\\:filterForm\\:searchTextField"]'
-    ).fill(ip_address)
+    ).fill(f"{ip_address}$")  # Setting end of regex to match only the IP address
     page.locator(
         'select[name="contentsPanelID\\:panel\\:emtabpanel\\:panel\\:lazyContent\\:content\\:filterPanel\\:filterForm\\:filters\\:1\\:userFilter\\:valueDropDownWidget"]'
     ).select_option("63")
