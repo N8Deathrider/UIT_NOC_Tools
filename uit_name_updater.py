@@ -441,6 +441,7 @@ def dns_changer_playwright(
     desired_dns: str,
     current_dns: str,
     aliases: list[str] = [],
+    headless: bool = True
 ) -> None:
     log.debug("Opening InfoBlox in Playwright")
     log.debug(f"Current DNS: '{current_dns}' Desired DNS: '{desired_dns}' Aliases: '{aliases}'")
