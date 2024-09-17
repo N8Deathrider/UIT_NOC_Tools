@@ -429,7 +429,7 @@ def dns_changer_playwright(
     page.get_by_role("button", name="Search").click()
 
     # Select correct record
-    page.get_by_text(f"Internal/{current_dns[:34]}.net.utah.edu").click()
+    page.get_by_text(f"Internal/{current_dns}.net.utah.edu").click()
 
     # Get current name
     old_dns = page.get_by_label("Name").input_value()
@@ -450,7 +450,7 @@ def dns_changer_playwright(
         browser.close()
 
     # Select correct record again
-    page.get_by_text(f"Internal/{current_dns[:34]}.net.utah.edu").click()
+    page.get_by_text(f"Internal/{current_dns}.net.utah.edu").click()
 
     # Select Aliases tab
     page.get_by_role("link", name="Aliases").click()
