@@ -260,23 +260,31 @@ def validate_ip_address(ip: str) -> str:
         raise argparse.ArgumentTypeError("Invalid IP address")
 
 
-def dns_change_allowed_checker(results: dict) -> bool:
-    objects = results["objects"]
+def dns_change_allowed_checker(results: dict) -> str | None:
+    """
+    Checks if DNS change is allowed based on the provided results.
+
+    Args:
+        results (dict): The dictionary containing the results.
+
+    Returns:
+        str | None: The host record if DNS change is allowed, otherwise None.
+    """
+    objects = results.get("objects", results["result"]["objects"])
     joined_objects = "".join(objects)
     host_record_count = joined_objects.count("record:host")
 
     if host_record_count < 1:
         log.warning("No host records found.")
-        return False
+        return None
     elif host_record_count > 1:
         log.warning("Multiple host records found.")
-        return False
+        return None
 
     if "External" in joined_objects:
         log.warning("External host record found.")
-        return False
+        return None
 
-    # Now return the object that is the host record
     for obj in objects:
         if obj.startswith("record:host"):
             return obj.split(":")[2].split("/")[0]
