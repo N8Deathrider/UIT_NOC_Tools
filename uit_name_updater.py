@@ -729,10 +729,20 @@ def main() -> None:
 
     # -- InfoBlox section ------------------------------
     log.debug("Entering InfoBlox Section")
+    
+    # Get the InfoBlox data
     ddi_data = ddi_search(ARGS.switch_ip).get("result")
+    
+    # Get the record objects
+    objects = ddi_data["objects"]  # I did it like this to raise an error if it doesn't exist
+    
+    # Get the dns names
     ddi_names = ddi_data.get("names", "").split(", ")
+    
+    # Check for a mismatch
     for name in ddi_names:
-        if name != full_name:
+        if name != full_name:  # If there is a mismatch
+            log.debug("Mismatch between preferred name and InfoBlox name.")
             rprint(change_display_table("InfoBlox Name Mismatch", name, full_name))
             print("There is a mismatch between the switch name and the InfoBlox name. Please fix this manually.")
             if Confirm.ask(f"Would you like a ticket to be created for this change?", default=True):
