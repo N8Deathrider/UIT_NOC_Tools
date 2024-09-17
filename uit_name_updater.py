@@ -14,6 +14,7 @@ from sys import exit
 import webbrowser  # TODO: Evaluate if this is needed
 from socket import gethostbyname
 from socket import gaierror
+from time import sleep
 import urllib3
 from threading import Thread
 
@@ -27,7 +28,7 @@ from uit_duo import Duo, get_form_args
 from netmiko import ConnectHandler, SSHDetect, BaseConnection
 from netmiko import NetmikoAuthenticationException, NetmikoTimeoutException
 import orionsdk
-from playwright.sync_api import Playwright, sync_playwright
+from playwright.sync_api import Playwright, sync_playwright, expect
 from yarl import URL
 
 # Local libraries
@@ -399,6 +400,19 @@ def dns_changer_playwright(
     # Get current name
     old_dns = page.get_by_label("Name").input_value()
     assert old_dns == current_dns.strip("net.utah.edu"), f"Old DNS: {old_dns}"  # Should be the same as current_dns
+
+    # Update DNS
+    page.get_by_label("Name").fill(desired_dns.strip("net.utah.edu"))
+    
+    # Save changes
+    page.get_by_role("button", name="Save & Close").click()
+    sleep(1)  # Wait for save to complete
+    try:  # Check for error message
+        expect(page.get_by_text("Operation not possible due to uniqueness constraint")).to_be_hidden()
+    except AssertionError:  # If error message is present, print message and close browser
+        print("Operation not possible due to uniqueness constraint, please resolve manually.")
+        context.close()
+        browser.close()
 
 
 def view_orion_node_page(node_id: int):
