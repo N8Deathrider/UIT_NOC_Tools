@@ -144,6 +144,19 @@ class Orion:
         self.swis.update(uri, NodeName=new_name)
 
 
+def remove_duplicates(lst: list) -> list:
+    """
+    Removes duplicates from a list while preserving the order of the elements.
+
+    Args:
+        lst (list): The list to remove duplicates from.
+
+    Returns:
+        list: The list with duplicates removed.
+    """
+    return list(dict.fromkeys(lst))
+
+
 def get_args() -> argparse.Namespace:
     """
     Parse command line arguments and return the parsed arguments as a Namespace object.
