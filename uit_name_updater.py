@@ -542,12 +542,6 @@ def change_display_table(table_title: str, current_name: str, proposed_name: str
     return table
 
 
-def padder(number):
-    number_str = str(number)
-    max_len = 4
-    return [number_str.zfill(i) for i in range(len(number_str), max_len + 1)]
-
-
 def change_switch_info(connection: BaseConnection, correct_name: str, building_number: str, room_number: str) -> None:
     """
     Updates the switch information with the correct name, building number, and room number.
