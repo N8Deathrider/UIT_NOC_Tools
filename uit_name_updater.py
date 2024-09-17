@@ -364,8 +364,17 @@ def ddi_search(ip: str) -> dict:
     return r.json()
 
 
-def dns_changer_playwright(playwright: Playwright, ip_address: str, desired_dns: str, aliases: list[str] = []) -> None:
-    pass
+def dns_changer_playwright(
+    playwright: Playwright,
+    ip_address: str,
+    desired_dns: str,
+    current_dns: str,
+    aliases: list[str] = [],
+) -> None:
+    browser = playwright.chromium.launch(headless=False)
+    context = browser.new_context()
+    page = context.new_page()
+    aliases = remove_duplicates(aliases.append(current_dns))  # Add the current DNS to the aliases list and remove duplicates
 
 
 def view_orion_node_page(node_id: int):
