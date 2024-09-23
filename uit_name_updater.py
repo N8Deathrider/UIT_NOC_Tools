@@ -922,6 +922,19 @@ def main2() -> None:
         log.debug(f"Device dictionary: {switch_connection_dict}")
     switch_connection = ConnectHandler(**switch_connection_dict)
 
+    # Getting the current switch name
+    current_switch_name = get_switch_name(switch_connection)
+    log.debug(f"Current Switch Name: {current_switch_name}")
+
+    # Getting Orion data
+    orion_data = orion.get_switch(ARGS.switch_ip).get("results")[0]
+    log.debug(f"Orion Data: {orion_data}")
+
+    uri = orion_data["URI"]
+    node_name = orion_data["NodeName"]
+
+    # Getting InfoBlox data
+    ddi_data = ddi_search(ARGS.switch_ip).get("result")
 
 
 
