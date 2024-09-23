@@ -936,6 +936,19 @@ def main2() -> None:
     # Getting InfoBlox data
     ddi_data = ddi_search(ARGS.switch_ip).get("result")
 
+    # Check if DNS change is allowed
+    ddi_name = dns_change_allowed_checker(ddi_data)
+
+    # Get the dns names
+    ddi_names = ddi_data.get("names", "").split(", ")
+
+    # Get the aliases
+    if ARGS.function_descriptor == "dx":
+        aliases = demark_alias_generator(
+            ARGS.building_number, ARGS.count, ARGS.switch_ip
+        )
+    else:
+        aliases = []
 
 
 if __name__ == "__main__":
