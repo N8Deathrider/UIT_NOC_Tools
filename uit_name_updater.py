@@ -860,6 +860,10 @@ def main() -> None:
     log.debug("Exiting InfoBlox Section")
 
 
+def main2() -> None:
+    pass
+
+
 if __name__ == "__main__":
     try:
         main()
