@@ -242,6 +242,19 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def get_switch_name(connection: BaseConnection) -> str:
+    """
+    Get the current hostname of the switch.
+
+    Args:
+        connection (BaseConnection): The connection object used to communicate with the switch.
+
+    Returns:
+        str: The current hostname of the switch.
+    """
+    return connection.send_command("show version", use_genie=True).get("version", {}).get("hostname")
+
+
 def validate_ip_address(ip: str) -> str:
     """
     Validates the given IP address.
