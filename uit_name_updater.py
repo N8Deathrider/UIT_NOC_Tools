@@ -477,7 +477,7 @@ def dns_changer_playwright(
     assert old_dns == current_dns, f"Old DNS: {old_dns}\nCurrent DNS: {current_dns}"  # Should be the same as current_dns
 
     # Update DNS
-    page.get_by_label("Name").fill(desired_dns.strip("net.utah.edu"))
+    page.get_by_label("Name").fill(desired_dns.removesuffix(".net.utah.edu"))
 
     # Save changes
     page.get_by_role("button", name="Save & Close").click()
