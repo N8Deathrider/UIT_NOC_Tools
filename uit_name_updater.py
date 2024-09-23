@@ -954,6 +954,7 @@ def main2() -> None:
         )
     else:
         aliases = []
+    log.debug(f"Aliases: {aliases}")
 
 
 if __name__ == "__main__":
