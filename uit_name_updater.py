@@ -1000,7 +1000,11 @@ def main2() -> None:
     # Prompt to change switch name if necessary
     if current_switch_name != correct_name:
         log.debug("Mismatch between switch name and correct name.")
+
+        # Display the mismatch
         rprint(change_display_table("Switch Name Mismatch", current_switch_name, correct_name))
+
+        # Prompt to change the switch name
         if Confirm.ask(f"Would you like to change the switch name to '{correct_name}'?"):
             switch_thread = Thread(
                 target=change_switch_info,
