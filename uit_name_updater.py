@@ -1020,6 +1020,22 @@ def main2() -> None:
         log.debug("Switch name matches correct name. Disconnecting from switch.")
         switch_connection.disconnect()
 
+    # Prompt to change Orion node name if necessary
+    if node_name != full_name:
+        log.debug("Mismatch between switch name and Orion name.")
+
+        # Display the mismatch
+        rprint(change_display_table("Orion Name Mismatch", node_name, full_name))
+
+        # Prompt to change the Orion node name
+        if Confirm.ask(f"Would you like to change the Orion node name to '{correct_name}'?"):
+            orion_thread = Thread(
+                target=orion.change_orion_node_name,
+                args=(uri, correct_name),
+            )
+            threads.append(orion_thread)
+            orion_thread.start()
+
 
 if __name__ == "__main__":
     try:
