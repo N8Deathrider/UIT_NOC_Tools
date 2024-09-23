@@ -745,6 +745,18 @@ def switch_name_change(connection: BaseConnection, correct_name: str, building_n
         log.debug("Switch connection closed.")
 
 
+def ddi_name_change(ip_address: str, correct_name: str, current_name: str, aliases: list[str] = []) -> None:
+    with sync_playwright() as p:
+        dns_changer_playwright(p, ip_address, correct_name, current_name, aliases)
+        
+    # Checking if the DNS change was successful
+    ddi_data = ddi_search(ip_address).get("result")
+    if correct_name in ddi_data.get("names", "").split(", "):
+        log.debug("DNS change successful.")
+    else:
+        log.error("DNS change failed. Please check the DNS record manually.")
+
+
 def main() -> None:
     """
     Main function for updating switch names in Orion and InfoBlox.
