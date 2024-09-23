@@ -1040,6 +1040,29 @@ def main2() -> None:
             threads.append(orion_thread)
             orion_thread.start()
 
+    # Prompt to change InfoBlox name if necessary
+    if full_name not in ddi_names:
+        log.debug("Mismatch between switch name and InfoBlox name.")
+
+        # Display the mismatch
+        rprint(change_display_table("InfoBlox Name Mismatch", ddi_name or ddi_names[0], full_name))
+
+        # Check if the DNS name can be changed and if so, offer to try automatically changing it
+        # If the ddi_name is None meaning the DNS change is not allowed, the user will have to change it manually
+        # and should not be prompted to try automatically changing it
+        if ddi_name and Confirm.ask(f"Would you like to try automatically changing the DNS?"):
+            ddi_thread = Thread(
+                target=ddi_name_change,
+                args=(ARGS.switch_ip, correct_name, ddi_name, aliases),
+            )
+            threads.append(ddi_thread)
+            ddi_thread.start()
+        else:  # If the DNS name cannot be changed automatically or the user chooses not to
+            log.debug("DNS name will not be changed automatically.")
+            rprint(
+                f"The proper switch name for '{ARGS.switch_ip}' should be: '{correct_name}' with the domain '{domain_name}' and the aliases: '{'\', \''.join(aliases)}'"
+            )
+
 
 if __name__ == "__main__":
     try:
