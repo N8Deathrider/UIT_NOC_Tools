@@ -861,7 +861,55 @@ def main() -> None:
 
 
 def main2() -> None:
-    pass
+    """
+    #TODO
+    """
+
+    orion = Orion("smg-hamp-p01.ad.utah.edu", ORION_USERNAME, ORION_PASSWORD)
+
+    ARGS = get_args()
+
+    if ARGS.debug:
+        log.setLevel(logging.DEBUG)
+
+    log.debug(f"Arguments: {ARGS}")
+
+    # Generating the correct name
+    correct_name = name_generator(
+        ARGS.function_descriptor,
+        ARGS.count,
+        ARGS.building_number,
+        ARGS.building_short_name,
+        ARGS.room_number,
+        ARGS.distribution_node,
+    )
+    domain_name = ".net.utah.edu"
+    full_name = correct_name + domain_name  # Correct name with domain
+
+    # Getting the switch connection
+    switch_connection_dict = {
+        "device_type": "autodetect",
+        "host": ARGS.switch_ip,
+        "username": SSH.username,
+        "password": SSH.password,
+    }
+    try:
+        guesser = SSHDetect(**switch_connection_dict)
+    except NetmikoAuthenticationException:
+        log.error("Authentication error. Please check the username and password.")
+        exit(EXIT_GENERAL_ERROR)
+    except NetmikoTimeoutException:
+        log.error("Connection timed out. Please check the IP address and try again.")
+        exit(EXIT_GENERAL_ERROR)
+    best_match = guesser.autodetect()
+    switch_connection_dict["device_type"] = best_match
+    if ARGS.debug:
+        dev_device_dict = switch_connection_dict.copy()
+        dev_device_dict["password"] = "********"
+        log.debug(f"Device dictionary: {switch_connection_dict}")
+    switch_connection = ConnectHandler(**switch_connection_dict)
+
+
 
 
 if __name__ == "__main__":
