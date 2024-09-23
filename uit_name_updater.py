@@ -1002,16 +1002,15 @@ def main2() -> None:
         log.debug("Mismatch between switch name and correct name.")
         rprint(change_display_table("Switch Name Mismatch", current_switch_name, correct_name))
         if Confirm.ask(f"Would you like to change the switch name to '{correct_name}'?"):
-            threads.append(
-                Thread(
-                    target=change_switch_info,
-                    args=(
-                        switch_connection,
-                        correct_name,
-                        ARGS.building_number,
-                        ARGS.room_number,
-                    ),
-                )
+            switch_thread = Thread(
+                target=change_switch_info,
+                args=(
+                    switch_connection,
+                    correct_name,
+                    ARGS.building_number,
+                    ARGS.room_number,
+                ),
+            )
             )
             threads[-1].start()  # Start the most recent thread
         else:
