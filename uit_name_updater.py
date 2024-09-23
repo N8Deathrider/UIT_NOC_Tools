@@ -819,14 +819,14 @@ def main() -> None:
     
     if full_name not in ddi_names:  # If the full name is not in the list of names
         log.debug("Mismatch between switch name and InfoBlox name.")
-        rprint(change_display_table("InfoBlox Name Mismatch", ddi_name, full_name))
+        rprint(change_display_table("InfoBlox Name Mismatch", ddi_name or ddi_names[0], full_name))
 
         # Check if the DNS name can be changed and if so, offer to try automatically changing it
         # If the ddi_name is None meaning the DNS change is not allowed, the user will have to change it manually
         # and should not be prompted to try automatically changing it
         if ddi_name and Confirm.ask(f"Would you like to try automatically changing the DNS?"):
             if Confirm.ask("Would you like a ticket to be created for this change?", default=True):
-                if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name, full_name):
+                if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name or ddi_names[0], full_name):
                     print("Ticket created successfully.")
                 else:
                     print("Ticket creation failed.")
@@ -838,7 +838,7 @@ def main() -> None:
                     desired_dns=full_name,
                     current_dns=ddi_name,
                     aliases=aliases
-                )  # TODO: Add aliases if dx
+                )
 
             # Check if the DNS name was changed
             ddi_data = ddi_search(ARGS.switch_ip).get("result")
