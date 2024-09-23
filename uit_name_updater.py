@@ -1063,6 +1063,13 @@ def main2() -> None:
                 f"The proper switch name for '{ARGS.switch_ip}' should be: '{correct_name}' with the domain '{domain_name}' and the aliases: '{'\', \''.join(aliases)}'"
             )
 
+        # Prompt to create a ticket for the DNS change
+        if Confirm.ask("Would you like a ticket to be created for this change?", default=True):
+            if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name, full_name):
+                log.debug("Ticket created successfully.")
+            else:
+                log.error("Ticket creation failed.")
+
 
 if __name__ == "__main__":
     try:
