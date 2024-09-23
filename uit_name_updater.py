@@ -717,6 +717,34 @@ def create_ticket(dns_ip: str, dns_pop_ip: str, dns_fqhn: str, dns_pop_fqhn: str
         return False
 
 
+def switch_name_change(connection: BaseConnection, correct_name: str, building_number: str, room_number: str) -> None:
+    """
+    Changes the name of the switch.
+
+    Args:
+        connection (BaseConnection): The connection object used to communicate with the switch.
+        correct_name (str): The correct name for the switch.
+        building_number (str): The building number where the switch is located.
+        room_number (str): The room number where the switch is located.
+
+    Returns:
+        None
+    """
+    switch_output = ""
+    commands = switch_commands_generator(correct_name, building_number, room_number)
+    try:
+        switch_output += connection.send_config_set(commands)
+    except ValueError as e:
+        log.error(e)
+    else:
+        connection.set_base_prompt()
+        switch_output += connection.save_config()
+        log.debug(f"Output: {switch_output}")
+    finally:
+        connection.disconnect()  # Disconnect from the switch
+        log.debug("Switch connection closed.")
+
+
 def main() -> None:
     """
     Main function for updating switch names in Orion and InfoBlox.
