@@ -1011,8 +1011,8 @@ def main2() -> None:
                     ARGS.room_number,
                 ),
             )
-            )
-            threads[-1].start()  # Start the most recent thread
+            threads.append(switch_thread)
+            switch_thread.start()
         else:
             log.debug("Switch name will not be changed. Disconnecting from switch.")
             switch_connection.disconnect()
