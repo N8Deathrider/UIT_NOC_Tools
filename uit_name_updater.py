@@ -942,6 +942,11 @@ def main2() -> None:
     # Get the dns names
     ddi_names = ddi_data.get("names", "").split(", ")
 
+    if ddi_name:
+        log.debug(f"Host Record DNS Name: {ddi_name}")
+    else:
+        log.debug(f"Automatic DNS Change Not Allowed, Manual Change Required. First DNS Name Found: {ddi_names[0]}")
+
     # Get the aliases
     if ARGS.function_descriptor == "dx":
         aliases = demark_alias_generator(
