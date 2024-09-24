@@ -778,6 +778,9 @@ def main() -> None:
 
     # Generating the correct name
     with console.status("Gathering Information...") as status:
+        if ARGS.debug:  # If debug mode is enabled do not show the status spinner
+            # It gets in the way of the debug logs
+            status.stop()
         status.update("Generating Correct Name...")
         correct_name = name_generator(
             ARGS.function_descriptor,
