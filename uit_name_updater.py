@@ -462,7 +462,9 @@ def dns_changer_playwright(
     context = browser.new_context()  # TODO: add logic for saving and reusing session info
     page = context.new_page()
     current_dns = current_dns.removesuffix(".net.utah.edu")  # Remove the domain from the current DNS
-    aliases.append(current_dns)  # Add the current DNS to the aliases list
+    if current_dns not in aliases:  # If the current DNS is not in the aliases list
+        aliases.append(current_dns)  # Add the current DNS to the aliases list
+        log.debug(f"Added current DNS to aliases: {current_dns}")
     aliases = remove_duplicates(aliases)  # Remove duplicates from the aliases list
     page.goto("https://ddi.utah.edu/ui/")
 
