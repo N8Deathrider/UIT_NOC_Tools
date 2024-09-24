@@ -754,9 +754,9 @@ def ddi_name_change(ip_address: str, correct_name: str, current_name: str, alias
     # Checking if the DNS change was successful
     ddi_data = ddi_search(ip_address).get("result")
     if correct_name in ddi_data.get("names", "").split(", "):
-        log.debug("DNS change successful.")
+        log.debug("DNS change check successful.")
     else:
-        log.error("DNS change failed. Please check the DNS record manually.")
+        log.error("DNS change check failed. Please verify the DNS change manually.")
 
 
 def main() -> None:
