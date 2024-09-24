@@ -759,7 +759,7 @@ def ddi_name_change(ip_address: str, correct_name: str, current_name: str, alias
         log.error("DNS change check failed. Please verify the DNS change manually.")
 
 
-def main2() -> None:
+def main() -> None:
     """
     #TODO
     """
@@ -920,7 +920,7 @@ def main2() -> None:
 
 if __name__ == "__main__":
     try:
-        main2()
+        main()
     except KeyboardInterrupt:
         log.info("\nCtrl + c pressed. Exiting script...")
         exit(EXIT_KEYBOARD_INTERRUPT)
