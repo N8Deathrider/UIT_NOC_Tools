@@ -20,6 +20,7 @@ from threading import Thread
 
 # Third-party libraries
 import requests
+from rich.console import Console
 from rich.logging import RichHandler
 from rich.prompt import Confirm
 from rich.table import Table
@@ -764,6 +765,7 @@ def main() -> None:
     #TODO
     """
 
+    console = Console()
     threads = []  # List to hold the threads
     orion = Orion("smg-hamp-p01.ad.utah.edu", ORION_USERNAME, ORION_PASSWORD)
 
@@ -775,74 +777,80 @@ def main() -> None:
     log.debug(f"Arguments: {ARGS}")
 
     # Generating the correct name
-    correct_name = name_generator(
-        ARGS.function_descriptor,
-        ARGS.count,
-        ARGS.building_number,
-        ARGS.building_short_name,
-        ARGS.room_number,
-        ARGS.distribution_node,
-    )
-    domain_name = ".net.utah.edu"
-    full_name = correct_name + domain_name  # Correct name with domain
-
-    # Getting the switch connection
-    switch_connection_dict = {
-        "device_type": "autodetect",
-        "host": ARGS.switch_ip,
-        "username": SSH.username,
-        "password": SSH.password,
-    }
-    try:
-        guesser = SSHDetect(**switch_connection_dict)
-    except NetmikoAuthenticationException:
-        log.error("Authentication error. Please check the username and password.")
-        exit(EXIT_GENERAL_ERROR)
-    except NetmikoTimeoutException:
-        log.error("Connection timed out. Please check the IP address and try again.")
-        exit(EXIT_GENERAL_ERROR)
-    best_match = guesser.autodetect()
-    switch_connection_dict["device_type"] = best_match
-    if ARGS.debug:
-        dev_device_dict = switch_connection_dict.copy()
-        dev_device_dict["password"] = "********"
-        log.debug(f"Device dictionary: {dev_device_dict}")
-        del dev_device_dict
-    switch_connection = ConnectHandler(**switch_connection_dict)
-
-    # Getting the current switch name
-    current_switch_name = get_switch_name(switch_connection)
-    log.debug(f"Current Switch Name: {current_switch_name}")
-
-    # Getting Orion data
-    orion_data = orion.get_switch(ARGS.switch_ip).get("results")[0]
-    log.debug(f"Orion Data: {orion_data}")
-
-    uri = orion_data["URI"]
-    node_name = orion_data["NodeName"]
-
-    # Getting InfoBlox data
-    ddi_data = ddi_search(ARGS.switch_ip).get("result")
-
-    # Check if DNS change is allowed
-    ddi_name = dns_change_allowed_checker(ddi_data)
-
-    # Get the dns names
-    ddi_names = ddi_data.get("names", "").split(", ")
-
-    if ddi_name:
-        log.debug(f"Host Record DNS Name: {ddi_name}")
-    else:
-        log.debug(f"Automatic DNS Change Not Allowed, Manual Change Required. First DNS Name Found: {ddi_names[0]}")
-
-    # Get the aliases
-    if ARGS.function_descriptor == "dx":
-        aliases = demark_alias_generator(
-            ARGS.building_number, ARGS.count, ARGS.switch_ip
+    with console.status("Gathering Information...") as status:
+        status.update("Generating Correct Name...")
+        correct_name = name_generator(
+            ARGS.function_descriptor,
+            ARGS.count,
+            ARGS.building_number,
+            ARGS.building_short_name,
+            ARGS.room_number,
+            ARGS.distribution_node,
         )
-    else:
-        aliases = []
-    log.debug(f"Aliases: {aliases}")
+        domain_name = ".net.utah.edu"
+        full_name = correct_name + domain_name  # Correct name with domain
+
+        # Getting the switch connection
+        status.update("Connecting to Switch...")
+        switch_connection_dict = {
+            "device_type": "autodetect",
+            "host": ARGS.switch_ip,
+            "username": SSH.username,
+            "password": SSH.password,
+        }
+        try:
+            guesser = SSHDetect(**switch_connection_dict)
+        except NetmikoAuthenticationException:
+            log.error("Authentication error. Please check the username and password.")
+            exit(EXIT_GENERAL_ERROR)
+        except NetmikoTimeoutException:
+            log.error("Connection timed out. Please check the IP address and try again.")
+            exit(EXIT_GENERAL_ERROR)
+        best_match = guesser.autodetect()
+        switch_connection_dict["device_type"] = best_match
+        if ARGS.debug:
+            dev_device_dict = switch_connection_dict.copy()
+            dev_device_dict["password"] = "********"
+            log.debug(f"Device dictionary: {dev_device_dict}")
+            del dev_device_dict
+        switch_connection = ConnectHandler(**switch_connection_dict)
+
+        # Getting the current switch name
+        status.update("Getting Current Switch Name...")
+        current_switch_name = get_switch_name(switch_connection)
+        log.debug(f"Current Switch Name: {current_switch_name}")
+
+        # Getting Orion data
+        status.update("Getting Orion Data...")
+        orion_data = orion.get_switch(ARGS.switch_ip).get("results")[0]
+        log.debug(f"Orion Data: {orion_data}")
+
+        uri = orion_data["URI"]
+        node_name = orion_data["NodeName"]
+
+        # Getting InfoBlox data
+        status.update("Getting InfoBlox Data...")
+        ddi_data = ddi_search(ARGS.switch_ip).get("result")
+
+        # Check if DNS change is allowed
+        ddi_name = dns_change_allowed_checker(ddi_data)
+
+        # Get the dns names
+        ddi_names = ddi_data.get("names", "").split(", ")
+
+        if ddi_name:
+            log.debug(f"Host Record DNS Name: {ddi_name}")
+        else:
+            log.debug(f"Automatic DNS Change Not Allowed, Manual Change Required. First DNS Name Found: {ddi_names[0]}")
+
+        # Get the aliases
+        if ARGS.function_descriptor == "dx":
+            aliases = demark_alias_generator(
+                ARGS.building_number, ARGS.count, ARGS.switch_ip
+            )
+        else:
+            aliases = []
+        log.debug(f"Aliases: {aliases}")
 
     # Prompt to change switch name if necessary
     if current_switch_name != correct_name:
