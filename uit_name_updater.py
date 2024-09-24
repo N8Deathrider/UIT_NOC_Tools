@@ -912,7 +912,7 @@ def main() -> None:
 
         # Prompt to create a ticket for the DNS change
         if Confirm.ask("Would you like a ticket to be created for this change?", default=True):
-            if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name, full_name):
+            if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name or ddi_names[0], full_name):
                 print("Ticket created successfully.")
             else:
                 log.error("Ticket creation failed.")
