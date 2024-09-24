@@ -754,7 +754,6 @@ def ddi_name_change(ip_address: str, correct_name: str, current_name: str, alias
     # Checking if the DNS change was successful
     ddi_data = ddi_search(ip_address).get("result")
     if f"{correct_name}.net.utah.edu" in ddi_data.get("names", "").split(", "):
-        log.info("DNS change check successful.")
         print("DNS change successful.")
     else:
         log.error("DNS change check failed. Please verify the DNS change manually.")
@@ -1070,7 +1069,6 @@ def main2() -> None:
         # Prompt to create a ticket for the DNS change
         if Confirm.ask("Would you like a ticket to be created for this change?", default=True):
             if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name, full_name):
-                log.info("Ticket created successfully.")
                 print("Ticket created successfully.")
             else:
                 log.error("Ticket creation failed.")
@@ -1078,7 +1076,7 @@ def main2() -> None:
 
 if __name__ == "__main__":
     try:
-        main()
+        main2()
     except KeyboardInterrupt:
         log.info("\nCtrl + c pressed. Exiting script...")
         exit(EXIT_KEYBOARD_INTERRUPT)
