@@ -962,7 +962,8 @@ def main2() -> None:
     if ARGS.debug:
         dev_device_dict = switch_connection_dict.copy()
         dev_device_dict["password"] = "********"
-        log.debug(f"Device dictionary: {switch_connection_dict}")
+        log.debug(f"Device dictionary: {dev_device_dict}")
+        del dev_device_dict
     switch_connection = ConnectHandler(**switch_connection_dict)
 
     # Getting the current switch name
