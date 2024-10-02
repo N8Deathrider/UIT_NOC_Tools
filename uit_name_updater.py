@@ -10,6 +10,7 @@ import argparse
 import ipaddress
 import logging
 import re
+from bs4 import BeautifulSoup
 from sys import exit
 import webbrowser  # TODO: Evaluate if this is needed
 from socket import gethostbyname
@@ -714,10 +715,78 @@ def create_ticket(dns_ip: str, dns_pop_ip: str, dns_fqhn: str, dns_pop_fqhn: str
     log.debug(f"Response: {response.json()}")
     if response.ok:
         log.debug("Ticket created successfully.")
-        return True
     else:
         log.error("Ticket creation failed.")
         return False
+
+    log.debug("Searching for new ticket.")
+    request_ticket_ref = response.json()["result"]["request_number"]
+
+    for _ in range(20):
+        response: requests.Response = session.get(
+            base_url / "api/now/v2/table/task",
+            params={
+                "sysparm_query": f"123TEXTQUERY321={request_ticket_ref}^numberSTARTSWITHTASK"
+            },
+        )
+
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as e:
+            log.error(f"HTTP Error: {e}")
+
+        if len(response.json()["result"]) > 0:
+            break
+        else:
+            sleep(2)
+    else:
+        log.error("Ticket not found after 20 search attempts. Ticket should be sitting in the DDI queue. Please take the ticket.")
+        return False
+
+    try:
+        task_id = response.json()["result"][0]["sys_id"]
+    except Exception:
+        log.error("Error")
+        with open("ticket.json", "w") as f:
+            f.write(response.text)
+        return False
+    log.debug(f"Task ID: {task_id}")
+
+    response: requests.Response = session.get(
+        base_url / "sc_task.do",
+        params={"sys_id": task_id},
+    )
+
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        log.error(f"HTTP Error: {e}")
+
+    log.debug("Attempting to reassign ticket.")
+
+    response: requests.Response = session.post(
+        base_url / "sc_task.do",
+        data={
+            "sysparm_ck": get_form_args(response.text, "sysparm_ck"),
+            "sys_target": "sc_task",
+            "sys_uniqueName": "sys_id",
+            "sys_uniqueValue": task_id,  # This is the sys_id of the ticket
+            "sys_action": "47fd7f4dc0a8000600a552278b5232ab",  # Looks to be the same for each ticket
+            "sc_task.state": "2",  # Work in Progress
+            # "sc_task.state": "3",  # Closed Complete
+            "sc_task.assignment_group": "d4bb465a6f6a1100c62f8a20af3ee4a9",  # This is the id for UIT - NCI - Network
+            "sc_task.assigned_to": user_info["sys_id"],  # Assign the ticket to the requester
+        },
+        allow_redirects=False,
+    )
+
+    if response.status_code == 302 and task_id in response.headers["Location"]:
+        log.debug("Ticket reassigned successfully.")
+        return True
+    else:
+        log.error("Ticket reassignment failed. Ticket should be sitting in the DDI queue.  Please take the ticket.")
+        log.debug(f"Redirect URL: {response.headers['Location']}\nStatus Code: {response.status_code}")
+        return 
 
 
 def switch_name_change(connection: BaseConnection, correct_name: str, building_number: str, room_number: str) -> None:
