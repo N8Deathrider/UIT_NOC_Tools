@@ -285,7 +285,11 @@ def check_status(s: requests.Session, status_arguments: dict) -> dict:
         dict: The status information returned from the search.
     """
     response: requests.Response = s.get(API_THREAD_URL, params=status_arguments)
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        log.error(f"{e.response.json().get('error')}")
+        exit(EXIT_GENERAL_ERROR)
     return response.json()
 
 
