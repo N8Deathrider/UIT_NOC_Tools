@@ -925,8 +925,6 @@ def main() -> None:
         if Confirm.ask("Would you like a ticket to be created for this change?", default=True):
             if create_ticket(ARGS.switch_ip, ARGS.switch_ip, ddi_name or ddi_names[0], full_name):
                 print("Ticket created successfully.")
-            else:
-                log.error("Ticket creation failed.")
 
 
 if __name__ == "__main__":
