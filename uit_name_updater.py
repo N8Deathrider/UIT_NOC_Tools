@@ -921,6 +921,7 @@ def main() -> None:
                 ),
             )
             threads.append(switch_thread)
+            log.debug(f"Threads: {threads}")
             switch_thread.start()
         else:
             log.debug("Switch name will not be changed. Disconnecting from switch.")
@@ -943,6 +944,7 @@ def main() -> None:
                 args=(uri, correct_name),
             )
             threads.append(orion_thread)
+            log.debug(f"Threads: {threads}")
             orion_thread.start()
 
     # Prompt to change InfoBlox name if necessary
@@ -961,6 +963,7 @@ def main() -> None:
                 args=(ARGS.switch_ip, correct_name, ddi_name, aliases),
             )
             threads.append(ddi_thread)
+            log.debug(f"Threads: {threads}")
             ddi_thread.start()
         else:  # If the DNS name cannot be changed automatically or the user chooses not to
             log.debug("DNS name will not be changed automatically.")
