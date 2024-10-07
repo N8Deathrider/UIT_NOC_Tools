@@ -25,6 +25,7 @@ from sys import exit
 # Third-party libraries
 import pandas as pd
 import requests
+from rich_argparse import RichHelpFormatter
 from rich.console import Console
 from rich.table import Table
 from rich.logging import RichHandler
@@ -57,7 +58,8 @@ def get_args() -> argparse.Namespace:
         argparse.Namespace: The parsed command line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="A script to lookup building information at UIT"
+        description="A script to lookup building information at UIT",
+        formatter_class=RichHelpFormatter,
     )
 
     parser.add_argument(

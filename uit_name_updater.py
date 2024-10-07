@@ -21,6 +21,7 @@ from threading import Thread
 
 # Third-party libraries
 import requests
+from rich_argparse import RichHelpFormatter
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.prompt import Confirm
@@ -181,7 +182,8 @@ def get_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(
         description="This script figures out the proper name for a switch based on the "
-        "current standards and updates it in the needed places."
+        "current standards and updates it in the needed places.",
+        formatter_class=RichHelpFormatter,
     )
 
     parser.add_argument(

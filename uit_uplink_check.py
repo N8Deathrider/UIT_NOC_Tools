@@ -14,6 +14,7 @@ import netmiko
 import pyperclip as pc
 from netmiko import ConnectHandler
 import netmiko.exceptions
+from rich_argparse import RichHelpFormatter
 from rich.logging import RichHandler
 from rich.console import Console
 from rich import print as rprint
@@ -48,6 +49,7 @@ def get_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(
         description="Get interface info for each interface up to the router",
+        formatter_class=RichHelpFormatter,
     )
 
     parser.add_argument(

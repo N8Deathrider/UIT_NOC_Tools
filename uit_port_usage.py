@@ -13,6 +13,7 @@ from time import sleep
 
 # Third-party libraries
 import requests
+from rich_argparse import RichHelpFormatter
 from rich.logging import RichHandler
 from rich.table import Table
 from rich import print as rprint
@@ -58,7 +59,8 @@ def get_args() -> argparse.Namespace:
         argparse.Namespace: Parsed command line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="This script will check when the last packet was sent or received on each port on a specified switch using a report run by TOAST. It will return a list of ports that have not had any traffic within a specified amount of time (default of 90 days)."
+        description="This script will check when the last packet was sent or received on each port on a specified switch using a report run by TOAST. It will return a list of ports that have not had any traffic within a specified amount of time (default of 90 days).",
+        formatter_class=RichHelpFormatter,
     )
 
     parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)

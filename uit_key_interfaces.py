@@ -35,6 +35,7 @@ from sys import exit
 
 # Third-party libraries
 import arrow
+from rich_argparse import RichHelpFormatter
 from netmiko import ConnectHandler
 from netmiko import SSHDetect
 from netmiko.exceptions import AuthenticationException
@@ -65,7 +66,7 @@ def get_args():
     Returns:
         argparse.Namespace: The arguments from the command line.
     """
-    parser = argparse.ArgumentParser()  # Instantiate the parser
+    parser = argparse.ArgumentParser(formatter_class=RichHelpFormatter)  # Instantiate the parser
 
     # Add the IP address argument to the parser
     parser.add_argument('ip', nargs='*', help='Space-separated list of IP addresses')

@@ -28,6 +28,7 @@ from threading import Thread
 
 # Third-party libraries
 from netmiko.exceptions import NetMikoTimeoutException, NetMikoAuthenticationException
+from rich_argparse import RichHelpFormatter
 from rich.logging import RichHandler
 from rich import print as rprint
 from rich.table import Table
@@ -61,7 +62,10 @@ def get_args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: The parsed command line arguments.
     """
-    parser = argparse.ArgumentParser(description="Get the uptime of a switch or switches.")
+    parser = argparse.ArgumentParser(
+        description="Get the uptime of a switch or switches.",
+        formatter_class=RichHelpFormatter,
+    )
 
     parser.add_argument("-d", "--debug", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("switch", type=str, help="The switch address.", nargs="+")

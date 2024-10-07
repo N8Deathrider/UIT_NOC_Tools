@@ -24,6 +24,7 @@ from sys import exit
 # Third-party libraries
 from fuzzyset import FuzzySet
 import pyperclip as pc
+from rich_argparse import RichHelpFormatter
 from rich import print as rprint
 from rich.logging import RichHandler
 from rich.prompt import Prompt
@@ -58,7 +59,10 @@ def get_args() -> argparse.Namespace:
     Returns:
         args: The arguments passed to the script
     """
-    parser = argparse.ArgumentParser(description="Format a message to route a request to the appropriate queue")
+    parser = argparse.ArgumentParser(
+        description="Format a message to route a request to the appropriate queue",
+        formatter_class=RichHelpFormatter,
+    )
     parser.add_argument("queue", type=str, help="The queue to route the request to")
     parser.add_argument("reason", type=str, help="The reason for the request", nargs="*")
     parser.add_argument("-d", "--debug", action="store_true", help=argparse.SUPPRESS)

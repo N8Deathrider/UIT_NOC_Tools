@@ -18,6 +18,7 @@ from netaddr import EUI
 from netaddr import core
 from netaddr import mac_cisco
 import pyperclip as pc
+from rich_argparse import RichHelpFormatter
 from rich.console import Console
 from rich.table import Table
 
@@ -308,7 +309,8 @@ def get_args() -> argparse.Namespace:
         argparse.Namespace: Parsed command line arguments.
     """
     p = argparse.ArgumentParser(
-        description="The point of this script is to make it slightly more convenient to add style to work notes."
+        description="The point of this script is to make it slightly more convenient to add style to work notes.",
+        formatter_class=RichHelpFormatter,
     )
     g = p.add_mutually_exclusive_group(required=True)
 

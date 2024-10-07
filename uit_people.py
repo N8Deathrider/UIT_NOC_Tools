@@ -10,6 +10,7 @@ from sys import exit
 import argparse
 
 # Third-party libraries
+from rich_argparse import RichHelpFormatter
 from rich.logging import RichHandler
 from rich.table import Table
 from rich.panel import Panel
@@ -48,7 +49,10 @@ def get_args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: The parsed command line arguments.
     """
-    parser = argparse.ArgumentParser(description="Search the University of Utah people directory.")
+    parser = argparse.ArgumentParser(
+        description="Search the University of Utah people directory.",
+        formatter_class=RichHelpFormatter,
+    )
     parser.add_argument("search_term", type=str, help="The term to search for.")
     parser.add_argument(
         "--max-results",
