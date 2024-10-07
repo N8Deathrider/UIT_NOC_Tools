@@ -28,7 +28,7 @@ from rich.table import Table
 from rich import print as rprint
 from uit_duo import Duo, get_form_args
 from netmiko import ConnectHandler, SSHDetect, BaseConnection
-from netmiko import NetmikoAuthenticationException, NetmikoTimeoutException
+from netmiko import NetmikoAuthenticationException, NetmikoTimeoutException, ConfigInvalidException
 import orionsdk
 from playwright.sync_api import Playwright, sync_playwright, expect
 from yarl import URL
