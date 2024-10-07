@@ -593,9 +593,14 @@ def change_switch_info(connection: BaseConnection, correct_name: str, building_n
     switch_output = ""
     commands = switch_commands_generator(correct_name, building_number, room_number)
     try:
-        switch_output += connection.send_config_set(commands)
+        switch_output += connection.send_config_set(
+            commands,
+            error_pattern=r"(Invalid input detected at|Command authorization failed)",
+        )
     except ValueError as e:
         log.error(e)
+    except ConfigInvalidException as e:
+        log.exception(e)
     else:
         connection.set_base_prompt()
         switch_output += connection.save_config()
