@@ -15,6 +15,7 @@ from sys import exit
 # Third-party libraries
 from netmiko import ConnectHandler
 from netmiko import BaseConnection
+from rich_argparse import RichHelpFormatter
 from rich.prompt import Prompt
 from rich.rule import Rule
 from rich.console import Console
@@ -88,7 +89,10 @@ def get_args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: Parsed command line arguments.
     """
-    parser = argparse.ArgumentParser(description="Configure switch interface(s)")
+    parser = argparse.ArgumentParser(
+        description="Configure switch interface(s)",
+        formatter_class=RichHelpFormatter,
+    )
     parser.add_argument(
         "--debug",
         help=argparse.SUPPRESS,
