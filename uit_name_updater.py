@@ -600,7 +600,7 @@ def change_switch_info(connection: BaseConnection, correct_name: str, building_n
     except ValueError as e:
         log.error(e)
     except ConfigInvalidException as e:
-        log.exception(e)
+        log.error(e)
     else:
         connection.set_base_prompt()
         switch_output += connection.save_config()
