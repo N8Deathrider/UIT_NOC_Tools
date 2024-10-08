@@ -187,7 +187,6 @@ def style_email() -> str:
     """
     em is short for email
     """
-    em = []
     styles = [
         ["From:", "<strong>From:</strong>"],
         ["Date:", "<strong>Date:</strong>"],
@@ -196,14 +195,7 @@ def style_email() -> str:
         ["Cc:", "<strong>Cc:</strong>"],
         ["Subject:", "<strong>Subject:</strong>"]
     ]
-    print(f"Please paste the copy of the email here.\n{stop_listening_instructions}")
-    while True:
-        try:
-            em.append(input())
-        except EOFError:
-            break
-    clear()
-    styled_email = "<br>".join(em)
+    styled_email = "<br>".join(pc.paste().splitlines())
     for style in styles:
         styled_email = styled_email.replace(*style)
     return f"<pre>{styled_email}</pre>"
