@@ -178,7 +178,7 @@ def style_switch_output(switch_output: str = pc.paste()) -> str:
     # clear()
     # output = f"<pre>{'<br>'.join(pc.paste().splitlines())}</pre>"
     switch_output = syntax_highlighting(
-        f"<pre style=\"background-color: #1e2021;color: #b9b3aa;width: fit-content;\">{'<br>'.join(switch_output.splitlines())}</pre>"
+        f"<pre style=\"background-color: #1e2021;color: #b9b3aa;width: fit-content; max-width: 100%\">{'<br>'.join(switch_output.splitlines())}</pre>"
     )
     return switch_output
 
