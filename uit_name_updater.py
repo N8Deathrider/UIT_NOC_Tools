@@ -49,7 +49,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(message)s",
     datefmt="[%X]",
-    handlers=[RichHandler()]
+    handlers=[RichHandler(console=CONSOLE)],
 )
 log: logging.Logger = logging.getLogger("rich")
 logging.getLogger("paramiko").setLevel(logging.WARNING)  # Suppress Paramiko info logs
@@ -237,10 +237,11 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "-d",
-        "--debug",
-        action="store_true",
-        help=argparse.SUPPRESS  # Hide the debug option from the help message
+        "--log-level",
+        type=str,
+        default="error",
+        choices=["debug", "info", "warning", "error", "critical"],
+        help=argparse.SUPPRESS
     )
 
     return parser.parse_args()
@@ -819,8 +820,19 @@ def main() -> None:
 
     ARGS = get_args()
 
-    if ARGS.debug:
-        log.setLevel(logging.DEBUG)
+    match ARGS.log_level:
+        case "debug":
+            log.setLevel(logging.DEBUG)
+        case "info":
+            log.setLevel(logging.INFO)
+        case "warning":
+            log.setLevel(logging.WARNING)
+        case "error":
+            log.setLevel(logging.ERROR)
+        case "critical":
+            log.setLevel(logging.CRITICAL)
+        case _:  # Default to WARNING
+            log.setLevel(logging.WARNING)
 
     log.debug(f"Arguments: {ARGS}")
 
@@ -856,7 +868,7 @@ def main() -> None:
             exit(EXIT_GENERAL_ERROR)
         best_match = guesser.autodetect()
         switch_connection_dict["device_type"] = best_match
-        if ARGS.debug:
+        if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
             dev_device_dict = switch_connection_dict.copy()
             dev_device_dict["password"] = "********"
             log.debug(f"Device dictionary: {dev_device_dict}")
