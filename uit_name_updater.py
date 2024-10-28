@@ -814,7 +814,6 @@ def main() -> None:
     #TODO
     """
 
-    console = Console()
     threads = []  # List to hold the threads
     orion = Orion("smg-hamp-p01.ad.utah.edu", ORION_USERNAME, ORION_PASSWORD)
 
@@ -826,10 +825,7 @@ def main() -> None:
     log.debug(f"Arguments: {ARGS}")
 
     # Generating the correct name
-    with console.status("Gathering Information...") as status:
-        if ARGS.debug:  # If debug mode is enabled do not show the status spinner
-            # It gets in the way of the debug logs
-            status.stop()
+    with CONSOLE.status("Gathering Information...") as status:
         status.update("Generating Correct Name...")
         correct_name = name_generator(
             ARGS.function_descriptor,
