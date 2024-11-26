@@ -48,7 +48,7 @@ log_message = "The log is below."
 info_tag = f"{B}[i]{R}"
 stop_listening_instructions = f"{info_tag} When done, press {BOLD_ON}Enter{BOLD_OFF} and then press {BOLD_ON}Ctrl{BOLD_OFF} + {BOLD_ON}d{BOLD_OFF}"
 copied_announcement = f'{ansi.yellow_fg}This has been automatically copied to the clipbord!{ansi.default_fg}'
-opening_code_tag = '<code style="background-color: #dddbdb;">'
+opening_code_tag = '<code style="background-color: #dddbdb; user-select: all">'
 wrapped_styled_text = None
 colors = {
     "emergency": "#e0948a",
