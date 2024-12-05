@@ -43,6 +43,7 @@ EXIT_GENERAL_ERROR = 1  # General error
 EXIT_INVALID_ARGUMENT = 120  # Invalid argument to exit
 EXIT_KEYBOARD_INTERRUPT = 130  # Keyboard interrupt (Ctrl+C)
 
+CONSOLE = Console()
 
 # Logging setup
 logging.basicConfig(
@@ -604,6 +605,9 @@ def change_switch_info(connection: BaseConnection, correct_name: str, building_n
         log.error(e)
     except ConfigInvalidException as e:
         log.error(e)
+        print("-" * 80)
+        print("\n".join([cmd.replace("\n", "") for cmd in commands]))
+        print("-" * 80)
     else:
         connection.set_base_prompt()
         switch_output += connection.save_config()
