@@ -97,7 +97,7 @@ def message_builder(
     if route_reason:
         route_reason = f"<br><strong>Reason:</strong> {route_reason}"
     return f"""[code]<div>
-<pre style="display: inline-block;"><strong>Routing to:</strong> {queue}{route_reason}</pre>
+<pre style="display: inline-block;  width: fit-content; max-width: 100%; word-wrap: break-word; white-space: break-spaces;"><strong>Routing to:</strong> {queue}{route_reason}</pre>
 <p>If routed incorrectly please advise.<br>
 Message me on <a style="text-decoration:underline" href="{teams_url}" target="_blank" rel="noopener noreferrer">Teams<img src="{image_url}" width="{image_width}" height="{image_height}" alt="Microsoft Teams Logo"/></a></p>
 </div>[/code]"""
